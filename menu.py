@@ -5,12 +5,10 @@
 import pygame
 
 
-def run_menu(screen, ui):
+def run_menu(screen):
     # Définir les couleurs
     WHITE = (255, 255, 255)
     DARK_BLUE = (0, 80, 200)
-    
-    running = True
     
     # Police pour le texte
     font = pygame.font.Font(None, 48)
@@ -27,11 +25,6 @@ def run_menu(screen, ui):
 
     while running:
         for event in pygame.event.get():
-            action = ui.handle_event(event)
-            if action == "quit":
-                return "quit"
-            if action == "settings":
-                return "settings"
             if event.type == pygame.QUIT:
                 return "quit"
             
@@ -39,7 +32,7 @@ def run_menu(screen, ui):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Si bouton lanchement cliqué
                 if launch_btn.collidepoint(event.pos):
-                    print("\nLancement du jeu.\n")
+                    print("Lancement du jeu.\n")
                     return 'game'
 
         # Dessiner l'écran
@@ -51,9 +44,6 @@ def run_menu(screen, ui):
         text_rect = text.get_rect(center= launch_btn.center)
         screen.blit(text, text_rect)
 
-        # Dessiner l'UI globale (icons)
-        ui.draw(screen)
-        
         pygame.display.flip()
 
     return None

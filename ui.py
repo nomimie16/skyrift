@@ -28,9 +28,9 @@ class UIOverlay:
         if event.type == pygame.MOUSEBUTTONDOWN:
             #Bouton quitter cliqué
             if self.quit_rect.collidepoint(event.pos):
-                print("\nJeu SkyRift Fermé.\n")
+                print("Jeu SkyRift Fermé.\n")
                 return 'quit'
             #Bouton setting cliqué
             if self.settings_rect.collidepoint(event.pos):
-                print("\nOuverture des paramètres.\n")
+                print("Ouverture des paramètres.\n")
                 return 'settings'
