@@ -31,3 +31,23 @@ class Economy:
         """return True if the player can afford the amount, False otherwise"""
         return self._gold >= amount
         
+
+if __name__ == "__main__":
+    print("=== TEST ECONOMY ===")
+    economy = Economy()
+    print("golds initiaux:", economy.get_gold())  # attendu: 100
+    economy.spend_gold(30)
+    print("golds après dépense de 30:", economy.get_gold())  # attendu: 70
+    economy.earn_gold(50)
+    print("golds après gain de 50:", economy.get_gold())  # attendu: 120
+    print("Peut dépenser 100:", economy.can_afford(100))  # attendu: True
+    print("Peut dépenser 200:", economy.can_afford(200))  # attendu: False
+    try:
+        economy.spend_gold(200)
+    except ValueError as e:
+        print("Erreur attendue:", e)  # attendu: Not enough gold
+    try:
+        economy.spend_gold(100)
+        print("golds après dépense de 100:", economy.get_gold())  # attendu: 20
+    except ValueError as e:
+        print("Erreur inattendue:", e)
