@@ -15,7 +15,7 @@ class Position:
             None: Met à jour l'objet Position directement
         """
         self.x += x
-        self.y += self.y + y
+        self.y += y
 
     def get_x(self):
         """Retourne le x de la position"""
