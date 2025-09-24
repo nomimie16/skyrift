@@ -29,23 +29,3 @@ class Position:
         """Affichage de la position"""
         return f"({self.x}, {self.y})"
 
-
-if __name__ == '__main__':
-
-    # Création de positions
-    pos1 = Position(0, 0)
-    pos2 = Position(5, 10)
-    pos3 = Position(12, 3)
-
-    print("Position initiale")
-    print(f"Postion 1 : {pos1}")
-    print(f"Postion 2 : {pos2}")
-    print(f"Postion 3 : {pos3}")
-
-    # Modification de la position
-    print("Test mèthode move")
-    pos2.move(3,2)
-    print(f"Postion 2 (+3x -2y): {pos2}")
-    pos3.move(-12,2)
-    print(f"Postion 3 (-12x, +2y): {pos3}")
-
