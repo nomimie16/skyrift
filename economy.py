@@ -1,21 +1,24 @@
-INITIAL_GOLD = 100
-GOLD_PER_TURN = 75
+INITIAL_GOLD = 100 
+GOLD_PER_TURN = 75 # managed in the main game loop
 
 class Economy:
 
-    gold: int
+    _gold: int
 
     def __init__(self, initial_gold=INITIAL_GOLD):
-        self.gold = initial_gold
+        self._gold = initial_gold
 
     def get_gold(self):
-        return self.gold
+        """return the current amount of gold"""
+        return self._gold
 
     def earn_gold(self, amount):
-        self.gold += amount
+        """add gold to the balance"""
+        self._gold += amount
 
     def spend_gold(self, amount):
-        if amount > self.gold:
+        """try to spend gold, raise an error if there is not enough gold"""
+        if amount > self._gold:
             raise ValueError("Not enough gold")
-        self.gold -= amount
+        self._gold -= amount
         
