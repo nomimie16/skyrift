@@ -1,9 +1,9 @@
 import pygame
 from win32api import GetSystemMetrics # Récuperer la taille de l'écran
 from menu import run_menu # Première fenêtre du jeu
-from game import run_game # Fenêtre principale du jeu
-from settings import run_settings # Page de paramètres
-from ui import UIOverlay # Import de l'interface commune du jeu
+from page.game import run_game # Fenêtre principale du jeu
+from page.settings import run_settings # Page de paramètres
+from page.ui import UIOverlay # Import de l'interface commune du jeu
 
 # Initialiser Pygame
 pygame.init()
