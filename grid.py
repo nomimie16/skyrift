@@ -1,5 +1,6 @@
-from component.Position import Position
-from component.entities.Dragon import Dragonnet
+from component.entities.dragon import Dragonnet
+from component.position import Position
+
 
 class Cell:
     """Definition of a grid cell"""
@@ -7,7 +8,6 @@ class Cell:
     def __init__(self, x, y):
         self.position = Position(x, y)
         self.occupant = None
-
 
     def __str__(self):
         """Display the cell"""
@@ -38,7 +38,7 @@ class Grid:
         if not (0 <= x < self.nb_columns) or not (0 <= y < self.nb_rows):
             print(f"Position ({x}, {y}) is out of grid")
             return False
-        
+
         cell = self.cells[y][x]
         if cell.occupant is None:
             cell.occupant = occupant
@@ -55,7 +55,6 @@ class Grid:
 
 
 if __name__ == '__main__':
-
     pos1 = Position(0, 2)
     pos2 = Position(1, 2)
 
