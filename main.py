@@ -1,44 +1,33 @@
 import pygame
-from win32api import GetSystemMetrics # pour récuperer la taille de l'écran
+from win32api import GetSystemMetrics # Récuperer la taille de l'écran
+from menu import run_menu # Première fenêtre du jeu
+from game import run_game # Fenêtre principale du jeu
+from ui import UIOverlay # Import de l'interface commune du jeu
 
 # Initialiser Pygame
 pygame.init()
- 
+
 # Créer la fenêtre
 taille_ecran = GetSystemMetrics(1)
 screen = pygame.display.set_mode((taille_ecran, taille_ecran))
- 
-# Définir les couleurs
-WHITE = (255, 255, 255)
- 
-# Bouton quitter le jeu
-quit_img = pygame.image.load("assets/img/quit.png").convert_alpha()
-quit_img = pygame.transform.scale(quit_img, (55, 55))
-quit_rect = quit_img.get_rect()
-quit_rect.topleft = (taille_ecran - 50, 0)
 
-# Police pour le texte
-# font = pygame.font.Font(None, 36)
- 
+# Création de l'interface commune (icons)
+ui = UIOverlay(screen)
+
+# Lancer le menu
 running = True
-while running:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
- 
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if quit_rect.collidepoint(event.pos):
-                running = False
-                print("##################\nJeu SkyRift Fermé.\n##################")
-                
- 
-    # Remplir l'écran avec du blanc
-    screen.fill(WHITE)
-    
-    # Dessiner le bouton quitter
-    screen.blit(quit_img, quit_rect)
-  
-    # Mettre à jour l'affichage
-    pygame.display.flip()
+etat = 'menu'
 
-pygame.quit()
+while running:
+    if etat == 'menu':
+        etat = run_menu(screen, ui)
+    elif etat == 'game':
+       etat = run_game(screen, ui) 
+    elif etat == 'settings':
+        etat == 'menu'
+        #page future
+    elif etat == 'quit':
+        running = False
+
+pygame.quit()        
+        
