@@ -1,6 +1,6 @@
 import pygame
 
-from component.position import Position
+from component.Position import Position
 
 
 class Entity:
