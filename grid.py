@@ -1,20 +1,28 @@
 from component.entities.dragon import Dragonnet
+from component.Position import Position
 
-from component.position import Position
+import pygame
+from win32api import GetSystemMetrics 
+
 
 
 class Cell:
     """Definition of a grid cell"""
 
     def __init__(self, x, y):
-        self.position = Position(x, y)
-        self.occupant = None
+        self._position = Position(x, y)
+        self._occupant = None
+
+    def get_occupant(self):
+        """return the current occupant"""
+        return self._occupant
+    
 
     def __str__(self):
         """Display the cell"""
-        if self.occupant:
-            return f"[{self.occupant.sprite_path}]"
-        return str(self.position)
+        if self._occupant:
+            return f"[{self._occupant.sprite}]"
+        return str(self._position)
 
     def __repr__(self):
         return str(self)
@@ -41,11 +49,18 @@ class Grid:
             return False
 
         cell = self.cells[y][x]
-        if cell.occupant is None:
-            cell.occupant = occupant
-            occupant.position = cell.position
+        if cell._occupant is None:
+            cell._occupant = occupant
+            occupant.position = cell._position
             return True
         return False
+    
+    def distance(self,occupant1, occupant2):
+
+        x1, y1 = occupant1.position.x, occupant1.position.y
+        x2, y2 = occupant2.position.x, occupant2.position.y
+        
+        return abs(x1 - x2) + abs(y1 - y2)
 
     def __str__(self):
         """Display the entire grid"""
@@ -55,19 +70,71 @@ class Grid:
         )
 
 
-if __name__ == '__main__':
-    pos1 = Position(0, 2)
-    pos2 = Position(1, 2)
+# if __name__ == '__main__':
+#     # Initialiser Pygame
+#     pygame.init()
+    
+#     # Créer la fenêtre
+#     taille_ecran = GetSystemMetrics(1)
+#     screen = pygame.display.set_mode((taille_ecran, taille_ecran))
+    
+#     # Définir les couleurs
+#     WHITE = (255, 255, 255)
+    
+#     # Bouton quitter le jeu
+#     quit_img = pygame.image.load("assets/img/quit.png").convert_alpha()
+#     quit_img = pygame.transform.scale(quit_img, (55, 55))
+#     quit_rect = quit_img.get_rect()
+#     quit_rect.topleft = (taille_ecran - 50, 0)
 
-    # Create the grid
-    grid = Grid(3, 3)
+#     # Police pour le texte
+#     # font = pygame.font.Font(None, 36)
+    
+#     running = True
+#     while running:
+#         for event in pygame.event.get():
+#             if event.type == pygame.QUIT:
+#                 running = False
+    
+#             if event.type == pygame.MOUSEBUTTONDOWN:
+#                 if quit_rect.collidepoint(event.pos):
+#                     running = False
+#                     print("##################\nJeu SkyRift Fermé.\n##################")
+                    
+    
+#         # Remplir l'écran avec du blanc
+#         screen.fill(WHITE)
+        
+#         # Dessiner le bouton quitter
+#         screen.blit(quit_img, quit_rect)
+    
+        
 
-    # Test add methode
-    grid.add_occupant(Dragonnet(pos1), pos2)
-    print(f"Grid 1:\n{grid}")
 
-    # # Test move method (if needed)
-    # pos2.move(3, 2)
-    # print(f"Position 2 (+3x, +2y): {pos2}")
-    # pos3.move(-12, 2)
-    # print(f"Position 3 (-12x, +2y): {pos3}")
+#     pos1 = Position(0, 0)
+#     pos2 = Position(1, 4)
+
+#     Dragon1 = Dragonnet(0,0)
+#     Dragon2 = Dragonnet(1,4)
+
+#     # Create the grid
+#     grid = Grid(5, 5)
+
+#     # Test add methode
+#     grid.add_occupant(Dragon1, pos1)
+#     grid.add_occupant(Dragon2, pos2)
+#     distance = grid.distance(Dragon1, Dragon2)
+
+#     print(f"Grid 1:\n{grid}")
+#     print(f"Distance :\n{distance}")
+
+#     # Mettre à jour l'affichage
+#     pygame.display.flip()
+#     # # Test move method (if needed)
+#     # pos2.move(3, 2)
+#     # print(f"Position 2 (+3x, +2y): {pos2}")
+#     # pos3.move(-12, 2)
+#     # print(f"Position 3 (-12x, +2y): {pos3}")
+
+#     pygame.quit()
+
