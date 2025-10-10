@@ -1,5 +1,7 @@
-from component.position import Position
 import pygame
+
+from component.position import Position
+
 
 class StaticEntity:
     def __init__(self, x: int, y: int, name: str, sprite_path: str, width: int, height: int):
@@ -17,6 +19,8 @@ class StaticEntity:
     def rect(self):
         return pygame.Rect(self._position.x, self._position.y, self._width, self._height)
 
+    # ------- Getters et Setters -------
+
     @property
     def position(self):
         return self._position
@@ -24,3 +28,35 @@ class StaticEntity:
     @property
     def name(self):
         return self._name
+
+    @name.setter
+    def name(self, name):
+        self._name = name
+
+    @property
+    def sprite_path(self):
+        return self._sprite_path
+
+    @sprite_path.setter
+    def sprite_path(self, sprite_path):
+        self._sprite_path = sprite_path
+
+    @property
+    def sprite(self):
+        return self._sprite
+
+    @property
+    def width(self):
+        return self._width
+
+    @width.setter
+    def width(self, width):
+        self._width = width
+
+    @property
+    def height(self):
+        return self._height
+
+    @height.setter
+    def height(self, height):
+        self._height = height

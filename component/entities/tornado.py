@@ -23,3 +23,8 @@ class Tornado(StaticEntity):
         """Appeler à chaque tour : diminue la durée de vie de la tornade."""
         self.duration -= 1
         return self.duration > 0
+
+    # ------- Getters et Setters -------
+    @property
+    def duration(self):
+        return self._duration
