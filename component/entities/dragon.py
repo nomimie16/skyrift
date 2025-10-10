@@ -2,6 +2,7 @@ import pygame
 
 from component.entities.entity import Entity
 from component.position import Position
+from const import DRAGONNET_COST, DRAGON_MOYEN_COST, DRAGON_GEANT_COST
 
 
 class Dragon(Entity):
@@ -144,20 +145,20 @@ class Dragon(Entity):
 class Dragonnet(Dragon):
     def __init__(self, x: int, y: int):
         super().__init__(x, y, name="Dragonnet", max_hp=50, attack_range=1, sprite_path="assets/sprites/dragonnet.png",
-                         speed=6, attack_damage=10, cost=100)
+                         speed=6, attack_damage=10, cost=DRAGONNET_COST)
 
 
 class DragonMoyen(Dragon):
     def __init__(self, x: int, y: int):
         super().__init__(x, y, name="Dragon", max_hp=120, attack_range=2, sprite_path="assets/sprites/dragon.png",
-                         speed=4, attack_damage=20, cost=300)
+                         speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST)
 
 
 class DragonGeant(Dragon):
     def __init__(self, x: int, y: int):
         super().__init__(x, y, name="Dragon Géant", max_hp=250, attack_range=3,
                          sprite_path="assets/sprites/dragon_geant.png",
-                         speed=2, attack_damage=40, cost=600)
+                         speed=2, attack_damage=40, cost=DRAGON_GEANT_COST)
 
 
 if __name__ == '__main__':
