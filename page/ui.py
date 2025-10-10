@@ -32,5 +32,5 @@ class UIOverlay:
                 return 'quit'
             #Bouton setting cliqué
             if self.settings_rect.collidepoint(event.pos):
-                print("Ouverture des paramètres.\n")
+                print("Ouverture des paramètres.")
                 return 'settings'

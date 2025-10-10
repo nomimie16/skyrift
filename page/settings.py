@@ -5,17 +5,17 @@
 import pygame
 
 def run_settings(screen, background):
-    # Définir les couleurs
+    # === COULEURS ===
     OVERLAY_COLOR = (0, 0, 0)
     OVERLAY_ALPHA = 150
     POPUP_COLOR = (240, 240, 240)
     BUTTON_COLOR = (0, 80, 200)
     BUTTON_TEXT_COLOR = (255, 255, 255)
     
-    # Police pour le texte
+    # === POLICE ===
     font = pygame.font.Font(None, 48)
-    
-    # Pop-up centrale
+
+    # === POP-UP CENTRALE ===
     popup_width, popup_height = 600, 400
     popup_rect = pygame.Rect(
         (screen.get_width()-popup_width)//2,
@@ -24,49 +24,92 @@ def run_settings(screen, background):
         popup_height
     )
 
-    # Création bouton retour au jeu
+    # === BOUTON RETOUR === 
     quit_settings = pygame.Rect(
-        screen.get_width() // 2 - 150,
-        screen.get_height() // 2 - 40,
-        200,
-        80
+        screen.get_width() // 2 - 125,
+        screen.get_height() // 2 + 120,
+        250,
+        60
     )
 
+    
+    # === IMAGES TOGGLE SON ===
+    img_song_toggle_off = pygame.image.load("assets/img/off_song_toggle.png").convert_alpha()
+    img_song_toggle_off_rect = img_song_toggle_off.get_rect()
+    img_song_toggle_off_rect.topleft = (
+        screen.get_width() // 2 - 10,
+        screen.get_height() // 2 - 30
+    )
+    img_song_toggle_on = pygame.image.load("assets/img/on_song_toggle.png").convert_alpha()
+    img_song_toggle_on_rect = img_song_toggle_on.get_rect()
+    img_song_toggle_on_rect.topleft = (
+        screen.get_width() // 2 - 10,
+        screen.get_height() // 2 - 30
+    )
+
+    # === ETAT DU SON ===
+    song_on = False
+
+    # Tant que le jeu tourne
     running = True
     while running:
+        mouse = pygame.mouse.get_pos()
         
+        # Pour chaque évenement du jeu
         for event in pygame.event.get():
+            
             # Si fermeture de la fenêtre
             if event.type == pygame.QUIT:
                 print('Fermeture du jeu.\n')
                 return 'quit'
+            
             # Check les boutons cliqués
             if event.type == pygame.MOUSEBUTTONDOWN:
-                # Si bouton reour au jeu est cliqué
+                # Si bouton retour au jeu est cliqué
                 if quit_settings.collidepoint(event.pos):
-                    print("Retour au jeu.\n")
                     return 'game'
-
-        # Fond assombri
-        screen.blit(background, (0,0))  # affiche le menu ou le jeu
+            
+                # Toggle musique ON/OFF
+                if img_song_toggle_off_rect.collidepoint(event.pos):
+                    song_on = not song_on
+                    print("Musique :", "ON" if song_on else "OFF")
+                
+        
+        # === AFFICHAGE ===
+        # Fond de la scène précedente (jeu ou menu)
+        screen.blit(background, (0,0))
+        
+        # Overlay noir semi-transparent
         overlay = pygame.Surface(screen.get_size())
         overlay.set_alpha(OVERLAY_ALPHA)
         overlay.fill(OVERLAY_COLOR)
-        screen.blit(overlay, (0,0))  # assombrir le fond
-        
-        # Dessiner la pop-up
-        pygame.draw.rect(screen, POPUP_COLOR, popup_rect, border_radius=20)
-    
+        screen.blit(overlay, (0,0))
 
-        # Dessiner le bouton
+        # Fenêtre pop-up
+        pygame.draw.rect(screen, POPUP_COLOR, popup_rect, border_radius=20)
+
+        # Bouton retour au jeu
         pygame.draw.rect(screen, BUTTON_COLOR, quit_settings, border_radius=12)
         text = font.render("Retour au jeu", True, BUTTON_TEXT_COLOR)
         text_rect = text.get_rect(center= quit_settings.center)
         screen.blit(text, text_rect)
+        
+        # Titre du menu
+        title = font.render("Paramètres", True, (0, 0, 0))
+        title_rect = title.get_rect(center=(screen.get_width() // 2, popup_rect.top + 60))
+        screen.blit(title, title_rect)
+        
+        # Label musique
+        label = font.render("Musique :", True, (0, 0, 0))
+        label_rect = label.get_rect(center=(screen.get_width() // 2 - 150, screen.get_height() // 2 - 20))
+        screen.blit(label, label_rect)
+        
+        # Afficher le bon toggle selon l’état
+        if song_on:
+            screen.blit(img_song_toggle_on, img_song_toggle_on_rect)
+        else:
+            screen.blit(img_song_toggle_off, img_song_toggle_off_rect)
 
         pygame.display.flip()
-
-        
-
 
     return None

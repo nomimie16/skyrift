@@ -32,7 +32,7 @@ def run_menu(screen):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Si bouton lanchement cliqué
                 if launch_btn.collidepoint(event.pos):
-                    print("Lancement du jeu.\n")
+                    print("\nLancement du jeu.")
                     return 'game'
 
         # Dessiner l'écran
