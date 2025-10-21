@@ -31,24 +31,43 @@ def run_settings(screen, background):
         250,
         60
     )
-
     
+    # === IMAGES TOGGLE MUSIQUE ===
+    toggle_size = (80,70)
+    img_music_toggle_off = pygame.image.load("assets/img/off_song_toggle.png").convert_alpha()
+    img_music_toggle_off = pygame.transform.scale(img_music_toggle_off, toggle_size)
+    img_music_toggle_off_rect = img_music_toggle_off.get_rect()
+    img_music_toggle_off_rect.topleft = (
+        screen.get_width() // 2-50,
+        screen.get_height() // 2-110
+    )
+    img_music_toggle_on = pygame.image.load("assets/img/on_song_toggle.png").convert_alpha()
+    img_music_toggle_on = pygame.transform.scale(img_music_toggle_on, toggle_size)
+    img_music_toggle_on_rect = img_music_toggle_on.get_rect()
+    img_music_toggle_on_rect.topleft = (
+        screen.get_width() // 2-50,
+        screen.get_height() // 2-110
+    )
     # === IMAGES TOGGLE SON ===
-    img_song_toggle_off = pygame.image.load("assets/img/off_song_toggle.png").convert_alpha()
-    img_song_toggle_off_rect = img_song_toggle_off.get_rect()
-    img_song_toggle_off_rect.topleft = (
-        screen.get_width() // 2 - 10,
+    img_sound_toggle_off = pygame.image.load("assets/img/off_song_toggle.png").convert_alpha()
+    img_sound_toggle_off = pygame.transform.scale(img_sound_toggle_off, toggle_size)
+    img_sound_toggle_off_rect = img_sound_toggle_off.get_rect()
+    img_sound_toggle_off_rect.topleft = (
+        screen.get_width() // 2-50,
         screen.get_height() // 2 - 30
     )
-    img_song_toggle_on = pygame.image.load("assets/img/on_song_toggle.png").convert_alpha()
-    img_song_toggle_on_rect = img_song_toggle_on.get_rect()
-    img_song_toggle_on_rect.topleft = (
-        screen.get_width() // 2 - 10,
+    img_sound_toggle_on = pygame.image.load("assets/img/on_song_toggle.png").convert_alpha()
+    img_sound_toggle_on = pygame.transform.scale(img_sound_toggle_on, toggle_size)
+    img_sound_toggle_on_rect = img_sound_toggle_on.get_rect()
+    img_sound_toggle_on_rect.topleft = (
+        screen.get_width() // 2-50,
         screen.get_height() // 2 - 30
     )
+
 
     # === ETAT DU SON ===
-    song_on = False
+    music_on = False
+    sound_on = False
 
     # Tant que le jeu tourne
     running = True
@@ -57,24 +76,22 @@ def run_settings(screen, background):
         
         # Pour chaque évenement du jeu
         for event in pygame.event.get():
-            
-            # Si fermeture de la fenêtre
-            if event.type == pygame.QUIT:
-                print('Fermeture du jeu.\n')
-                return 'quit'
-            
             # Check les boutons cliqués
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Si bouton retour au jeu est cliqué
                 if quit_settings.collidepoint(event.pos):
-                    return 'game'
+                    return 'pause'
             
                 # Toggle musique ON/OFF
-                if img_song_toggle_off_rect.collidepoint(event.pos):
-                    song_on = not song_on
-                    print("Musique :", "ON" if song_on else "OFF")
-                
-        
+                if img_music_toggle_off_rect.collidepoint(event.pos):
+                    music_on = not music_on
+                    print("Musique :", "ON" if music_on else "OFF")
+                # Toggle son du jeu ON/OFF
+                if img_sound_toggle_off_rect.collidepoint(event.pos):
+                    sound_on = not sound_on
+                    print("Son du jeu :", "ON" if sound_on else "OFF")
+
+
         # === AFFICHAGE ===
         # Fond de la scène précedente (jeu ou menu)
         screen.blit(background, (0,0))
@@ -88,9 +105,9 @@ def run_settings(screen, background):
         # Fenêtre pop-up
         pygame.draw.rect(screen, POPUP_COLOR, popup_rect, border_radius=20)
 
-        # Bouton retour au jeu
+        # Bouton retour au menu pause
         pygame.draw.rect(screen, BUTTON_COLOR, quit_settings, border_radius=12)
-        text = font.render("Retour au jeu", True, BUTTON_TEXT_COLOR)
+        text = font.render("Retour", True, BUTTON_TEXT_COLOR)
         text_rect = text.get_rect(center= quit_settings.center)
         screen.blit(text, text_rect)
         
@@ -99,16 +116,24 @@ def run_settings(screen, background):
         title_rect = title.get_rect(center=(screen.get_width() // 2, popup_rect.top + 60))
         screen.blit(title, title_rect)
         
-        # Label musique
-        label = font.render("Musique :", True, (0, 0, 0))
-        label_rect = label.get_rect(center=(screen.get_width() // 2 - 150, screen.get_height() // 2 - 20))
-        screen.blit(label, label_rect)
+        # Label musique/son du jeu
+        label_musique = font.render("Musique :", True, (0, 0, 0))
+        label_rect = label_musique.get_rect(center=(screen.get_width() // 2 - 200, screen.get_height() // 2 - 70))
+        screen.blit(label_musique, label_rect)
+        label_son = font.render("Son du jeu :", True, (0, 0, 0))
+        label_rect = label_son.get_rect(center=(screen.get_width() // 2 - 190, screen.get_height() // 2 + 20))
+        screen.blit(label_son, label_rect)
         
-        # Afficher le bon toggle selon l’état
-        if song_on:
-            screen.blit(img_song_toggle_on, img_song_toggle_on_rect)
+        
+        # Afficher le bon toggle selon l’état - SON et MUSIQUE
+        if music_on:
+            screen.blit(img_music_toggle_on, img_music_toggle_on_rect)
         else:
-            screen.blit(img_song_toggle_off, img_song_toggle_off_rect)
+            screen.blit(img_music_toggle_off, img_music_toggle_off_rect)
+        if sound_on:
+            screen.blit(img_sound_toggle_on, img_sound_toggle_on_rect)
+        else:
+            screen.blit(img_sound_toggle_off, img_sound_toggle_off_rect)
 
         pygame.display.flip()
 
