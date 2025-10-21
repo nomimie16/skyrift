@@ -11,7 +11,7 @@ class Dragon(Entity):
                  attack_damage: int,
                  cost: int):
         super().__init__(x, y, name, max_hp, sprite_path)
-        self._speed_base: int = speed  # speed de base du dragon
+        self._base_speed: int = speed  # speed de base du dragon
         self._actual_speed: int = speed  # speed actuel du dragon
         self._speed_modifier: int = 0  # nombre de speed en plus ou en moins à celui de base
         self._attack_damage: int = attack_damage

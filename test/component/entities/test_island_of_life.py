@@ -5,7 +5,7 @@ from unittest.mock import patch
 class TestIslandOfLife:
 
     def setup_method(self):
-        with patch('pygame.image.load'):
+        with patch('pygame.image.load'): # mock une image, permet de rendre les tests independants de l'existence d'une image ou non
             self.island = IslandOfLife(1, 1)
             self.entity = Entity(1, 1, "test", 10, "assets/sprites/dragonnet.png")
 

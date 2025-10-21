@@ -1,9 +1,10 @@
 from component.entities.entity import Entity
+from component.entities.effect_zone import EffectZone
 
 
 class Volcano(EffectZone):
-    def __init__(self, x: int, y: int):
-        super().__init__(x, y, name="Volcan", sprite_path="assets/sprites/volcano.png", width=128, height=128)
+    def __init__(self, x: int, y: int, sprite_path="assets/sprites/volcano.png"):
+        super().__init__(x, y, name="Volcan", sprite_path=sprite_path, width=128, height=128)
 
     def apply_effect(self, entity: Entity):
         """

@@ -21,7 +21,7 @@ def test_dragonnet_init():
     assert d._attack_damage == 10
     assert d._attack_range == 1
     assert d._cost is not None
-    assert d._speed_base == 6
+    assert d._base_speed == 6
 
 def test_dragonmoyen_init():
     d = DragonMoyen(3, 4)
@@ -31,7 +31,7 @@ def test_dragonmoyen_init():
     assert d._attack_damage == 20
     assert d._attack_range == 2
     assert d._cost is not None
-    assert d._speed_base == 4
+    assert d._base_speed == 4
 
 def test_dragongeant_init():
     d = DragonGeant(5, 6)
@@ -41,7 +41,7 @@ def test_dragongeant_init():
     assert d._attack_damage == 40
     assert d._attack_range == 3
     assert d._cost is not None
-    assert d._speed_base == 2
+    assert d._base_speed == 2
 
 def test_move_dragon_sets_target_and_moving():
     d = Dragonnet(0, 0)
@@ -55,7 +55,7 @@ def test_reset_speed_sets_actual_speed_and_modifier():
     d._actual_speed = 2
     d._speed_modifier = 5
     # initialiser _base_speed car la propriété base_speed utilise _base_speed
-    d._base_speed = d._speed_base
+    d._base_speed = d._base_speed
     d.reset_speed()
     assert d._actual_speed == d.base_speed
     assert d._speed_modifier == 0

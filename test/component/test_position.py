@@ -1,5 +1,3 @@
-import pytest
-
 from ...component import position
 
 class TestPosition:
