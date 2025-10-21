@@ -22,8 +22,12 @@ class StaticEntity:
     # ------- Getters et Setters -------
 
     @property
-    def position(self):
+    def position(self) -> Position:
         return self._position
+
+    @position.setter
+    def position(self, value: Position):
+        self._position = value
 
     @property
     def name(self):
