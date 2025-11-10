@@ -1,5 +1,5 @@
 from component.entities.entity import Entity
-
+from component.entities.effect_zone import EffectZone
 
 class Volcano(EffectZone):
     def __init__(self, x: int, y: int):
