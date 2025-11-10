@@ -1,5 +1,5 @@
 from component.entities.dragon import Dragonnet
-from component.Position import Position
+from component.position import Position
 
 import pygame
 from win32api import GetSystemMetrics 
@@ -8,7 +8,6 @@ from win32api import GetSystemMetrics
 
 class Cell:
     """Definition of a grid cell"""
-
     def __init__(self, x, y):
         self._position = Position(x, y)
         self._occupant = None
@@ -17,11 +16,15 @@ class Cell:
         """return the current occupant"""
         return self._occupant
     
+    def get_position(self, occupant):
+        if occupant.position:
+            return occupant.position
+        return None
 
     def __str__(self):
         """Display the cell"""
         if self._occupant:
-            return f"[{self._occupant.sprite}]"
+            return "occupe"
         return str(self._position)
 
     def __repr__(self):
@@ -29,25 +32,20 @@ class Cell:
 
 
 class Grid:
+    
     """Definition of a game board grid"""
-
     def __init__(self, nb_columns, nb_rows):
         self.nb_columns = nb_columns
         self.nb_rows = nb_rows
-        self.cells = [
-            [Cell(x, y) for x in range(nb_columns)]
-            for y in range(nb_rows)
-        ]
+        self.cells = [[Cell(x, y) for x in range(nb_columns)] for y in range(nb_rows)]
 
     def add_occupant(self, occupant, position: Position):
         """Place an occupant (e.g., a dragon) on the grid"""
         x = position.get_x()
         y = position.get_y()
-
         if not (0 <= x < self.nb_columns) or not (0 <= y < self.nb_rows):
             print(f"Position ({x}, {y}) is out of grid")
             return False
-
         cell = self.cells[y][x]
         if cell._occupant is None:
             cell._occupant = occupant
@@ -56,7 +54,6 @@ class Grid:
         return False
     
     def distance(self,occupant1, occupant2):
-
         x1, y1 = occupant1.position.x, occupant1.position.y
         x2, y2 = occupant2.position.x, occupant2.position.y
         
@@ -129,12 +126,12 @@ class Grid:
 #     print(f"Distance :\n{distance}")
 
 #     # Mettre à jour l'affichage
-#     pygame.display.flip()
-#     # # Test move method (if needed)
-#     # pos2.move(3, 2)
-#     # print(f"Position 2 (+3x, +2y): {pos2}")
-#     # pos3.move(-12, 2)
-#     # print(f"Position 3 (-12x, +2y): {pos3}")
+#     # pygame.display.flip()
+#     # # # Test move method (if needed)
+#     # # pos2.move(3, 2)
+#     # # print(f"Position 2 (+3x, +2y): {pos2}")
+#     # # pos3.move(-12, 2)
+#     # # print(f"Position 3 (-12x, +2y): {pos3}")
 
-#     pygame.quit()
+#     # pygame.quit()
 
