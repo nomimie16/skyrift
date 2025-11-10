@@ -1,5 +1,5 @@
 ######################
-# FENETRE MENU PAUSE
+# FENETRE MENU PAUSE #
 ######################
 
 import pygame
@@ -27,19 +27,25 @@ def run_pause(screen, background):
     # === BOUTONS === 
     quit_pause = pygame.Rect(
         screen.get_width() // 2 - 125,
-        screen.get_height() // 2,
+        screen.get_height() // 2 - 200,
         250,
         60
     )
     settings = pygame.Rect(
         screen.get_width() // 2 - 125,
-        screen.get_height() // 2 + 100,
+        screen.get_height() // 2 - 100,
         250,
         60
     )
     quit_game = pygame.Rect(
         screen.get_width() // 2 - 125,
-        screen.get_height() // 2 + 200,
+        screen.get_height() // 2,
+        250,
+        60
+    )
+    rules_btn = pygame.Rect(
+        screen.get_width() // 2 - 125,
+        screen.get_height() // 2 + 100,
         250,
         60
     )
@@ -54,7 +60,9 @@ def run_pause(screen, background):
                 if quit_game.collidepoint(event.pos):
                     return 'quit'
                 if settings.collidepoint(event.pos):
-                    return 'settings'
+                    return 'settingsFromGame'
+                if rules_btn.collidepoint(event.pos):
+                    return 'rules'
 
         # === AFFICHAGE ===
         # Fond de la scène précédente
@@ -64,6 +72,7 @@ def run_pause(screen, background):
         overlay.set_alpha(OVERLAY_ALPHA)
         overlay.fill(OVERLAY_COLOR)
         screen.blit(overlay, (0, 0))
+        
         # Fenêtre pop-up
         pygame.draw.rect(screen, POPUP_COLOR, popup_rect, border_radius=20)
                 
@@ -83,6 +92,12 @@ def run_pause(screen, background):
         pygame.draw.rect(screen, BUTTON_COLOR, quit_game, border_radius=12)
         text = font.render("Quitter le jeu", True, BUTTON_TEXT_COLOR)
         text_rect = text.get_rect(center=quit_game.center)
+        screen.blit(text, text_rect)
+        
+        # Bouton "Règles du jeu"
+        pygame.draw.rect(screen, BUTTON_COLOR, rules_btn, border_radius=12)
+        text = font.render("Règles du jeu", True, BUTTON_TEXT_COLOR)
+        text_rect = text.get_rect(center=rules_btn.center)
         screen.blit(text, text_rect)
         
         pygame.display.flip()

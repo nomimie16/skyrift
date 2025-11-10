@@ -1,67 +1,83 @@
-######################
-# FENETRE DEBUT DU JEU
-######################
+########################
+# FENETRE DEBUT DU JEU #
+########################
 
+from pygame import *
 import pygame
 
 def run_start(screen):
-    # === COULEURS ===
-    WHITE = (255, 255, 255)
+    # === RESSOURCES ===
+    #Couleurs
     DARK_BLUE = (0, 80, 200)
     BLACK = (0, 0, 0)
-    
-    # === POLICES ===
+    #Polices
     font = pygame.font.Font(None, 48)
-    small_font = pygame.font.Font(None, 42)
+    #Images
+    fond = image.load('assets/img/bgPause.png')
 
-    # === BOUTON LANCEMENT ===
+    # === BOUTONS ===
+    #Lancement
     launch_btn = pygame.Rect(
+        screen.get_width() // 2 - 150,
+        screen.get_height() // 2 - 100,
+        300,
+        80
+    )
+    #Quitter
+    quit_btn = pygame.Rect(
+        screen.get_width() // 2 - 150,
+        screen.get_height() // 2 ,
+        300,
+        80
+    )
+    #Options
+    options_btn = pygame.Rect(
         screen.get_width() // 2 - 150,
         screen.get_height() // 2 + 100,
         300,
         80
     )
+
     
-    # === CHOIX JOUEURS ===
-    options = ["Jouer avec l'IA", "Jouer sans IA"]
-    selected_index = 0
+    fond = fond.convert()
 
     running = True
     while running:
+        # === AFFICHAGE ===
+        screen.blit(fond, (0,0))
+        
+        # Bouton Lancer le jeu
+        pygame.draw.rect(screen, DARK_BLUE, launch_btn, border_radius=12)
+        text = font.render("Lancer le jeu", True, (255, 255, 255))
+        text_rect = text.get_rect(center=launch_btn.center)
+        screen.blit(text, text_rect)
+        # Bouton Quitter
+        pygame.draw.rect(screen, DARK_BLUE, quit_btn, border_radius=12)
+        text = font.render("Quitter", True, (255, 255, 255))
+        text_rect = text.get_rect(center=quit_btn.center)
+        screen.blit(text, text_rect)
+        # Bouton Options
+        pygame.draw.rect(screen, DARK_BLUE, options_btn, border_radius=12)
+        text = font.render("Options", True, (255, 255, 255))
+        text_rect = text.get_rect(center=options_btn.center)
+        screen.blit(text, text_rect)
+
+        # === GESTION ÉVÉNEMENTS ===
         for event in pygame.event.get():            
-            # Gestion des flèches haut/bas
-            if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_UP:
-                    selected_index = (selected_index - 1) % len(options)
-                elif event.key == pygame.K_DOWN:
-                    selected_index = (selected_index + 1) % len(options)
+            #pass
             
             # Gestion clic souris
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if launch_btn.collidepoint(event.pos):
                     print("\nLancement du jeu.")
-                    #APPELER ICI LE JEU SELON IA OU NON!!!
-                    # if selected_index == 0: 
-                    #     return 'game_with_ia'
-                    # else: 
-                    #     return 'game_without_ia'
+                    #appeler la pop up choix ia ou nn
                     return 'game'
-
-        # === AFFICHAGE ===
-        screen.fill(WHITE)
-
-        # Afficher les options de mode de jeu
-        for i, option in enumerate(options):
-            prefix = "> " if i == selected_index else "  "
-            text_surface = small_font.render(prefix + option, True, BLACK)
-            text_rect = text_surface.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2 - 80 + i * 50))
-            screen.blit(text_surface, text_rect)
-
-        # Bouton Lancer le jeu
-        pygame.draw.rect(screen, DARK_BLUE, launch_btn, border_radius=12)
-        text = font.render("Lancer le jeu", True, WHITE)
-        text_rect = text.get_rect(center=launch_btn.center)
-        screen.blit(text, text_rect)
+                if quit_btn.collidepoint(event.pos):
+                    print("\nFermeture du jeu.")
+                    return 'quit'
+                if options_btn.collidepoint(event.pos):
+                    print("\nOuverture des options.")
+                    return 'settingsFromStart'
 
         pygame.display.flip()
 

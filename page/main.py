@@ -4,30 +4,32 @@ from startGame import run_start # Première fenêtre du jeu
 from game import run_game # Fenêtre principale du jeu
 from pause import run_pause # Page de pause
 from settings import run_settings # Page de paramètres
+from sidepanels import draw_sidepanels # Import des panneaux latéraux du jeu
 from ui import UIOverlay # Import de l'interface commune du jeu
 
 # Initialiser Pygame
 pygame.init()
 
 # Créer la fenêtre
-taille_ecran = GetSystemMetrics(1)
+taille_ecran = GetSystemMetrics(1)#hauteur de l'écran
 screen = pygame.display.set_mode((taille_ecran, taille_ecran))
+pygame.display.set_caption("SkyRift")
 
 # Création de l'interface commune (icons)
 ui = UIOverlay(screen)
 
 # Lancer le menu
 running = True
-etat = 'menu'
+etat = 'startGame'
 background_game = None
 
 while running:
-    if etat == 'menu':
+    if etat == 'startGame':
         etat = run_start(screen)
 
     elif etat == 'game':
-       etat = run_game(screen, ui)
-       background_game = screen.copy()  
+        etat = run_game(screen, ui)
+        background_game = screen.copy()
 
     elif etat == 'pause':
         if background_game is not None:
@@ -36,9 +38,14 @@ while running:
             background = screen.copy()
         etat = run_pause(screen, background)
 
-    elif etat == 'settings':
+    elif etat == 'settingsFromStart':
         background = screen.copy()
-        etat = run_settings(screen, background)
+        etat = run_settings(screen, background, False)
+        
+    elif etat == 'settingsFromGame':
+        background = screen.copy()
+        etat = run_settings(screen, background, True)
+    
         
     elif etat == 'quit':
         running = False

@@ -1,10 +1,10 @@
-######################
-#FENETRE DE PARAMETRES
-######################
+########################
+#FENETRE DE PARAMETRES #
+########################
 
 import pygame
 
-def run_settings(screen, background):
+def run_settings(screen, background, from_game):
     # === COULEURS ===
     OVERLAY_COLOR = (0, 0, 0)
     OVERLAY_ALPHA = 150
@@ -74,24 +74,6 @@ def run_settings(screen, background):
     while running:
         mouse = pygame.mouse.get_pos()
         
-        # Pour chaque évenement du jeu
-        for event in pygame.event.get():
-            # Check les boutons cliqués
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                # Si bouton retour au jeu est cliqué
-                if quit_settings.collidepoint(event.pos):
-                    return 'pause'
-            
-                # Toggle musique ON/OFF
-                if img_music_toggle_off_rect.collidepoint(event.pos):
-                    music_on = not music_on
-                    print("Musique :", "ON" if music_on else "OFF")
-                # Toggle son du jeu ON/OFF
-                if img_sound_toggle_off_rect.collidepoint(event.pos):
-                    sound_on = not sound_on
-                    print("Son du jeu :", "ON" if sound_on else "OFF")
-
-
         # === AFFICHAGE ===
         # Fond de la scène précedente (jeu ou menu)
         screen.blit(background, (0,0))
@@ -135,6 +117,26 @@ def run_settings(screen, background):
         else:
             screen.blit(img_sound_toggle_off, img_sound_toggle_off_rect)
 
+        # Pour chaque évenement du jeu
+        for event in pygame.event.get():
+            # Check les boutons cliqués
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # Si bouton retour au jeu est cliqué
+                if quit_settings.collidepoint(event.pos):
+                    if from_game:
+                        return 'pause'
+                    else:
+                        return 'startGame'
+            
+                # Toggle musique ON/OFF
+                if img_music_toggle_off_rect.collidepoint(event.pos):
+                    music_on = not music_on
+                    print("Musique :", "ON" if music_on else "OFF")
+                # Toggle son du jeu ON/OFF
+                if img_sound_toggle_off_rect.collidepoint(event.pos):
+                    sound_on = not sound_on
+                    print("Son du jeu :", "ON" if sound_on else "OFF")
+                    
         pygame.display.flip()
 
     return None
