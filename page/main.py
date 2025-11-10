@@ -1,6 +1,6 @@
 import pygame
 from win32api import GetSystemMetrics # Récuperer la taille de l'écran
-from menu import run_menu # Première fenêtre du jeu
+from page.menu import run_menu # Première fenêtre du jeu
 from page.game import run_game # Fenêtre principale du jeu
 from page.settings import run_settings # Page de paramètres
 from page.ui import UIOverlay # Import de l'interface commune du jeu
@@ -12,25 +12,28 @@ pygame.init()
 taille_ecran = GetSystemMetrics(1)
 screen = pygame.display.set_mode((taille_ecran, taille_ecran))
 
-# Création de l'interface commune (icons)
-ui = UIOverlay(screen)
+if __name__ == '__main__':
+    
 
-# Lancer le menu
-running = True
-etat = 'menu'
+    # Création de l'interface commune (icons)
+    ui = UIOverlay(screen)
 
-while running:
-    if etat == 'menu':
-        etat = run_menu(screen)
+    # Lancer le menu
+    running = True
+    etat = 'menu'
 
-    elif etat == 'game':
-       etat = run_game(screen, ui) 
-       
-    elif etat == 'settings':
-        background = screen.copy()
-        etat = run_settings(screen, background)
+    while running:
+        if etat == 'menu':
+            etat = run_menu(screen)
 
-    elif etat == 'quit':
-        running = False
+        elif etat == 'game':
+            etat = run_game(screen, ui) 
+        
+        elif etat == 'settings':
+            background = screen.copy()
+            etat = run_settings(screen, background)
 
-pygame.quit()
+        elif etat == 'quit':
+            running = False
+
+    pygame.quit()
