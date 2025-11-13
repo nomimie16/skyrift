@@ -1,6 +1,8 @@
 import pygame
 import sys
 from page.main import taille_ecran, screen
+from component.grid import Grid, Position
+from component.entities.dragon import Dragonnet, Dragon, DragonMoyen
 
 
 pygame.init()
@@ -22,10 +24,15 @@ clock = pygame.time.Clock()
 background = pygame.image.load("assets/img/backgroundsquare.png").convert_alpha()
 background = pygame.transform.scale(background, screen.get_size())
 
+grid = Grid(cols, rows)
+
+dragon = DragonMoyen(0,0)  
+start_pos = dragon.position
+grid.add_occupant(dragon, start_pos)
+
 # grille pour la map
-# 0 vide (pas de plateforme)
-# 1  plateforme (sur laquelle le dragon peut marcher)
-# Creation des platformes de la map
+# 0 vide (peut pas marcher)
+# 1  plateforme (peut marcher)
 MAP = [[1 for _ in range(cols)] for _ in range(rows)]
 
 
@@ -53,17 +60,30 @@ def get_clicked_tile(mouse_pos):
         return (row, col)
     return None 
 
-def is_adjacent(dragon, target):
-    dr, dc = dragon
-    tr, tc = target
-    # uniquement cases adjacentes 
-    return abs(dr - tr) + abs(dc - tc) == 1
 
-def can_move_to(tile):
+def is_adjacent(dragon, target):
+    dr, dc = dragon.position.y, dragon.position.x
+    tr, tc = target
+    return (dr == tr) or (dc == tc) or (abs(dr - tr) + abs(dc - tc) == 1)
+
+def can_move_to(tile, dragon):
+    distance_max = dragon._actual_speed
+    print("dragon speed:", distance_max)
     r, c = tile
-    if 0 <= r < rows and 0 <= c < cols:
-        return MAP[r][c] == 1
-    return False
+    # vérifie les cotés
+    if not (0 <= r < rows and 0 <= c < cols):
+        return False
+
+    # vérifie que la tuile est praticable
+    if MAP[r][c] != 1:
+        return False
+
+    # calcule distance de Manhattan entre dragon et la cible
+    dr = dragon.position.y
+    dc = dragon.position.x
+    manhattan = abs(dr - r) + abs(dc - c)
+    print("manhattan distance:", manhattan)
+    return manhattan <= distance_max
 
 # boucle
 running = True
@@ -74,8 +94,13 @@ while running:
             running = False
         elif event.type == pygame.MOUSEBUTTONDOWN:
             clicked = get_clicked_tile(pygame.mouse.get_pos())
-            if clicked and is_adjacent(dragon_pos, clicked) and can_move_to(clicked):
+            print("can move",can_move_to(clicked, dragon))
+            print("adja",is_adjacent(dragon, clicked))
+            if clicked and is_adjacent(dragon, clicked) and can_move_to(clicked, dragon):
                 dragon_pos = list(clicked)
+                r, c = clicked
+                dragon.position.x = c
+                dragon.position.y = r
 
 
     screen.blit(background, (0,0))  # fond 

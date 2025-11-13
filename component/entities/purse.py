@@ -1,7 +1,7 @@
 import random
 from component.entities.static_entity import StaticEntity
 from component.position import Position
-from grid import Grid
+from component.grid import Grid
 
 
 def spawn_random_purse(grid: Grid, amount: int = 50):
