@@ -9,6 +9,7 @@ class Entity:
         self._name: str = name
         self._max_hp: int = max_hp
         self._hp: int = max_hp
+        self._sprite_path: str = sprite_path
         self._sprite = pygame.image.load(sprite_path).convert_alpha()
 
     def draw(self, surface):

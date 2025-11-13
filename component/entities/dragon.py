@@ -1,3 +1,5 @@
+import os
+
 import pygame
 
 from component.entities.entity import Entity
@@ -39,12 +41,18 @@ class Dragon(Entity):
         self._moving = True
 
     def update(self):
-        """
-        Mise à jour du placement du dragon de façon séquentiel
-        """
-        if not self._moving or self._target_place:
-            dx: int = self._target_place.x - self._position.x
-            dy: int = self._target_place.y - self._position.y
+        """Mise à jour du déplacement et de l’animation du dragon."""
+        if not self._moving or not self._target_place:
+            return
+
+        dx: int = self._target_place.x - self._position.x
+        dy: int = self._target_place.y - self._position.y
+
+        if dx > 0:  # va vers la droite → on charge le sprite GAUCHE
+            self.update_direction("droite")
+        elif dx < 0:  # va vers la gauche → on charge le sprite DROITE
+            print("gauche")
+            self.update_direction("gauche")
 
         if dx != 0:
             step = 1 if dx > 0 else -1
@@ -57,6 +65,36 @@ class Dragon(Entity):
             return
 
         self._index_img = (self._index_img + 1) % len(self._imageSprite)
+
+    def update_direction(self, direction: str):
+        """
+        Met à jour le sprite selon la direction du déplacement.
+        direction: 'gauche' ou 'droite'
+        """
+        base_path, filename = os.path.split(self.sprite_path)
+        name, ext = os.path.splitext(filename)
+        print("Base path:", base_path)
+        print("Filename:", filename)
+        print("Name:", name)
+        print("Extension:", ext)
+
+        print("Direction demandée:", direction)
+
+        # On inverse le suffixe selon la direction
+        if "gauche" not in name and direction == "gauche":
+            new_name = name.replace("droite", "gauche")
+        elif "droite" not in name and direction == "droite":
+            new_name = name.replace("gauche", "droite")
+        else:
+            return
+
+        new_path = f"{base_path}/{new_name}{ext}"
+        new_path = new_path.replace("\\", "/")
+
+        if os.path.exists(new_path):
+            self._sprite_path = new_path
+            self._sprite_sheet = pygame.image.load(new_path)
+            self._imageSprite = [self._sprite_sheet.subsurface(x * 64, 0, 64, 64) for x in range(4)]
 
     def draw(self, surface):
         """
@@ -144,13 +182,15 @@ class Dragon(Entity):
 
 class Dragonnet(Dragon):
     def __init__(self, x: int, y: int):
-        super().__init__(x, y, name="Dragonnet", max_hp=50, attack_range=1, sprite_path="assets/sprites/dragonnet.png",
+        super().__init__(x, y, name="Dragonnet", max_hp=50, attack_range=1,
+                         sprite_path="assets/sprites/dragonnet/dragonnet_rouge_droite.png",
                          speed=6, attack_damage=10, cost=DRAGONNET_COST)
 
 
 class DragonMoyen(Dragon):
     def __init__(self, x: int, y: int):
-        super().__init__(x, y, name="Dragon", max_hp=120, attack_range=2, sprite_path="assets/sprites/dragon.png",
+        super().__init__(x, y, name="Dragon", max_hp=120, attack_range=2,
+                         sprite_path="assets/sprites/dragon_moyen/dragon_moyen_bleu_droite.png",
                          speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST)
 
 
