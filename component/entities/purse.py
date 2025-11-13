@@ -1,5 +1,4 @@
 import random
-
 from component.entities.static_entity import StaticEntity
 from component.position import Position
 from grid import Grid

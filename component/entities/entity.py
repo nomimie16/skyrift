@@ -24,6 +24,14 @@ class Entity:
 
     def is_dead(self):
         return self._hp <= 0
+    
+    def attack(self, target, amount):
+        """
+        attaque la cible choisie
+        @param target : l'entité ciblée
+        @param amount : le nombre de degats a infliger
+        """
+        target.take_damage(amount)
 
     # ------- Getters et Setters -------
 

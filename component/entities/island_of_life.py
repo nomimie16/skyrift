@@ -1,4 +1,5 @@
 from component.entities.entity import Entity
+from component.entities.static_entity import StaticEntity
 
 
 class IslandOfLife(StaticEntity):
