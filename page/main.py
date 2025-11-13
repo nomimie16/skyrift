@@ -45,9 +45,11 @@ while running:
     elif etat == 'settingsFromGame':
         background = screen.copy()
         etat = run_settings(screen, background, True)
-    
         
-    elif etat == 'quit':
+    elif etat == 'rules':
+        etat = run_rules(screen)
+            
+    else:
         running = False
 
 pygame.quit()
