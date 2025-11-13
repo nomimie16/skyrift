@@ -1,7 +1,7 @@
 import pytest
 from component.entities.dragon import Dragonnet
 from component.position import Position
-from grid import Grid
+from component.grid import Grid
 
 class TestGrid:
     
