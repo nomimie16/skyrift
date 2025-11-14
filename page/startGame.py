@@ -13,21 +13,21 @@ def run_start(screen):
       
     #Couleurs
     WHITE = (255, 255, 255)
-    TRANSLUCENT_BLUE = (0, 150, 200, 180)
+    TRANSLUCENT_BLUE = (0, 120, 200, 180)
     HOVER_BLUE = (0, 140, 255, 220)
     SHADOW = (0, 0, 0)
     
     #Images
-    fond = pygame.image.load('assets/img/bgPause.png')
+    fond = pygame.image.load('assets/img/bgStart.png')
     fond = fond.convert()
     
     #Polices
     try:
-        FONT_TITLE = pygame.font.Font("assets/font/test1.ttf", 72)
-        FONT_BUTTON = pygame.font.Font("assets/font/test2.ttf", 72)
+        FONT_TITLE = pygame.font.Font("assets/font/test1.ttf", 100)
+        FONT_BUTTON = pygame.font.Font("assets/font/BoldPixels.ttf", 36)
     except:
-        FONT_TITLE = pygame.font.SysFont(None, 72)
-        FONT_BUTTON = pygame.font.SysFont(None, 72)
+        FONT_TITLE = pygame.font.SysFont(None, 100)
+        FONT_BUTTON = pygame.font.SysFont(None, 36)
     
     #Musique
     #mixer.music.load('assets/sound/startMusic.mp3')
@@ -85,12 +85,11 @@ def run_start(screen):
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for button in buttons:
                     if button.rect.collidepoint(event.pos):
-                        print(f"\nAction : {button.action}")
+                        print(f"Action : {button.action}")
                         return button.action
         
         screen.blit(fond, (0,0))
         mouse_pos = pygame.mouse.get_pos()
-        mouse_pressed = pygame.mouse.get_pressed()
         
         #Titre
         title = FONT_TITLE.render("SkyRift", True, WHITE)
@@ -104,39 +103,3 @@ def run_start(screen):
         pygame.display.flip()
 
     return None
-        
-    #     # Bouton Lancer le jeu
-    #     pygame.draw.rect(screen, TRANSLUCENT_BLUE, launch_btn, border_radius=12)
-    #     text = font.render("Lancer le jeu", True, WHITE)
-    #     text_rect = text.get_rect(center=launch_btn.center)
-    #     screen.blit(text, text_rect)
-    #     # Bouton Quitter
-    #     pygame.draw.rect(screen, TRANSLUCENT_BLUE, quit_btn, border_radius=12)
-    #     text = font.render("Quitter", True, WHITE)
-    #     text_rect = text.get_rect(center=quit_btn.center)
-    #     screen.blit(text, text_rect)
-    #     # Bouton Options
-    #     pygame.draw.rect(screen, TRANSLUCENT_BLUE, options_btn, border_radius=12)
-    #     text = font.render("Options", True, WHITE)
-    #     text_rect = text.get_rect(center=options_btn.center)
-    #     screen.blit(text, text_rect)
-
-    #     # === GESTION ÉVÉNEMENTS ===
-    #     for event in pygame.event.get():
-            
-    #         # Gestion clic souris
-    #         if event.type == pygame.MOUSEBUTTONDOWN:
-    #             if launch_btn.collidepoint(event.pos):
-    #                 print("\nLancement du jeu.")
-    #                 #appeler la pop up choix ia ou nn
-    #                 return 'game'
-    #             if quit_btn.collidepoint(event.pos):
-    #                 print("\nFermeture du jeu.")
-    #                 return 'quit'
-    #             if options_btn.collidepoint(event.pos):
-    #                 print("\nOuverture des options.")
-    #                 return 'settingsFromStart'
-
-    #     pygame.display.flip()
-
-    # return None

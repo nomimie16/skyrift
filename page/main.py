@@ -4,6 +4,7 @@ from startGame import run_start # Première fenêtre du jeu
 from game import run_game # Fenêtre principale du jeu
 from pause import run_pause # Page de pause
 from settings import run_settings # Page de paramètres
+from rules import run_rules # Page des règles du jeu
 from sidepanels import draw_sidepanels # Import des panneaux latéraux du jeu
 from ui import UIOverlay # Import de l'interface commune du jeu
 
