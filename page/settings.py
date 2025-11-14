@@ -127,6 +127,11 @@ def run_settings(screen, background, from_game):
                         return 'pause'
                     else:
                         return 'startGame'
+                if background.get_rect().collidepoint(event.pos) and not popup_rect.collidepoint(event.pos):
+                    if from_game:
+                        return 'pause'
+                    else:
+                        return 'startGame'
             
                 # Toggle musique ON/OFF
                 if img_music_toggle_off_rect.collidepoint(event.pos):

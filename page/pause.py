@@ -37,13 +37,13 @@ def run_pause(screen, background):
         250,
         60
     )
-    quit_game = pygame.Rect(
+    rules_btn = pygame.Rect(
         screen.get_width() // 2 - 125,
         screen.get_height() // 2,
         250,
         60
     )
-    rules_btn = pygame.Rect(
+    quit_game = pygame.Rect(
         screen.get_width() // 2 - 125,
         screen.get_height() // 2 + 100,
         250,
@@ -63,6 +63,8 @@ def run_pause(screen, background):
                     return 'settingsFromGame'
                 if rules_btn.collidepoint(event.pos):
                     return 'rules'
+                if background.get_rect().collidepoint(event.pos) and not popup_rect.collidepoint(event.pos):
+                    return 'game'
 
         # === AFFICHAGE ===
         # Fond de la scène précédente
