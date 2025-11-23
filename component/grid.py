@@ -1,4 +1,7 @@
+import pygame
+
 from component.position import Position
+from const import TILE_SIZE
 
 
 class Cell:
@@ -64,6 +67,43 @@ class Grid:
         x2, y2 = occupant2.position.x, occupant2.position.y
 
         return abs(x1 - x2) + abs(y1 - y2)
+
+    @staticmethod
+    def draw_grid(screen, grid=None):
+        TOP_PCT = 0.10
+        BOTTOM_PCT = 0.10
+        LEFT_PCT = 0.05
+        RIGHT_PCT = 0.05
+        screen_w, screen_h = screen.get_size()
+
+        margin_top = int(screen_h * TOP_PCT)
+        margin_bottom = int(screen_h * BOTTOM_PCT)
+        margin_left = int(screen_w * LEFT_PCT)
+        margin_right = int(screen_w * RIGHT_PCT)
+
+        usable_w = screen_w - (margin_left + margin_right)
+        usable_h = screen_h - (margin_top + margin_bottom)
+
+        rows = usable_h // TILE_SIZE
+        cols = usable_w // TILE_SIZE
+
+        grid_w = cols * TILE_SIZE
+        grid_h = rows * TILE_SIZE
+
+        offset_x = margin_left + (usable_w - grid_w) // 2
+        offset_y = margin_top + (usable_h - grid_h) // 2
+
+        for r in range(rows):
+            for c in range(cols):
+                rect = pygame.Rect(
+                    offset_x + c * TILE_SIZE,
+                    offset_y + r * TILE_SIZE,
+                    TILE_SIZE,
+                    TILE_SIZE
+                )
+                pygame.draw.rect(screen, (150, 150, 150), rect, 1)
+
+        return rows, cols
 
     def __str__(self):
         """Display the entire grid"""

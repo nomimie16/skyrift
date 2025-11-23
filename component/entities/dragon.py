@@ -5,64 +5,74 @@ import pygame
 from component.entities.entity import Entity
 from component.position import Position
 from const import DRAGONNET_COST, DRAGON_MOYEN_COST, DRAGON_GEANT_COST
+from const import TILE_SIZE
 
 
 class Dragon(Entity):
 
-    def __init__(self, x: int, y: int, name: str, max_hp: int, attack_range: int, sprite_path: str, speed: int,
+    def __init__(self, x_cell: int, y_cell: int, name: str, max_hp: int, attack_range: int, sprite_path: str,
+                 speed: int,
                  attack_damage: int,
                  cost: int):
-        super().__init__(x, y, name, max_hp, attack_damage, attack_range, sprite_path)
+        super().__init__(x_cell, y_cell, name, max_hp, attack_damage, attack_range, sprite_path)
+        self.grid_pos = Position(x_cell, y_cell)  # position sur la grille
+        self._pixel_pos = Position(x_cell * TILE_SIZE, y_cell * TILE_SIZE)  # position pour l'affichage
         self._speed_base: int = speed  # speed de base du dragon
         self._actual_speed: int = speed  # speed actuel du dragon
         self._speed_modifier: int = 0  # nombre de speed en plus ou en moins à celui de base
         self._cost: int = cost
         self._index_img: int = 0
         self._moving: bool = False
-        self._target_place: Position | None = None
+        self._target_cell: Position | None = None
         self._sprite_sheet = pygame.image.load(sprite_path)
         self._imageSprite = [self._sprite_sheet.subsurface(x * 64, 0, 64, 64) for x in range(4)]
+        self._anim_counter = 0
 
     def reset_speed(self):
         """Réinitialise la vitesse à sa valeur de base."""
         self._actual_speed = self.base_speed
         self._speed_modifier = 0
 
-    def move_dragon(self, x: int, y: int):
+    def move_dragon(self, x_cell: int, y_cell: int):
         """
         Mouvement du dragon
-        :param x: (int) abscisse du nouvelle emplacement du drgaon
-        :param y: (int) ordonnée du nouvelle emplacement du drgaon
+        :param x_cell: (int) abscisse du nouvelle emplacement du drgaon
+        :param y_cell: (int) ordonnée du nouvelle emplacement du drgaon
         :return: None
         """
-        self._target_place = Position(x, y)
+        self._target_cell = Position(x_cell, y_cell)
         self._moving = True
 
     def update(self):
-        """Mise à jour du déplacement et de l’animation du dragon."""
-        if not self._moving or not self._target_place:
-            return
+        if not self._moving or not self._target_cell:
+            return  # rien à faire si le dragon ne bouge pas
 
-        dx: int = self._target_place.x - self._position.x
-        dy: int = self._target_place.y - self._position.y
+        target_x = self._target_cell.x * TILE_SIZE
+        target_y = self._target_cell.y * TILE_SIZE
 
-        if dx > 0:  # va vers la droite → on charge le sprite GAUCHE
-            self.update_direction("droite")
-        elif dx < 0:  # va vers la gauche → on charge le sprite DROITE
-            print("gauche")
-            self.update_direction("gauche")
+        dx = target_x - self._pixel_pos.x
+        dy = target_y - self._pixel_pos.y
 
         if dx != 0:
-            step = 1 if dx > 0 else -1
-            self._position.move(step, 0)
+            step_x = min(0.5, abs(dx)) * (1 if dx > 0 else -1)
+            self._pixel_pos.x += step_x
+            self.update_direction("droite" if dx > 0 else "gauche")
         elif dy != 0:
-            step = 1 if dy > 0 else -1
-            self._position.move(0, step)
-        else:
-            self._moving = False
-            return
+            step_y = min(0.5, abs(dy)) * (1 if dy > 0 else -1)
+            self._pixel_pos.y += step_y
 
-        self._index_img = (self._index_img + 1) % len(self._imageSprite)
+        if self._pixel_pos.x == target_x and self._pixel_pos.y == target_y:
+            self._moving = False
+            self.grid_pos.x = self._target_cell.x
+            self.grid_pos.y = self._target_cell.y
+            self._target_cell = None
+            self._index_img = 0  # remettre sprite en position "repos"
+
+        if self._moving:
+            self._anim_counter += 1
+            if self._anim_counter >= 50:
+                self._anim_counter = 0
+                self._index_img = (self._index_img + 1) % len(self._imageSprite)
 
     def update_direction(self, direction: str):
         """
@@ -99,7 +109,8 @@ class Dragon(Entity):
         Affichage du dragon
         @:param surface: Surface sur laquelle le dragon est placé
         """
-        surface.blit(self._imageSprite[self._index_img], (int(self._position.x), int(self._position.y)))
+
+        surface.blit(self._imageSprite[self._index_img], (int(self._pixel_pos.x), int(self._pixel_pos.y)))
 
     # ------- Getters et Setters -------
     @property
