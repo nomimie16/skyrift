@@ -12,12 +12,10 @@ class Dragon(Entity):
     def __init__(self, x: int, y: int, name: str, max_hp: int, attack_range: int, sprite_path: str, speed: int,
                  attack_damage: int,
                  cost: int):
-        super().__init__(x, y, name, max_hp, sprite_path)
+        super().__init__(x, y, name, max_hp, attack_damage, attack_range, sprite_path)
         self._speed_base: int = speed  # speed de base du dragon
         self._actual_speed: int = speed  # speed actuel du dragon
         self._speed_modifier: int = 0  # nombre de speed en plus ou en moins à celui de base
-        self._attack_damage: int = attack_damage
-        self._attack_range: int = attack_range
         self._cost: int = cost
         self._index_img: int = 0
         self._moving: bool = False

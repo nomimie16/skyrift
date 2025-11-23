@@ -24,7 +24,24 @@ class Purse(StaticEntity):
     def __init__(self, x: int, y: int, amount: int):
         super().__init__(x, y, name="Bourse", sprite_path="assets/sprites/purse.png", width=1, height=1)
         self._amount: int = 50
-        self._position = Position(x, y)
+        self._target_pos = Position(x, y)
+
+        self._position = Position(x, -self._sprite.get_height())
+
+        self._speed = 5
+        self._arrived = False
+
+    # TODO animer la bourse qui tombe du ciel
+    def update(self):
+        if not self._arrived:
+            self._position.y += (self._target_pos.y - self._position.y) * 0.1
+            if abs(self._position.y - self._target_pos.y) < 1:
+                self._position.y = self._target_pos.y
+                self._arrived = True
+
+    def draw(self, surface):
+        self.update()
+        surface.blit(self._sprite, (self._position.x, self._position.y))
 
     # ------- Getters et Setters -------
 
