@@ -1,7 +1,9 @@
 import random
+
 from component.entities.static_entity import StaticEntity
-from component.position import Position
 from component.grid import Grid
+from component.position import Position
+from screen_const import TILE_SIZE
 
 
 def spawn_random_purse(grid: Grid, amount: int = 50):
@@ -21,15 +23,18 @@ def spawn_random_purse(grid: Grid, amount: int = 50):
 
 
 class Purse(StaticEntity):
-    def __init__(self, x: int, y: int, amount: int):
-        super().__init__(x, y, name="Bourse", sprite_path="assets/sprites/purse.png", width=1, height=1)
+    def __init__(self, x_cell: int, y_cell: int, amount: int):
+        super().__init__(x_cell, y_cell, name="Bourse", sprite_path="assets/sprites/purse.png", width=1, height=1)
         self._amount: int = 50
-        self._target_pos = Position(x, y)
+        self._target_pos = Position(y_cell, y_cell)
 
-        self._position = Position(x, -self._sprite.get_height())
+        self._position = Position(x_cell, -self._sprite.get_height())
 
         self._speed = 5
         self._arrived = False
+
+        self.grid_pos = Position(x_cell, y_cell)  # position sur la grille
+        self._pixel_pos = Position(x_cell * TILE_SIZE, y_cell * TILE_SIZE)  # position pour l'affichage
 
     # TODO animer la bourse qui tombe du ciel
     def update(self):
@@ -41,7 +46,7 @@ class Purse(StaticEntity):
 
     def draw(self, surface):
         self.update()
-        surface.blit(self._sprite, (self._position.x, self._position.y))
+        surface.blit(self._sprite, (self._pixel_pos.x, self._pixel_pos.y))
 
     # ------- Getters et Setters -------
 

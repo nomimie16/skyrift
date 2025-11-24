@@ -1,5 +1,17 @@
-# dragonevents.py
+import screen_const as sc
 from component.position import Position
+
+
+# im
+#
+# screen_w, screen_h = screen.get_size()
+# rows = screen_h // TILE_SIZE
+# cols = screen_w // TILE_SIZE
+#
+# grid_w = cols * TILE_SIZE
+# grid_h = rows * TILE_SIZE
+# offset_x = (screen_w - grid_w) // 2
+# offset_y = (screen_h - grid_h) // 2
 
 
 class DragonEvents:
@@ -14,7 +26,7 @@ class DragonEvents:
         self.selected_dragon = None
         self.offset_x = offset_x
         self.offset_y = offset_y
-        self.tile_size = tile_size
+        self.tile_size = sc.TILE_SIZE
 
     def set_offsets(self, offset_x, offset_y):
         """Met à jour les offsets pour la conversion pixels -> case"""
@@ -30,8 +42,8 @@ class DragonEvents:
         mouse_x, mouse_y = mouse_pos
 
         # Conversion pixels -> case
-        col = (mouse_x - self.offset_x) // self.tile_size
-        row = (mouse_y - self.offset_y) // self.tile_size
+        col = (mouse_x - sc.OFFSET_X) // self.tile_size
+        row = (mouse_y - sc.OFFSET_Y) // self.tile_size
         print(f"Clic sur la case : ({col}, {row})")
 
         # Vérifier qu'on est bien dans la grille
@@ -43,7 +55,9 @@ class DragonEvents:
         if cell.occupant:
             # Si clic sur un dragon, on le sélectionne
             self.selected_dragon = cell.occupant
+            print(f"Dragon sélectionné en position ({col}, {row})")
         elif self.selected_dragon:
+            print("Tentative de déplacement du dragon sélectionné")
             # Sinon, tenter de déplacer le dragon vers une case vide
             target_pos = Position(col, row)
             # Distance Manhattan
@@ -55,6 +69,7 @@ class DragonEvents:
                 self.selected_dragon.move_dragon(target_pos.x, target_pos.y)
 
                 # Mettre à jour la grille
+                old_x = self.selected_dragon.grid_pos.x
                 old_x = self.selected_dragon.grid_pos.x
                 old_y = self.selected_dragon.grid_pos.y
                 self.grid.cells[old_y][old_x].occupant = None

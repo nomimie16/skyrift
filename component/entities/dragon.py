@@ -5,7 +5,7 @@ import pygame
 from component.entities.entity import Entity
 from component.position import Position
 from const import DRAGONNET_COST, DRAGON_MOYEN_COST, DRAGON_GEANT_COST
-from const import TILE_SIZE
+from screen_const import TILE_SIZE
 
 
 class Dragon(Entity):

@@ -1,7 +1,7 @@
 import pygame
 
+import screen_const as sc
 from component.position import Position
-from const import TILE_SIZE
 
 
 class Cell:
@@ -43,7 +43,7 @@ class Cell:
 class Grid:
     """Game board grid"""
 
-    def __init__(self, nb_columns, nb_rows):
+    def __init__(self, nb_columns: int = sc.COLS, nb_rows: int = sc.ROWS):
         self.nb_columns = nb_columns
         self.nb_rows = nb_rows
         self.cells = [[Cell(x, y) for x in range(nb_columns)] for y in range(nb_rows)]
@@ -70,40 +70,16 @@ class Grid:
 
     @staticmethod
     def draw_grid(screen, grid=None):
-        TOP_PCT = 0.10
-        BOTTOM_PCT = 0.10
-        LEFT_PCT = 0.05
-        RIGHT_PCT = 0.05
-        screen_w, screen_h = screen.get_size()
 
-        margin_top = int(screen_h * TOP_PCT)
-        margin_bottom = int(screen_h * BOTTOM_PCT)
-        margin_left = int(screen_w * LEFT_PCT)
-        margin_right = int(screen_w * RIGHT_PCT)
-
-        usable_w = screen_w - (margin_left + margin_right)
-        usable_h = screen_h - (margin_top + margin_bottom)
-
-        rows = usable_h // TILE_SIZE
-        cols = usable_w // TILE_SIZE
-
-        grid_w = cols * TILE_SIZE
-        grid_h = rows * TILE_SIZE
-
-        offset_x = margin_left + (usable_w - grid_w) // 2
-        offset_y = margin_top + (usable_h - grid_h) // 2
-
-        for r in range(rows):
-            for c in range(cols):
+        for r in range(sc.ROWS):
+            for c in range(sc.COLS):
                 rect = pygame.Rect(
-                    offset_x + c * TILE_SIZE,
-                    offset_y + r * TILE_SIZE,
-                    TILE_SIZE,
-                    TILE_SIZE
+                    sc.OFFSET_X + c * sc.TILE_SIZE,
+                    sc.OFFSET_Y + r * sc.TILE_SIZE,
+                    sc.TILE_SIZE,
+                    sc.TILE_SIZE
                 )
                 pygame.draw.rect(screen, (150, 150, 150), rect, 1)
-
-        return rows, cols
 
     def __str__(self):
         """Display the entire grid"""
