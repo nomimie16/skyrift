@@ -2,10 +2,10 @@ import os
 
 import pygame
 
+import screen_const as sc
 from component.entities.entity import Entity
 from component.position import Position
 from const import DRAGONNET_COST, DRAGON_MOYEN_COST, DRAGON_GEANT_COST
-from screen_const import TILE_SIZE
 
 
 class Dragon(Entity):
@@ -16,7 +16,10 @@ class Dragon(Entity):
                  cost: int):
         super().__init__(x_cell, y_cell, name, max_hp, attack_damage, attack_range, sprite_path)
         self.grid_pos = Position(x_cell, y_cell)  # position sur la grille
-        self._pixel_pos = Position(x_cell * TILE_SIZE, y_cell * TILE_SIZE)  # position pour l'affichage
+        self._pixel_pos = Position(
+            x_cell * sc.TILE_SIZE + sc.OFFSET_X,
+            y_cell * sc.TILE_SIZE + sc.OFFSET_Y
+        )  # position pour l'affichage
         self._speed_base: int = speed  # speed de base du dragon
         self._actual_speed: int = speed  # speed actuel du dragon
         self._speed_modifier: int = 0  # nombre de speed en plus ou en moins à celui de base
@@ -47,8 +50,8 @@ class Dragon(Entity):
         if not self._moving or not self._target_cell:
             return  # rien à faire si le dragon ne bouge pas
 
-        target_x = self._target_cell.x * TILE_SIZE
-        target_y = self._target_cell.y * TILE_SIZE
+        target_x = self._target_cell.x * sc.TILE_SIZE
+        target_y = self._target_cell.y * sc.TILE_SIZE
 
         dx = target_x - self._pixel_pos.x
         dy = target_y - self._pixel_pos.y
@@ -110,7 +113,13 @@ class Dragon(Entity):
         @:param surface: Surface sur laquelle le dragon est placé
         """
 
-        surface.blit(self._imageSprite[self._index_img], (int(self._pixel_pos.x), int(self._pixel_pos.y)))
+        surface.blit(
+            self._imageSprite[self._index_img],
+            (
+                int(self._pixel_pos.x + (sc.TILE_SIZE - self._imageSprite[self._index_img].get_width()) / 2),
+                int(self._pixel_pos.y + (sc.TILE_SIZE - self._imageSprite[self._index_img].get_height()) / 2)
+            )
+        )
 
     # ------- Getters et Setters -------
     @property
