@@ -27,6 +27,7 @@ background = pygame.transform.scale(background, screen.get_size())
 grid = Grid(cols, rows)
 
 dragon = DragonMoyen(0,0)  
+
 start_pos = dragon.position
 grid.add_occupant(dragon, start_pos)
 
@@ -39,7 +40,11 @@ MAP = [[1 for _ in range(cols)] for _ in range(rows)]
 
 #placement dragon(carré rouge)
 dragon_pos = [0,0]  
+dragon.position.x = dragon_pos[1] * TILE_SIZE
+dragon.position.y = dragon_pos[0] * TILE_SIZE
 DRAGON_COLOR = (255,50,50)
+sprite_path = dragon.sprite_path
+sprite = image = pygame.image.load(sprite_path).convert()
 
 def draw_map():
     """ dessine la map en fonction de la grille choisie"""
@@ -96,11 +101,16 @@ while running:
             clicked = get_clicked_tile(pygame.mouse.get_pos())
             print("can move",can_move_to(clicked, dragon))
             print("adja",is_adjacent(dragon, clicked))
+            print("Clicked tile:", clicked)
+            print("dragon pos:", dragon.position.x, dragon.position.y)
+            
             if clicked and is_adjacent(dragon, clicked) and can_move_to(clicked, dragon):
-                dragon_pos = list(clicked)
+                # dragon_pos = list(clicked)
                 r, c = clicked
-                dragon.position.x = c
-                dragon.position.y = r
+                dragon_pos = [r, c]
+                dragon.position.x = c * TILE_SIZE
+                dragon.position.y = r * TILE_SIZE
+                
 
 
     screen.blit(background, (0,0))  # fond 
@@ -110,6 +120,14 @@ while running:
     dr, dc = dragon_pos
     dragon_rect = pygame.Rect(offset_x +dc*TILE_SIZE, offset_y +dr*TILE_SIZE, TILE_SIZE, TILE_SIZE)
     pygame.draw.rect(screen, DRAGON_COLOR, dragon_rect)
+    print("dragon grid pos:", dc, dr)
+    print("dragon pos", dragon.position.x, dragon.position.y)
+    # print("dragon pixel pos:", offset_x +dc*TILE_SIZE, offset_y +dr*TILE_SIZE)
+    dragon.move_dragon(offset_x +dc*TILE_SIZE, offset_y +dr*TILE_SIZE)
+    dragon.update()
+    # dragon.update_direction("droite")
+    dragon.draw(screen)
+    
 
     pygame.display.flip()
 
