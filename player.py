@@ -1,10 +1,7 @@
-import economy
-
 class Player: # a completer
     """Classe représentant un joueur (humain ou IA)"""
 
     def __init__(self):
-        self.economy = economy.Economy() # economie du joueur
         self.units = []  # unités appartenant au joueur
 
     def add_unit(self, unit):

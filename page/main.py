@@ -8,6 +8,7 @@ from settings import run_settings # Page de paramètres
 from rules import run_rules # Page des règles du jeu
 from sidepanels import draw_sidepanels # Import des panneaux latéraux du jeu
 from ui import UIOverlay # Import de l'interface commune du jeu
+from economy import Economy
 
 # Initialiser Pygame
 pygame.init()
@@ -33,7 +34,8 @@ while running:
         etat = run_start(screen)
 
     elif etat == 'game':
-        etat = run_game(screen, ui)
+        economy = Economy()
+        etat = run_game(screen, ui, economy)
         background_game = screen.copy()
 
     elif etat == 'pause':
