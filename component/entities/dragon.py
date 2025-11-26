@@ -13,7 +13,7 @@ class Dragon(Entity):
                  attack_damage: int,
                  cost: int):
         super().__init__(x, y, name, max_hp, sprite_path)
-        self._speed_base: int = speed  # speed de base du dragon
+        self._base_speed: int = speed  # speed de base du dragon
         self._actual_speed: int = speed  # speed actuel du dragon
         self._speed_modifier: int = 0  # nombre de speed en plus ou en moins à celui de base
         self._attack_damage: int = attack_damage
@@ -183,21 +183,21 @@ class Dragon(Entity):
 class Dragonnet(Dragon):
     def __init__(self, x: int, y: int):
         super().__init__(x, y, name="Dragonnet", max_hp=50, attack_range=1,
-                         sprite_path="assets/sprites/dragonnet/dragonnet_rouge_droite.png",
+                         sprite_path="assets/sprites/dragonnet.png",
                          speed=6, attack_damage=10, cost=DRAGONNET_COST)
 
 
 class DragonMoyen(Dragon):
     def __init__(self, x: int, y: int):
         super().__init__(x, y, name="Dragon", max_hp=120, attack_range=2,
-                         sprite_path="assets/sprites/dragon_moyen/dragon_moyen_bleu_droite.png",
+                         sprite_path="assets/sprites/dragonnet.png",
                          speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST)
 
 
 class DragonGeant(Dragon):
     def __init__(self, x: int, y: int):
         super().__init__(x, y, name="Dragon Géant", max_hp=250, attack_range=3,
-                         sprite_path="assets/sprites/dragon_geant.png",
+                         sprite_path="assets/sprites/dragonnet.png",
                          speed=2, attack_damage=40, cost=DRAGON_GEANT_COST)
 
 
