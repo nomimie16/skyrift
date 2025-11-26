@@ -47,8 +47,11 @@ while running:
         background = screen.copy()
         etat = run_settings(screen, background, True)
         
-    elif etat == 'rules':
-        etat = run_rules(screen)
+    elif etat == 'rulesFromStart':
+        etat = run_rules(screen, False)
+    
+    elif etat == 'rulesFromGame':
+        etat = run_rules(screen, True)
             
     else:
         running = False

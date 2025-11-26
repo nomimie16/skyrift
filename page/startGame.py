@@ -68,7 +68,7 @@ def run_start(screen):
     buttons = [
         Button("Lancer le jeu", 320, "game"),
         Button("Options", 420, "settingsFromStart"),
-        Button("Règles", 520, "rules"),
+        Button("Règles", 520, "rulesFromStart"),
         Button("Quitter", 620, "quit")
     ]     
 

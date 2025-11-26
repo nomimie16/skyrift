@@ -6,7 +6,7 @@ from tkinter import W
 from pygame import *
 import pygame
 
-def run_rules(screen):
+def run_rules(screen, from_game):
     # ===== RESSOURCES =====
     #Couleurs
     WHITE = (255, 255, 255)
@@ -70,7 +70,10 @@ def run_rules(screen):
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if btn_retour.collidepoint(event.pos):
-                    return 'startGame'
+                    if from_game:
+                        return 'game'
+                    else:
+                        return 'startGame'
 
                     
         pygame.display.flip()

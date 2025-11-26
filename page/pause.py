@@ -62,7 +62,7 @@ def run_pause(screen, background):
                 if settings.collidepoint(event.pos):
                     return 'settingsFromGame'
                 if rules_btn.collidepoint(event.pos):
-                    return 'rules'
+                    return 'rulesFromGame'
                 if background.get_rect().collidepoint(event.pos) and not popup_rect.collidepoint(event.pos):
                     return 'game'
 
