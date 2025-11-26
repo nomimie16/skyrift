@@ -1,6 +1,7 @@
 import random
 
 from component.entities.static_entity import StaticEntity
+from component.enum.type_entities import TypeEntitiesEnum
 from component.grid import Grid
 from component.position import Position
 from screen_const import TILE_SIZE
@@ -24,7 +25,8 @@ def spawn_random_purse(grid: Grid, amount: int = 50):
 
 class Purse(StaticEntity):
     def __init__(self, x_cell: int, y_cell: int, amount: int):
-        super().__init__(x_cell, y_cell, name="Bourse", sprite_path="assets/sprites/purse.png", width=1, height=1)
+        super().__init__(x_cell, y_cell, name="Bourse", type_entity=[TypeEntitiesEnum.TREASURE],
+                         sprite_path="assets/sprites/purse.png", width=1, height=1)
         self._amount: int = 50
         self._target_pos = Position(y_cell, y_cell)
 

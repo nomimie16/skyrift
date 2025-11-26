@@ -1,7 +1,10 @@
 from component.entities.entity import Entity
+from component.enum.type_entities import TypeEntitiesEnum
 
 
 class Tower(Entity):
     def __init__(self, x: int, y: int):
-        super().__init__(x, y, name="Tour de défense", max_hp=300, attack_damage=25, attack_range=3,
+        super().__init__(x, y, name="Tour de défense", type_entity=[TypeEntitiesEnum.TOWER, TypeEntitiesEnum.OBSTACLE],
+                         max_hp=300,
+                         attack_damage=25, attack_range=3,
                          sprite_path="assets/sprites/tour.png")

@@ -2,11 +2,13 @@ from random import randint
 
 from component.entities.entity import Entity
 from component.entities.static_entity import StaticEntity
+from component.enum.type_entities import TypeEntitiesEnum
 
 
 class Tornado(StaticEntity):
     def __init__(self, x: int, y: int):
-        super().__init__(x, y, name="Tornade", sprite_path="assets/sprites/tornado.png", width=128, height=128)
+        super().__init__(x, y, name="Tornade", type_entity=[TypeEntitiesEnum.TORNADO, TypeEntitiesEnum.EFFECT_ZONE],
+                         sprite_path="assets/sprites/tornado.png", width=128, height=128)
         self._duration = randint(1, 5)  # nombre de tours restants avant disparition
 
     def apply_effect(self, entity: Entity):

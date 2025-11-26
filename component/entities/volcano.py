@@ -1,9 +1,12 @@
 from component.entities.entity import Entity
-from component.entities.effect_zone import EffectZone
+from component.entities.static_entity import StaticEntity
+from component.enum.type_entities import TypeEntitiesEnum
 
-class Volcano(EffectZone):
+
+class Volcano(StaticEntity):
     def __init__(self, x: int, y: int):
-        super().__init__(x, y, name="Volcan", sprite_path="assets/sprites/volcano.png", width=128, height=128)
+        super().__init__(x, y, name="Volcan", type_entity=[TypeEntitiesEnum.VOLCANO, TypeEntitiesEnum.OBSTACLE],
+                         sprite_path="assets/img/volcano.png", width=5, height=5)
 
     def apply_effect(self, entity: Entity):
         """
