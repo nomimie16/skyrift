@@ -1,0 +1,66 @@
+import pygame
+
+from component.position import Position
+
+
+class StaticEntity:
+    def __init__(self, x: int, y: int, name: str, sprite_path: str, width: int, height: int):
+        self._position = Position(x, y)
+        self._name = name
+        self._sprite_path = sprite_path
+        self._sprite = pygame.image.load(sprite_path).convert_alpha()
+        self._width = width
+        self._height = height
+
+    def draw(self, surface):
+        surface.blit(self._sprite, (self._position.x, self._position.y))
+
+    @property
+    def rect(self):
+        return pygame.Rect(self._position.x, self._position.y, self._width, self._height)
+
+    # ------- Getters et Setters -------
+
+    @property
+    def position(self) -> Position:
+        return self._position
+
+    @position.setter
+    def position(self, value: Position):
+        self._position = value
+
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, name):
+        self._name = name
+
+    @property
+    def sprite_path(self):
+        return self._sprite_path
+
+    @sprite_path.setter
+    def sprite_path(self, sprite_path):
+        self._sprite_path = sprite_path
+
+    @property
+    def sprite(self):
+        return self._sprite
+
+    @property
+    def width(self):
+        return self._width
+
+    @width.setter
+    def width(self, width):
+        self._width = width
+
+    @property
+    def height(self):
+        return self._height
+
+    @height.setter
+    def height(self, height):
+        self._height = height
