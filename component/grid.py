@@ -1,5 +1,3 @@
-import pygame
-
 import screen_const as sc
 from component.position import Position
 
@@ -21,10 +19,8 @@ class Cell:
         self._occupant = value
 
     @property
-    def position(self, occupant):
-        if occupant.position:
-            return occupant.position
-        return None
+    def position(self):
+        return self._position
 
     @position.setter
     def position(self, value):
@@ -48,6 +44,24 @@ class Grid:
         self.nb_rows = nb_rows
         self.cells = [[Cell(x, y) for x in range(nb_columns)] for y in range(nb_rows)]
 
+    def add_static_occupants(self, occupant, position: Position, height: int, width: int):
+        """Place un occupant non mobile sur la grille"""
+        x_start = position.get_x()
+        y_start = position.get_y()
+        for y in range(y_start, y_start + height):
+            for x in range(x_start, x_start + width):
+                if not (0 <= x < self.nb_columns) or not (0 <= y < self.nb_rows):
+                    print(f"Position ({x}, {y}) is out of grid")
+                    return False
+                cell = self.cells[y][x]
+                if cell._occupant is None:
+                    cell._occupant = occupant
+                    occupant.position = cell._position
+                else:
+                    print(f"Cell ({x}, {y}) is already occupied")
+                    return False
+        return True
+
     def add_occupant(self, occupant, position: Position):
         """Place an occupant (e.g., a dragon) on the grid"""
         x = position.get_x()
@@ -62,24 +76,17 @@ class Grid:
             return True
         return False
 
+    def remove_occupant(self, position: Position):
+        """Place an occupant (e.g., a dragon) on the grid"""
+        cell = self.cells[position.get_y()][position.get_x()]
+        if cell._occupant is not None:
+            cell._occupant = None
+
     def distance(self, occupant1, occupant2):
         x1, y1 = occupant1.position.x, occupant1.position.y
         x2, y2 = occupant2.position.x, occupant2.position.y
 
         return abs(x1 - x2) + abs(y1 - y2)
-
-    @staticmethod
-    def draw_grid(screen, grid=None):
-
-        for r in range(sc.ROWS):
-            for c in range(sc.COLS):
-                rect = pygame.Rect(
-                    sc.OFFSET_X + c * sc.TILE_SIZE,
-                    sc.OFFSET_Y + r * sc.TILE_SIZE,
-                    sc.TILE_SIZE,
-                    sc.TILE_SIZE
-                )
-                pygame.draw.rect(screen, (150, 150, 150), rect, 1)
 
     def __str__(self):
         """Display the entire grid"""

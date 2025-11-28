@@ -221,7 +221,8 @@ class Dragonnet(Dragon):
 
 class DragonMoyen(Dragon):
     def __init__(self, x: int, y: int):
-        super().__init__(x, y, name="Dragon", type_entity=[TypeEntitiesEnum.DRAGON_MOYEN, TypeEntitiesEnum.DRAGON],
+        super().__init__(x, y, name="Dragon", type_entity=[TypeEntitiesEnum.DRAGON_MOYEN, TypeEntitiesEnum.DRAGON,
+                                                           ],
                          max_hp=120, attack_range=2,
                          sprite_path="assets/sprites/dragon_moyen/dragon_moyen_rouge_droite.png",
                          speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST)
