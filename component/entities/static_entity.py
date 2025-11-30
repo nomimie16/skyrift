@@ -2,6 +2,7 @@ from typing import List
 
 import pygame
 
+import screen_const as sc
 from component.enum.type_entities import TypeEntitiesEnum
 from component.position import Position
 
@@ -18,7 +19,15 @@ class StaticEntity:
         self._height = height
 
     def draw(self, surface):
-        surface.blit(self._sprite, (self._position.x, self._position.y))
+        pixel_x = (self.position.x - (self.width - 1)) * sc.TILE_SIZE + sc.OFFSET_X
+        pixel_y = (self.position.y - (self.height - 1)) * sc.TILE_SIZE + sc.OFFSET_Y
+
+        scaled = pygame.transform.scale(
+            self._sprite,
+            (self.width * sc.TILE_SIZE, self.height * sc.TILE_SIZE)
+        )
+
+        surface.blit(scaled, (pixel_x, pixel_y))
 
     @property
     def rect(self):

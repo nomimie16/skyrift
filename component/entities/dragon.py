@@ -52,8 +52,12 @@ class Dragon(Entity):
         self._moving = True
 
     def update(self):
+        """
+        Met à jour la position du dragon lors de son déplacement
+        :return: None
+        """
         if not self._moving or not self._target_cell:
-            return  # rien à faire si le dragon ne bouge pas
+            return
 
         target_x = self._target_cell.x * sc.TILE_SIZE + sc.OFFSET_X
         target_y = self._target_cell.y * sc.TILE_SIZE + sc.OFFSET_Y
@@ -74,7 +78,7 @@ class Dragon(Entity):
             self.grid_pos.x = self._target_cell.x
             self.grid_pos.y = self._target_cell.y
             self._target_cell = None
-            self._index_img = 0  # remettre sprite en position "repos"
+            self._index_img = 0
 
         if self._moving:
             self._anim_counter += 1
@@ -85,18 +89,11 @@ class Dragon(Entity):
     def update_direction(self, direction: str):
         """
         Met à jour le sprite selon la direction du déplacement.
-        direction: 'gauche' ou 'droite'
+        :param direction: (str) direction du déplacement
         """
         base_path, filename = os.path.split(self.sprite_path)
         name, ext = os.path.splitext(filename)
-        # print("Base path:", base_path)
-        # print("Filename:", filename)
-        # print("Name:", name)
-        # print("Extension:", ext)
-        #
-        # print("Direction demandée:", direction)
 
-        # On inverse le suffixe selon la direction
         if "gauche" not in name and direction == "gauche":
             new_name = name.replace("droite", "gauche")
         elif "droite" not in name and direction == "droite":
@@ -128,12 +125,12 @@ class Dragon(Entity):
 
     # ------- Getters et Setters -------
     @property
-    def base_speed(self) -> int:
-        return self._base_speed
+    def speed_base(self) -> int:
+        return self._speed_base
 
-    @base_speed.setter
-    def base_speed(self, value: int):
-        self._base_speed = value
+    @speed_base.setter
+    def speed_base(self, value: int):
+        self._speed_base = value
 
     @property
     def actual_speed(self) -> int:

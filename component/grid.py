@@ -44,7 +44,7 @@ class Grid:
         self.nb_rows = nb_rows
         self.cells = [[Cell(x, y) for x in range(nb_columns)] for y in range(nb_rows)]
 
-    def add_static_occupants(self, occupant, position: Position, height: int, width: int):
+    def add_static_occupants(self, occupant, position: Position, width: int, height: int):
         """Place un occupant non mobile sur la grille"""
         x_start = position.get_x()
         y_start = position.get_y()

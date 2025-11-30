@@ -2,6 +2,7 @@ from typing import List
 
 import pygame
 
+import screen_const as sc
 from component.enum.type_entities import TypeEntitiesEnum
 from component.grid import Grid
 from component.position import Position
@@ -25,7 +26,9 @@ class Entity:
         Affichage d'une entité
         @:param surface: Surface sur laquelle l'entité est placée
         """
-        surface.blit(self._sprite, (self._position.x, self._position.y))
+        x = self._position.x * sc.TILE_SIZE + sc.OFFSET_X
+        y = self._position.y * sc.TILE_SIZE + sc.OFFSET_Y
+        surface.blit(self._sprite, (x, y))
 
     def take_damage(self, amount):
         """
