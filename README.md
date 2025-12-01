@@ -5,18 +5,18 @@
 ---
 
 
-#### 1.1 Vue d’ensemble 
+### 1.1 Vue d’ensemble 
 * <ins>Nom du jeu</ins> : **Skyrift**
 * <ins>Genre</ins> : Combat, tour par tour
 * <ins>Public cible</ins> : 12 - 99 ans
 * <ins>PEGI </ins>: ![pegi 12s](/assets/img/PEGI_12.png)
-* <ins>Date de parution </ins>: 20/09/25
+* <ins>Date de parution </ins>: 20/09/2025
 * <ins>Langue </ins>: Français
 * <ins>Plateforme </ins>: PC Windows
 * <ins>Moteur / Framework </ins>: Python 3 + Pygame
 * <ins>Joueurs </ins>: 1 joueur vs 1 joueur (local ou IA)
 
-#### 1.2 Synopsis 
+### 1.2 Synopsis 
 
   _Aux confins des nuages, suspendue entre ciel et lumière, s’élevait la Cité des Dragons de Rhaegal, un sanctuaire où sagesse et puissance vivaient en harmonie. Mais l’équilibre fut rompu lorsque le clan de Viserion, né des brumes et du chaos, surgit pour revendiquer le trône des cieux. Leur chef lança un ultimatum :_
 
@@ -35,7 +35,7 @@
 
 ![barre ](/assets/img/bar.png)
 
-#### 1.3 But du jeu 
+### 1.3 But du jeu 
 
 Le but du jeu est simple : **détruire la base ennemie** avant que la vôtre ne soit anéantie. Une seule forteresse peut **survivre**.
 
@@ -55,6 +55,8 @@ La victoire dépend de votre capacité à gérer vos ressources et à équilibre
 ## **Règles et fonctionnement du jeu**
 ---
 
+### 2.1 Règles 
+
 **Début de la partie**
 
 * Chaque joueur commence avec **100 Skygold**, la monnaie du jeu.
@@ -70,24 +72,98 @@ La victoire dépend de votre capacité à gérer vos ressources et à équilibre
 
 * Au début de chaque tour, vous pouvez choisir d’invoquer l’un des 3 niveaux de **dragons** :
 
-    * Dragonnet – rapide et peu coûteux, idéal pour harceler.
+    * **Dragonnet** – rapide et peu coûteux, idéal pour harceler.
 
-    * Dragon à deux têtes – équilibré entre puissance et résistance.
+    * **Dragon à deux têtes** – équilibré entre puissance et résistance.
 
-    * Dragon Géant – très puissant et résistant, mais coûteux.
+    * **Dragon Géant** – très puissant et résistant, mais coûteux.
 
 * Chaque dragon peut :
 
-    * Attaquer les dragons ennemis adjacents.
+    * **Attaquer** les dragons ennemis adjacents.
 
 
-    * Se déplacer sur la grille pour prendre position ou protéger votre base.
+    * **Se déplacer** sur la grille pour prendre position ou protéger votre base.
 
 * ![warning ](/assets/img/warning.png)   **Important** : si un dragon occupe le spawn, vous ne pourrez pas en faire apparaître un autre au tour suivant. Planifiez vos attaques avec soin !
 
 **Fin de la partie**
 
-* La partie se termine lorsque la base d’un joueur atteint 0 PV.
+* La partie se termine lorsque la base d’un joueur atteint **0 PV**.
 
 
-* Le joueur ayant détruit la base adverse remporte la victoire.
+* Le joueur ayant détruit la base adverse remporte la **victoire**.
+
+---
+### 2.2 Unités
+
+|                         | Dragonnet | Dragon à deux têtes | Dragon géant | Tour de défense |
+|-------------------------|-----------|---------------------|--------------|-----------------|
+| Coût (skygold)          | 100       | 300                 | 600          | 600             |
+| Vitesse                 | 6         | 4                   | 2            | -               |
+| Puissance de tir/dégâts | 10        | 20                  | 40           | -               |
+| Portée tir              | 1         | 2                   | 3            | 3               |
+| Blindage / PV           | 50        | 120                 | 250          | 300             |
+
+
+## **Structure du projet**
+---
+
+### 3.1 Structure générale :
+```
+- main.py  (lance le jeu)
+- assets/
+  - sounds/
+  - sprites/
+- component/
+  - entities/ (contient les unités)
+  - position.py
+- page/
+  - ui.py (affichage de l’écran de jeu)
+  - ...
+- test
+- grid.py (Classe Grille)
+- economy.py (gestion des revenu des joueur)
+- events.py (gestion des événements : clique de souris, clique de touche etc…)
+
+```
+
+### 3.2 Structure des objets :
+
+```
+- Class Entity
+  - Class Dragon
+    - Dragonnet
+    - DragonDoubleTete
+    - DragonGeant
+  - Class EffectZone
+
+- Class StaticEntity 
+  - Base
+  - Tower
+  - Volcano
+  - Tornado
+  - island of life
+
+- Class Grille (contient les cases et leur état)
+
+- Class Economy
+
+- Class Event
+
+- Class Position
+```
+
+### 3.3 Dépendances :
+
+* [Python 3.x](https://www.python.org/downloads/) (version 3.10+)
+
+* [Pygame](https://www.pygame.org/news) (affichage, sprites, son)
+
+* [Pygame GUI](https://pygame-gui.readthedocs.io/en/latest/) (interface)
+
+* [Numpy](https://numpy.org/) (maths/IA)
+
+* [Moviepy](https://zulko.github.io/moviepy/) (clip vidéos)
+
+* [Pytest](https://docs.pytest.org/en/stable/) (tests)
