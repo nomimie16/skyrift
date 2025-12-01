@@ -3,6 +3,8 @@ from typing import List
 import pygame
 
 from component.entities.dragon import Dragon
+from component.entities.entity import Entity
+from component.entities.static_entity import StaticEntity
 from component.enum.type_entities import TypeEntitiesEnum
 from component.grid import Grid
 from component.position import Position
@@ -64,17 +66,24 @@ class DragonEvents:
                 dist = abs(x - x0) + abs(y - y0)
                 if 0 < dist <= max_move:
                     possible.append(Position(x, y))
-        return [pos for pos in possible if not self.grid.cells[pos.y][pos.x].occupant]
 
-    def handle_click(self, mouse_pos: Position):
+        for pos in possible[:]:
+            cell = self.grid.cells[pos.y][pos.x]
+            if len(cell.occupants) > 0:
+                if any(TypeEntitiesEnum.OBSTACLE in o.type_entity for o in cell.occupants):
+                    possible.remove(pos)
+
+        return possible
+
+    def handle_click(self, mouse_pos: Position, occupant: Entity | StaticEntity | None = None):
         """
         Gère le clic sur la grille :
         - sélection d'un dragon
         - déplacement si dragon sélectionné
         @param mouse_pos: Position (x,y) du clic souris en pixels
+        @param occupant: occupant de la case cliquée (s'il y en a un)
         @return: None
         """
-        # TODO gérer les attaques
         cell_pos: Position = self._pixel_to_cell(mouse_pos)
         if not cell_pos:
             return
@@ -82,20 +91,21 @@ class DragonEvents:
         cell = self.grid.cells[cell_pos.y][cell_pos.x]
 
         # Clique sur un dragon
-        if cell.occupant and TypeEntitiesEnum.DRAGON in cell.occupant.type_entity:
-            self.selected_dragon = cell.occupant
+        if occupant and TypeEntitiesEnum.DRAGON in occupant.type_entity:
+            if isinstance(occupant, Dragon):
+                self.selected_dragon = occupant
             self.move_cells = self.display_move_cells(self.selected_dragon)
-            self.attack_cells = []  # à implémenter si attaques
+            self.attack_cells = []  # TODO à implémenter
             print(f"Dragon sélectionné -> {self.selected_dragon.name}")
             return
 
         # Clique sur case vide avec dragon sélectionné
         if self.selected_dragon:
             if any(p.x == cell_pos.x and p.y == cell_pos.y for p in self.move_cells):
-                self.grid.remove_occupant(self.selected_dragon.grid_pos)
+                self.grid.remove_occupant(self.selected_dragon.grid_pos, self.selected_dragon)
                 self.grid.add_occupant(self.selected_dragon, cell_pos)
                 self.selected_dragon.move_dragon(cell_pos.x, cell_pos.y)
-                print(f"Dragon déplacé vers {cell_pos.x}, {cell_pos.y}")
+                print(self.grid)
 
             self.selected_dragon = None
             self.move_cells = []

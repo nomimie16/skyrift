@@ -47,7 +47,7 @@ class MapBuilder:
         possible_cells: List = []
         for row in self.grid.cells:
             for cell in row:
-                if cell.occupant is None:
+                if len(cell.occupants) == 0:
                     pos = cell.position
                     if self.can_place_cell(pos, temp.width, temp.height, 3):
                         possible_cells.append(cell)
@@ -72,7 +72,7 @@ class MapBuilder:
         possible_cells = []
         for row in self.grid.cells:
             for cell in row:
-                if cell.occupant is None:
+                if len(cell.occupants) == 0:
                     pos = cell.position
                     if self.can_place_cell(pos, temp.width, temp.height, 7):
                         possible_cells.append(cell)
@@ -113,27 +113,27 @@ class MapBuilder:
         :param min_gap: nombre minimal de cases vides entre les bords
         :return: True si l’occupant peut être placé, False sinon
         """
-        x0, y0 = position.get_x(), position.get_y()
-        volcano_cells: List = []
+        x0, y0 = position.x, position.y
+        target_cells: List = []
         min_dist = None
 
         for y in range(y0, y0 + height):
             for x in range(x0, x0 + width):
                 if not (0 <= x < self.grid.nb_columns) or not (0 <= y < self.grid.nb_rows):
                     return False
-                if self.grid.cells[y][x].occupant is not None:
+                if len(self.grid.cells[y][x].occupants) > 0:
                     return False
 
         for y in range(y0, y0 + height):
             for x in range(x0, x0 + width):
-                volcano_cells.append((x, y))
+                target_cells.append((x, y))
 
         for row in self.grid.cells:
             for cell in row:
-                if cell.occupant is not None:
+                if len(cell.occupants) > 0:
                     ox, oy = cell.position.x, cell.position.y
-                    for (vx, vy) in volcano_cells:
-                        dist = abs(vx - ox) + abs(vy - oy)
+                    for (tx, ty) in target_cells:
+                        dist = abs(tx - ox) + abs(ty - oy)
 
                         if min_dist is None or dist < min_dist:
                             min_dist = dist

@@ -5,7 +5,7 @@ from component.enum.type_entities import TypeEntitiesEnum
 
 class Volcano(StaticEntity):
     def __init__(self, x: int, y: int):
-        super().__init__(x, y, name="Volcan", type_entity=[TypeEntitiesEnum.VOLCANO, TypeEntitiesEnum.OBSTACLE],
+        super().__init__(x, y, name="Volcan", type_entity=[TypeEntitiesEnum.VOLCANO],
                          sprite_path="assets/img/volcano.png", width=8, height=8)
 
     def apply_effect(self, entity: Entity):

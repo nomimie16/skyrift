@@ -67,11 +67,20 @@ def run_game(screen, ui):
                 cell = grid_comp.handle_click(event.pos)
                 if cell is None:
                     continue
-                occ = cell.occupant
+
+                occ = None
+                for o in cell.occupants:
+                    if TypeEntitiesEnum.DRAGON in o.type_entity:
+                        occ = o
+                    elif occ is not None:
+                        occ = o
+
                 if occ is not None:
                     print("Cell Occupant:", occ.type_entity)
                     if TypeEntitiesEnum.DRAGON in occ.type_entity:
                         print("DRAGON sélectionné")
+                        dragon_events.handle_click(event.pos, occ)
+                    else:
                         dragon_events.handle_click(event.pos)
                 else:
                     dragon_events.handle_click(event.pos)
