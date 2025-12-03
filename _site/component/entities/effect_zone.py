@@ -1,3 +1,5 @@
+from component.entities.entity import Entity
+
 class EffectZone:
 
     def __init__(self, x1, y1, x2, y2, speed_debuff=0, life_debuff=0):

@@ -1,0 +1,27 @@
+site_name: Skyrift Documentation
+repo_url: "https://github.com/nomimie16/skyrift"
+nav:
+  - Accueil: index.md
+  # - Présentation: presentation.md
+  - Installation: installation.md
+  - Règles et fonctionnement: rules.md
+  - Unités: entities.md
+  - Structures: structures.md
+  - Economie: economy.md
+  - Documentation technique:
+    - Changelog : technique/changelog.md
+    - Dépendances: technique/dependencies.md
+    - Structure du projet: technique/structure.md
+
+
+extra_css:
+  - overrides/theme.css
+
+theme: shadcn
+custom_dir: overrides
+
+markdown_extensions:
+  - pymdownx.blocks.tab
+  - pymdownx.tabbed
+  - codehilite
+  - admonition
