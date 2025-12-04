@@ -36,7 +36,7 @@ Skyrift est un jeu de combat **stratégique** en 1VS1 où des **dragons** s’af
     * **Se déplacer** sur la grille pour prendre position ou protéger votre base.
 
 !!! warning "Important :"
-    Si un dragon occupe le spawn, vous ne pourrez pas en faire apparaître un autre au tour suivant. Planifiez vos attaques avec soin !
+    Si un dragon occupe le spawn, vous ne pouvez pas en faire apparaître un autre au tour suivant. Planifiez vos attaques avec soin !
 
 ## Fin de la partie
 

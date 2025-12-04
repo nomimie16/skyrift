@@ -9,7 +9,7 @@ Pour faire apparaitre vos dragons et détruire la base ennemie, le jeu contient 
 
 Base alliée                              | Base ennemie
 -----------------------------------------|--------------
-![dragonnet](/assets/img/base.png) | ![dragonnet](/assets/img/base_ennemie.png)
+![base](assets/img/base.png) | ![base_ennemie](assets/img/base_ennemie.png)
 
 
 * ### La base alliée
@@ -80,7 +80,7 @@ Ile de vie                              | Volcan                             | T
 
 ## Effet des structures
 
-* comment arrive un effet des structures
+* expliquer comment sont les effets sur le jeu
 
 * images sur le jeu
 
