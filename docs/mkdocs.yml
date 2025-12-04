@@ -1,5 +1,8 @@
 site_name: Skyrift Documentation
 repo_url: "https://github.com/nomimie16/skyrift"
+site_url: https://nomimie16.github.io/skyrift/
+use_directory_urls: true
+
 nav:
   - Accueil: index.md
   # - Présentation: presentation.md
@@ -9,7 +12,7 @@ nav:
   - Structures: structures.md
   - Economie: economy.md
   - Documentation technique:
-    - Changelog : technique/changelog.md
+    - Changelog: technique/changelog.md
     - Dépendances: technique/dependencies.md
     - Structure du projet: technique/structure.md
 
