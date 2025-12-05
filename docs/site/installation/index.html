@@ -40,7 +40,7 @@
     
 
 
-<title>Installation</title>
+<title>Installation et configuration</title>
 
 
 
@@ -55,7 +55,7 @@
 
 <!-- Open Graph (Facebook, LinkedIn) -->
 
-<meta property="og:title" content="Installation">
+<meta property="og:title" content="Installation et configuration">
 
 
 
@@ -70,7 +70,7 @@
 
 <!-- Twitter Card -->
 
-<meta name="twitter:title" content="Installation">
+<meta name="twitter:title" content="Installation et configuration">
 
 
 
@@ -396,6 +396,44 @@
 </li>
                 
                 
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/skyrift/faq/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        FAQ
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+                
+                
+                <li data-slot="sidebar-menu-item" data-sidebar="menu-item" class="group/menu-item relative">
+    <a data-slot="sidebar-menu-button" data-active="false" data-sidebar="menu-button"
+        data-size="default" href="/skyrift/credits/"
+        class="hover:bg-sidebar-accent hover:text-sidebar-accent-foreground peer/menu-button flex items-center gap-2 rounded-md p-2 text-left outline-hidden ring-sidebar-ring transition-[width,height,padding] focus-visible:ring-2 active:bg-sidebar-accent active:text-sidebar-accent-foreground disabled:pointer-events-none disabled:opacity-50 group-has-data-[sidebar=menu-action]/menu-item:pr-8 aria-disabled:pointer-events-none aria-disabled:opacity-50 data-[active=true]:font-medium data-[active=true]:text-sidebar-accent-foreground data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! [&>span:last-child]:truncate [&>svg]:size-4 [&>svg]:shrink-0 data-[active=true]:bg-accent data-[active=true]:border-accent 3xl:fixed:w-full 3xl:fixed:max-w-48 relative h-[30px] w-fit overflow-visible border border-transparent text-[0.8rem] font-medium after:absolute after:inset-x-0 after:-inset-y-1 after:z-0 after:rounded-md">
+
+        
+        Crédits
+        
+
+        
+
+        
+
+        
+    </a>
+</li>
+                
+                
             </ul>
         </div>
     </div>
@@ -483,7 +521,7 @@
         <h1
           class="scroll-m-20 text-4xl font-semibold tracking-tight sm:text-3xl xl:text-4xl"
         >
-          Installation
+          Installation et configuration
         </h1>
 
         <div class="flex items-center gap-2 pt-1.5">
@@ -565,11 +603,20 @@
   </div>
   <div class="typography w-full flex-1 *:data-[slot=alert]:first:mt-0">
     <hr />
+<h3 id="prerequis-systeme">Prérequis système</h3>
+<ul>
+<li>OS : Windows 10/11, macOS 10.15+, Linux (Ubuntu 18.04+)</li>
+<li>Mémoire : 2 GB RAM</li>
+<li>Stockage : ?? d'espace libre</li>
+</ul>
+<h2 id="installation-du-jeu">Installation du jeu</h2>
 <div class="admonition info">
 <p class="admonition-title">Information :</p>
 <p>Il existe deux façons d'installer et de lancer Skyrift en fonction de vos préférences</p>
 </div>
-<h2 id="telechargement-de-lexecutable">Téléchargement de l'exécutable</h2>
+<ul>
+<li>
+<h3 id="telechargement-de-lexecutable">Téléchargement de l'exécutable</h3>
 <ol>
 <li>
 <p>Rendez-vous sur le dépôt GitHub officiel : <a href="">Skyrift Github</a></p>
@@ -581,10 +628,12 @@
 <p>Téléchargez l'exécutable correspondant à votre système.</p>
 </li>
 </ol>
-<h2 id="lancement-depuis-le-code-source">Lancement depuis le code source</h2>
+</li>
+<li>
+<h3 id="lancement-depuis-le-code-source">Lancement depuis le code source</h3>
 <ol>
 <li>
-<p>Depuis l'onglet "Releases", téléchargez le code source si vous ne souhaitez pas utiliser l’exécutable.</p>
+<p>Depuis l'onglet <strong>"Releases"</strong>, téléchargez le code source si vous ne souhaitez pas utiliser l’exécutable.</p>
 </li>
 <li>
 <p>Décompressez le fichier téléchargé.</p>
@@ -596,11 +645,17 @@
 <p>Ouvrez un terminal dans le dossier du projet et lancez :</p>
 </li>
 </ol>
-<!-- pip install -r requirements.txt -->
-
+</li>
+</ul>
 <div class="codehilite"><pre><span></span><code>pip install -r requirements.txt
 python skyrift/main.py
+pip
 </code></pre></div>
+
+<h2 id="mise-a-jour">Mise à jour</h2>
+<ul>
+<li>Expliquer comment mettre à jour le jeu</li>
+</ul>
   </div>
 </article>
                                 <div class="mx-auto flex flex-wrap h-16 w-full max-w-2xl items-center gap-2 px-4 md:px-0">
@@ -685,6 +740,18 @@ python skyrift/main.py
                         
                     </a>
                     
+                    <a class="text-2xl font-medium" href="../faq/">
+                        
+                        FAQ
+                        
+                    </a>
+                    
+                    <a class="text-2xl font-medium" href="../credits/">
+                        
+                        Crédits
+                        
+                    </a>
+                    
                 </div>
             </div>
             
@@ -737,18 +804,40 @@ python skyrift/main.py
         
         
         
-        <a href="#telechargement-de-lexecutable"
+        <a href="#prerequis-systeme"
             class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
             data-active="false" data-depth="2">
-            Téléchargement de l'exécutable
+            Prérequis système
         </a>
         
 
         
-        <a href="#lancement-depuis-le-code-source"
+        <a href="#installation-du-jeu"
             class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
             data-active="false" data-depth="2">
+            Installation du jeu
+        </a>
+        
+        
+        <a href="#telechargement-de-lexecutable"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
+            Téléchargement de l'exécutable
+        </a>
+        
+        <a href="#lancement-depuis-le-code-source"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="3">
             Lancement depuis le code source
+        </a>
+        
+        
+
+        
+        <a href="#mise-a-jour"
+            class="text-muted-foreground hover:text-foreground data-[active=true]:text-foreground text-[0.8rem] no-underline transition-colors data-[depth=3]:pl-4 data-[depth=4]:pl-6"
+            data-active="false" data-depth="2">
+            Mise à jour
         </a>
         
 
