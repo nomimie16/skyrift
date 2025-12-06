@@ -42,14 +42,14 @@ class Entity:
         """
         return self._hp <= 0
 
-    # def attack(self, target, amount):
-    #     """
-    #     attaque la cible choisie
-    #     @param target : l'entité ciblée
-    #     @param amount : le nombre de degats a infliger
-    #     """
-    #     target.take_damage(amount)
-    #
+    def attack(self, target):
+        """
+        attaque la cible choisie
+        @param target : l'entité ciblée
+        @param amount : le nombre de degats a infliger
+        """
+        target.take_damage(self.attack_damage)
+
     # def attack(self, target_entity):
     #     """
     #     Attaque une autre entité en lui infligeant des dégâts

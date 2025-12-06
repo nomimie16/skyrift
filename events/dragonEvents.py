@@ -51,7 +51,7 @@ class DragonEvents:
 
         return Position(col, row)
 
-    def display_move_cells(self, dragon: Dragon) -> List[Cell]:
+    def compute_move_cells(self, dragon: Dragon) -> List[Cell]:
         """
         Calcule toutes les cases accessibles pour le dragon
         :param dragon: instance de Dragon
@@ -75,6 +75,28 @@ class DragonEvents:
 
         return possible_cells
 
+    def compute_attack_cells(self, dragon: Dragon) -> List[Cell]:
+        """
+        Calcule toutes les cases attaquables pour le dragon
+        :param dragon: instance de Dragon
+        :return: liste de Position des cases attaquables
+        """
+        max_attack_range: int = dragon.attack_range
+        x0: int = dragon.cell.position.x
+        y0: int = dragon.cell.position.y
+
+        possible_cells: List[Cell] = []
+        for y in range(self.grid.nb_rows):
+            for x in range(self.grid.nb_columns):
+                dist = abs(x - x0) + abs(y - y0)
+                if 0 < dist <= max_attack_range:
+                    cell = self.grid.cells[y][x]
+                    for occupant in cell.occupants:
+                        if TypeEntitiesEnum.DRAGON in occupant.type_entity:
+                            possible_cells.append(cell)
+
+        return possible_cells
+
     def handle_click(self, mouse_pos: Position, occupant: Entity | StaticEntity | None = None):
         """
         Gère le clic sur la grille :
@@ -84,38 +106,49 @@ class DragonEvents:
         @param occupant: occupant de la case cliquée (s'il y en a un)
         @return: None
         """
-        cell_pos: Position = self._pixel_to_cell(mouse_pos)
+        cell_pos: Position = Cell.get_cell_position_by_pixel(mouse_pos)
         if not cell_pos:
             return
 
-        cell = self.grid.cells[cell_pos.y][cell_pos.x]
+        cell: Cell = self.grid.cells[cell_pos.y][cell_pos.x]
+
+        # Clique sur case avec dragon sélectionné
+        if self.selected_dragon:
+            attacked: bool = False
+
+            # Déplacement
+            if cell in self.move_cells:
+                current_cell = self.grid.cells[self.selected_dragon.cell.position.y][
+                    self.selected_dragon.cell.position.x]
+
+                current_cell.remove_occupant(self.selected_dragon)
+                self.grid.add_occupant(self.selected_dragon, cell)
+                self.selected_dragon.move_dragon(cell.position.x, cell.position.y, self.grid)
+
+            # Attaque
+            if cell in self.attack_cells:
+                for occupant in cell.occupants:
+                    if TypeEntitiesEnum.DRAGON in occupant.type_entity and isinstance(occupant, Dragon):
+                        print("hp avant attaque:", occupant.hp)
+                        self.selected_dragon.attack(occupant)
+                        print("hp après attaque:", occupant.hp)
+                        attacked = True
+            self.selected_dragon = None
+
+            if attacked:
+                self.move_cells = []
+                self.attack_cells = []
+                return
+        self.move_cells = []
+        self.attack_cells = []
 
         # Clique sur un dragon
         if occupant and TypeEntitiesEnum.DRAGON in occupant.type_entity:
             if isinstance(occupant, Dragon):
                 self.selected_dragon = occupant
-            self.move_cells = self.display_move_cells(self.selected_dragon)
-            self.attack_cells = []  # TODO à implémenter
+                self.move_cells = self.compute_move_cells(self.selected_dragon)
+                self.attack_cells = self.compute_attack_cells(self.selected_dragon)
             return
-
-        # Clique sur case vide avec dragon sélectionné
-        if self.selected_dragon:
-            if cell in self.move_cells:
-                current_cell = self.grid.cells[self.selected_dragon.cell.position.y][
-                    self.selected_dragon.cell.position.x]
-                current_cell.remove_occupant(self.selected_dragon)
-                print("Cell occupants after removal:", current_cell.occupants)
-
-                # Ajoute le dragon à la nouvelle cellule
-                self.grid.add_occupant(self.selected_dragon, cell)
-
-                # Déplace le dragon (met à jour sa position interne)
-                self.selected_dragon.move_dragon(cell.position.x, cell.position.y, self.grid)
-
-            print(self.grid)
-            self.selected_dragon = None
-            self.move_cells = []
-            self.attack_cells = []
 
     def draw(self, surface):
         """
@@ -135,3 +168,15 @@ class DragonEvents:
                 self.tile_size
             )
             pygame.draw.rect(surface, (0, 100, 255), rect, 3)
+            for occ in cell.occupants:
+                if TypeEntitiesEnum.EFFECT_ZONE in occ.type_entity:
+                    pygame.draw.rect(surface, (255, 128, 0), rect, 3)
+        # Zones attaque
+        for cell in self.attack_cells:
+            rect = pygame.Rect(
+                ox + cell.position.x * self.tile_size,
+                oy + cell.position.y * self.tile_size,
+                self.tile_size,
+                self.tile_size
+            )
+            pygame.draw.rect(surface, (255, 0, 0), rect, 3)

@@ -232,7 +232,8 @@ class Dragon(Entity):
 
 class Dragonnet(Dragon):
     def __init__(self, x: int, y: int):
-        super().__init__(x, y, name="Dragonnet", type_entity=[TypeEntitiesEnum.DRAGONNET, TypeEntitiesEnum.DRAGON],
+        super().__init__(x, y, name="Dragonnet",
+                         type_entity=[TypeEntitiesEnum.DRAGONNET, TypeEntitiesEnum.DRAGON, TypeEntitiesEnum.OBSTACLE],
                          max_hp=50, attack_range=1,
                          sprite_path="assets/sprites/dragonnet/dragonnet_rouge_droite.png",
                          speed=6, attack_damage=10, cost=DRAGONNET_COST)
@@ -241,7 +242,7 @@ class Dragonnet(Dragon):
 class DragonMoyen(Dragon):
     def __init__(self, x: int, y: int):
         super().__init__(x, y, name="Dragon", type_entity=[TypeEntitiesEnum.DRAGON_MOYEN, TypeEntitiesEnum.DRAGON,
-                                                           ],
+                                                           TypeEntitiesEnum.OBSTACLE],
                          max_hp=120, attack_range=2,
                          sprite_path="assets/sprites/dragon_moyen/dragon_moyen_rouge_droite.png",
                          speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST)
@@ -250,7 +251,8 @@ class DragonMoyen(Dragon):
 class DragonGeant(Dragon):
     def __init__(self, x: int, y: int):
         super().__init__(x, y, name="Dragon Géant",
-                         type_entity=[TypeEntitiesEnum.DRAGON_GEANT, TypeEntitiesEnum.DRAGON], max_hp=250,
+                         type_entity=[TypeEntitiesEnum.DRAGON_GEANT, TypeEntitiesEnum.DRAGON,
+                                      TypeEntitiesEnum.OBSTACLE], max_hp=250,
                          attack_range=3,
                          sprite_path="assets/sprites/dragon_geant/dragon_geant_bleu_droite.png",
                          speed=2, attack_damage=40, cost=DRAGON_GEANT_COST)
