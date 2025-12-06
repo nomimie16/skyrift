@@ -51,6 +51,12 @@ class Cell:
         y = (pixel_pos.y - sc.OFFSET_Y) // sc.TILE_SIZE
         return Cell(x, y)
 
+    @staticmethod
+    def get_cell_position_by_tuple(pixel_pos: tuple):
+        x = (pixel_pos.x - sc.OFFSET_X) // sc.TILE_SIZE
+        y = (pixel_pos.y - sc.OFFSET_Y) // sc.TILE_SIZE
+        return Cell(x, y)
+
     @property
     def occupants(self):
         """return the current occupant"""
