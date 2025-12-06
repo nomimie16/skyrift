@@ -1,7 +1,7 @@
 import pygame
 
 import screen_const as sc
-from component.entities.dragon import Dragonnet
+from component.entities.dragon import Dragonnet, DragonGeant
 from component.enum.type_entities import TypeEntitiesEnum
 from events.dragonEvents import DragonEvents
 from page.component.grid_component import GridComponent
@@ -13,9 +13,9 @@ def run_game(screen, ui):
     WHITE = (240, 240, 240)
     running = True
 
-    img_test = pygame.image.load("assets/sprites/dragonnet.png").convert_alpha()
-    img_test_rect = img_test.get_rect()
-    img_test_rect.topleft = (100, 100)
+    # img_test = pygame.image.load("assets/sprites/dragonnet.png").convert_alpha()
+    # img_test_rect = img_test.get_rect()
+    # img_test_rect.topleft = (100, 100)
 
     # État des panneaux
     left_open = False
@@ -31,17 +31,28 @@ def run_game(screen, ui):
     builder = MapBuilder(grid_comp.grid)
     grid_comp.grid = builder.build_map()
     dragon_events = DragonEvents(grid_comp.grid, origin=(sc.OFFSET_X, sc.OFFSET_Y), tile_size=sc.TILE_SIZE)
-    print(grid_comp.grid)
 
-    dragonnet_test = Dragonnet(0, 0)
-    grid_comp.grid.add_occupant(dragonnet_test, dragonnet_test.position)
+    dragons = []
+    x, y = 0, 0
+    dragonnet_test = Dragonnet(x, y)
+    cell = grid_comp.grid.cells[y][x]
+    grid_comp.grid.add_occupant(dragonnet_test, cell)
+    x, y = 0, 1
+    dragon_geant_test = DragonGeant(x, y)
+    cell = grid_comp.grid.cells[y][x]
+    grid_comp.grid.add_occupant(dragon_geant_test, cell)
+    dragons.append(dragon_geant_test)
+    dragons.append(dragonnet_test)
+    dragonnet_test.hp = 4
+
+    print(grid_comp.grid)
 
     while running:
 
         # Dessiner le jeu
         screen.fill(WHITE)
         ui.draw(screen)
-        screen.blit(img_test, img_test_rect)
+        # screen.blit(img_test, img_test_rect)
 
         # Grille et map
         grid_comp.draw(screen)
@@ -49,12 +60,10 @@ def run_game(screen, ui):
         builder.base2.draw(screen)
         builder.volcano.draw(screen)
         builder.life_island.draw(screen)
+        builder.tornado.draw(screen)
 
         # Events
         dragon_events.draw(screen)
-
-        # Entités de test
-        dragonnet_test.draw(screen)
 
         # Dessiner les side panels et récupérer leurs rectangles
         left_rect, right_rect = draw_sidepanels(screen, left_open, right_open)
@@ -72,18 +81,43 @@ def run_game(screen, ui):
                 for o in cell.occupants:
                     if TypeEntitiesEnum.DRAGON in o.type_entity:
                         occ = o
+                        break
                     elif occ is not None:
                         occ = o
 
                 if occ is not None:
-                    print("Cell Occupant:", occ.type_entity)
                     if TypeEntitiesEnum.DRAGON in occ.type_entity:
-                        print("DRAGON sélectionné")
                         dragon_events.handle_click(event.pos, occ)
                     else:
                         dragon_events.handle_click(event.pos)
                 else:
                     dragon_events.handle_click(event.pos)
+
+        # ======================================================================================
+        # Appliquer les effets des zones sur les dragons
+        for row in grid_comp.grid.cells:
+            for cell in row:
+                cell.apply_effects()
+
+        # Supprimer les dragons morts de la grille
+        for row in grid_comp.grid.cells:
+            for cell in row:
+                for occupant in cell.occupants:
+                    if TypeEntitiesEnum.DRAGON in occupant.type_entity:
+                        if occupant.is_dead():
+                            print("Dragon mort détecté :", occupant.name)
+                            occupant.update(grid_comp.grid)
+                            cell.remove_occupant(occupant)
+                        else:
+                            occupant.draw(screen)
+                            occupant.update(grid_comp.grid)
+        #
+        # for dragon in dragons:
+        #     if not dragon.is_dead():
+        #         dragon.update(grid_comp.grid)
+        #         dragon.draw(screen)
+
+        # ======================================================================================
 
         # Gérer l'ouverture/fermeture des panneaux
         mouse = pygame.mouse.get_pos()
@@ -97,8 +131,7 @@ def run_game(screen, ui):
         else:
             right_open = False
 
-        # Test
-        dragonnet_test.update()
+        builder.tornado.move_tornado()
 
         pygame.display.flip()
 
