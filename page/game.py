@@ -60,7 +60,6 @@ def run_game(screen, ui):
         builder.base2.draw(screen)
         builder.volcano.draw(screen)
         builder.life_island.draw(screen)
-        builder.tornado.draw(screen)
 
         # Events
         dragon_events.draw(screen)
@@ -130,8 +129,6 @@ def run_game(screen, ui):
             right_open = True
         else:
             right_open = False
-
-        builder.tornado.move_tornado()
 
         pygame.display.flip()
 

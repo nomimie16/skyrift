@@ -19,11 +19,6 @@ class Tornado(ZoneEntity):
         self._name: str = "Tornade"
         self.type_entity: List[TypeEntitiesEnum] = [TypeEntitiesEnum.TORNADO, TypeEntitiesEnum.EFFECT_ZONE]
         self._target_cell: Cell | None = None
-        self._cell: Cell = Cell(x_cell, y_cell)
-        self._pixel_pos = Position(
-            x_cell * sc.TILE_SIZE + sc.OFFSET_X,
-            y_cell * sc.TILE_SIZE + sc.OFFSET_Y
-        )
         self._index_img: int = 0
         self._sprite_sheet = pygame.image.load(self.sprite_path)
         self._imageSprite = [self._sprite_sheet.subsurface(x * 64, 0, 64, 64) for x in range(4)]
@@ -36,53 +31,50 @@ class Tornado(ZoneEntity):
     #     self.duration -= 1
     #     # return self.duration > 0
 
-    def move_tornado(self):
+    def move_tornado(self, grid: Grid):
         """
         Mouvement du dragon
         :return: None
         """
-        possible_cells = Grid.get_adjacent_free_cells(self._cell)
-        self._target_cell = possible_cells[randint(0, len(possible_cells) - 1)]
-        # print(f"Déplacement de la tornade {self.name} vers la cellule ({self._target_cell.position.x}, {self._target_cell.position.y})")
-        self._moving = True
-        self._cell = self._target_cell
-        self.position = Position(self._cell.position.x, self._cell.position.y)
+        possible_cells = grid.get_adjacent_free_cells(self._cell)
+        if possible_cells:
+            print("Déplacement de la tornade", possible_cells)
+            self._target_cell = possible_cells[randint(0, len(possible_cells) - 1)]
+            self._moving = True
 
-    def update(self):
-        """
-        Met à jour la position du dragon lors de son déplacement
-        :return: None
-        """
-        self.duration -= 1
+    def update(self, grid: Grid):
+        if not self._moving or not self._target_cell:
+            return
 
-        # if not self._moving or not self._target_cell:
-        #     return
+        target_px = Position(
+            self._target_cell.position.x * sc.TILE_SIZE + sc.OFFSET_X,
+            self._target_cell.position.y * sc.TILE_SIZE + sc.OFFSET_Y
+        )
 
-        target_x = self._target_cell.position.x + sc.OFFSET_X
-        target_y = self._target_cell.position.y + sc.OFFSET_Y
-
-        dx = target_x - self._pixel_pos.x
-        dy = target_y - self._pixel_pos.y
+        dx = target_px.x - self._pixel_pos.x
+        dy = target_px.y - self._pixel_pos.y
+        moved = False
 
         if dx != 0:
-            step_x = min(0.5, abs(dx)) * (1 if dx > 0 else -1)
-            self._pixel_pos.x += step_x
-        elif dy != 0:
-            step_y = min(0.5, abs(dy)) * (1 if dy > 0 else -1)
-            self._pixel_pos.y += step_y
+            moved = True
+            self._pixel_pos.x += min(4, abs(dx)) * (1 if dx > 0 else -1)
 
-        if self._pixel_pos.x == target_x and self._pixel_pos.y == target_y:
+        if dy != 0:
+            moved = True
+            self._pixel_pos.y += min(4, abs(dy)) * (1 if dy > 0 else -1)
+
+        if not moved or (abs(dx) <= 4 and abs(dy) <= 4):
             self._moving = False
-            self.grid_pos.x = self._target_cell.x
-            self.grid_pos.y = self._target_cell.y
+
+            if self._cell:
+                self._cell.remove_occupant(self)
+
+            self._cell = self._target_cell
+            self._cell.occupants.append(self)
+
             self._target_cell = None
             self._index_img = 0
-
-        if self._moving:
-            self._anim_counter += 1
-            if self._anim_counter >= 50:
-                self._anim_counter = 0
-                self._index_img = (self._index_img + 1) % len(self._imageSprite)
+        return grid
 
     def draw(self, surface):
         """

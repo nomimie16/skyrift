@@ -5,6 +5,7 @@ import pygame
 import screen_const as sc
 from component.enum.type_entities import TypeEntitiesEnum
 from component.grid import Cell
+from component.position import Position
 
 
 class StaticEntity:
@@ -40,6 +41,14 @@ class StaticEntity:
     @cell.setter
     def cell(self, value: Cell):
         self._cell = value
+
+    @property
+    def pixel_pos(self) -> Position:
+        return self._pixel_pos
+
+    @cell.setter
+    def cell(self, value: Position):
+        self._pixel_pos = value
 
     @property
     def name(self):

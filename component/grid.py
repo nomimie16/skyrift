@@ -148,8 +148,7 @@ class Grid:
                     vacant_cells.append(cell)
         return vacant_cells
 
-    @staticmethod
-    def get_adjacent_free_cells(cell: Cell) -> List[Cell]:
+    def get_adjacent_free_cells(self, cell: Cell) -> List[Cell]:
         """
         Retourne la liste des cellules adjacentes libres autour d'une position donnée
         :param cell: Cellule de référence
@@ -161,10 +160,9 @@ class Grid:
             new_x = cell.position.x + dx
             new_y = cell.position.y + dy
             if 0 <= new_x < sc.COLS and 0 <= new_y < sc.ROWS:
-                adjacent_cell = Cell(new_x, new_y)
+                adjacent_cell = self.cells[new_y][new_x]
                 if len(adjacent_cell.occupants) == 0:
                     adjacent_cells.append(adjacent_cell)
-        # print("Adjacent free cells:", adjacent_cells)
         return adjacent_cells
 
     # ------- Getters et Setters -------
