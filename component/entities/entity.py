@@ -46,19 +46,8 @@ class Entity:
         """
         attaque la cible choisie
         @param target : l'entité ciblée
-        @param amount : le nombre de degats a infliger
         """
         target.take_damage(self.attack_damage)
-
-    # def attack(self, target_entity):
-    #     """
-    #     Attaque une autre entité en lui infligeant des dégâts
-    #     @:param target_entity: Entité cible de l'attaque
-    #     @:param damage: Montant des dégâts infligés
-    #     """
-    #     print("distance :", Grid.distance(self, target_entity), "range:", self._attack_range)
-    #     if Grid.distance(self, target_entity) <= self._attack_range:
-    #         target_entity.take_damage(self._attack_damage)
 
     # ------- Getters et Setters -------
 

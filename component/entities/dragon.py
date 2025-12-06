@@ -33,7 +33,7 @@ class Dragon(Entity):
 
     def reset_speed(self):
         """Réinitialise la vitesse à sa valeur de base."""
-        self._actual_speed = self.base_speed
+        self._actual_speed = self._speed_base
         self._speed_modifier = 0
 
     def move_dragon(self, target_x: int, target_y: int, grid: Grid):
@@ -163,6 +163,14 @@ class Dragon(Entity):
         self._actual_speed = value
 
     @property
+    def speed_modifier(self) -> int:
+        return self._speed_modifier
+
+    @speed_modifier.setter
+    def speed_modifier(self, value: int):
+        self._speed_modifier = value
+
+    @property
     def attack_damage(self) -> int:
         return self._attack_damage
 
@@ -227,7 +235,16 @@ class Dragon(Entity):
         self._imageSprite = value
 
     def __str__(self):
-        return super().__str__()
+        return (
+            f"Dragon(name={self._name}, "
+            f"HP={self._hp}/{self._max_hp}, "
+            f"Attack={self._attack_damage}, "
+            f"Range={self._attack_range}, "
+            f"Speed={self._actual_speed}, "
+            f"Cost={self._cost}, "
+            f"Cell=({self.cell.position.x}, {self.cell.position.y}), "
+            f"Moving={self._moving})"
+        )
 
 
 class Dragonnet(Dragon):
