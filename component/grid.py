@@ -46,16 +46,15 @@ class Cell:
         return Position(pixel_x, pixel_y)
 
     @staticmethod
-    def get_cell_position_by_pixel(pixel_pos: Position):
-        x = (pixel_pos.x - sc.OFFSET_X) // sc.TILE_SIZE
-        y = (pixel_pos.y - sc.OFFSET_Y) // sc.TILE_SIZE
-        return Cell(x, y)
+    def get_cell_by_pixel(grid: 'Grid', pixel_pos):
+        px, py = pixel_pos
+        col = (px - sc.OFFSET_X) // sc.TILE_SIZE
+        row = (py - sc.OFFSET_Y) // sc.TILE_SIZE
 
-    @staticmethod
-    def get_cell_position_by_tuple(pixel_pos: tuple):
-        x = (pixel_pos.x - sc.OFFSET_X) // sc.TILE_SIZE
-        y = (pixel_pos.y - sc.OFFSET_Y) // sc.TILE_SIZE
-        return Cell(x, y)
+        if not (0 <= col < grid.nb_columns and 0 <= row < grid.nb_rows):
+            return None
+
+        return grid.cells[row][col]
 
     @property
     def occupants(self):

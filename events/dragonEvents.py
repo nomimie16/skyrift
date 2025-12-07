@@ -106,11 +106,9 @@ class DragonEvents:
         @param occupant: occupant de la case cliquée (s'il y en a un)
         @return: None
         """
-        cell_pos: Position = Cell.get_cell_position_by_pixel(mouse_pos)
-        if not cell_pos:
+        cell = Cell.get_cell_by_pixel(self.grid, mouse_pos)
+        if not cell:
             return
-
-        cell: Cell = self.grid.cells[cell_pos.y][cell_pos.x]
 
         # Clique sur case avec dragon sélectionné
         if self.selected_dragon:
