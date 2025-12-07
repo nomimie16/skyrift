@@ -14,6 +14,7 @@ from component.position import Position
 class Tornado(ZoneEntity):
     def __init__(self, x_cell: int, y_cell: int, width: int = 1, height: int = 1):
         super().__init__(x_cell, y_cell, sprite_path="assets/sprites/dragonnet.png", width=width, height=height,
+                         type_entity=[TypeEntitiesEnum.EFFECT_ZONE, TypeEntitiesEnum.BAD_EFFECT_ZONE],
                          zone_effect=TornadoEffect())
         self._duration = randint(1, 5)  # nombre de tours restants avant disparition
         self._name: str = "Tornade"

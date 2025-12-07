@@ -74,7 +74,7 @@ class Dragon(Entity):
                 direction = 1
             else:
                 direction = -1
-            current_px.x += min(self._actual_speed, abs(dx)) * direction
+            current_px.x += min(0.5, abs(dx)) * direction
             if direction > 0:
                 self.update_direction("droite")
             else:
@@ -87,7 +87,7 @@ class Dragon(Entity):
                 direction = 1
             else:
                 direction = -1
-            current_px.y += min(self._actual_speed, abs(dy)) * direction
+            current_px.y += min(0.5, abs(dy)) * direction
 
         # À l'arrivée
         if not moved:

@@ -9,6 +9,7 @@ class Volcano(ZoneEntity):
             x=x, y=y,
             sprite_path="assets/img/volcano.png",
             width=8, height=8,
+            type_entity=[TypeEntitiesEnum.EFFECT_ZONE, TypeEntitiesEnum.BAD_EFFECT_ZONE],
             zone_effect=VolcanoEffect()
         )
         self.name = "Volcan"

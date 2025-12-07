@@ -2,6 +2,7 @@ import pygame
 
 import screen_const as sc
 from component.entities.dragon import Dragonnet, DragonGeant
+from component.entities.purse import spawn_random_purse
 from component.enum.type_entities import TypeEntitiesEnum
 from events.dragonEvents import DragonEvents
 from page.component.grid_component import GridComponent
@@ -54,6 +55,7 @@ def run_game(screen, ui):
     dragons.append(dragonnet_test)
     dragonnet_test.hp = 4
 
+    purse_test = spawn_random_purse(grid_comp.grid)
     print(grid_comp.grid)
 
     while running:
@@ -69,6 +71,8 @@ def run_game(screen, ui):
         builder.base2.draw(screen)
         builder.volcano.draw(screen)
         builder.life_island.draw(screen)
+
+        purse_test.draw(screen)
 
         # Events
         dragon_events.draw(screen)
