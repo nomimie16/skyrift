@@ -58,20 +58,45 @@ class DragonEvents:
         :return: liste de Position des cases accessibles
         """
         max_move = dragon.actual_speed
-        x0, y0 = dragon.cell.position.x, dragon.cell.position.y
+        start_x, start_y = dragon.cell.position.x, dragon.cell.position.y
 
+        directions = [(1, 0), (-1, 0), (0, 1), (0, -1)]  # Droite, Gauche, Bas, Haut
+        visited = set()
         possible_cells = []
-        for y in range(self.grid.nb_rows):
-            for x in range(self.grid.nb_columns):
-                dist = abs(x - x0) + abs(y - y0)
-                if 0 < dist <= max_move:
-                    cell = self.grid.cells[y][x]
-                    has_obstacle = False
-                    for occupant in cell.occupants:
-                        if TypeEntitiesEnum.OBSTACLE in occupant.type_entity:
-                            has_obstacle = True
-                    if not has_obstacle:
-                        possible_cells.append(cell)
+        queue = [(start_x, start_y, 0)]  # liste = file FIFO
+        visited.add((start_x, start_y))
+
+        while queue:
+            x, y, dist = queue.pop(0)
+
+            if dist > 0:
+                possible_cells.append(self.grid.cells[y][x])
+
+            if dist == max_move:
+                continue
+
+            for dx, dy in directions:
+                nx, ny = x + dx, y + dy
+
+                if not (0 <= nx < self.grid.nb_columns and 0 <= ny < self.grid.nb_rows):
+                    continue
+
+                if (nx, ny) in visited:
+                    continue
+
+                next_cell = self.grid.cells[ny][nx]
+
+                blocked = False
+                for occ in next_cell.occupants:
+                    if TypeEntitiesEnum.OBSTACLE in occ.type_entity:
+                        blocked = True
+                        break
+
+                if blocked:
+                    continue
+
+                visited.add((nx, ny))
+                queue.append((nx, ny, dist + 1))
 
         return possible_cells
 
@@ -139,6 +164,7 @@ class DragonEvents:
                 return
         self.move_cells = []
         self.attack_cells = []
+        print(self.grid)
 
         # Clique sur un dragon
         if occupant and TypeEntitiesEnum.DRAGON in occupant.type_entity:
@@ -166,9 +192,14 @@ class DragonEvents:
                 self.tile_size
             )
             pygame.draw.rect(surface, (0, 100, 255), rect, 3)
+
+            # Zones effet
             for occ in cell.occupants:
-                if TypeEntitiesEnum.EFFECT_ZONE in occ.type_entity:
+                if TypeEntitiesEnum.BAD_EFFECT_ZONE in occ.type_entity:
                     pygame.draw.rect(surface, (255, 128, 0), rect, 3)
+                if TypeEntitiesEnum.GOOD_EFFECT_ZONE in occ.type_entity:
+                    pygame.draw.rect(surface, (0, 255, 0), rect, 3)
+
         # Zones attaque
         for cell in self.attack_cells:
             rect = pygame.Rect(

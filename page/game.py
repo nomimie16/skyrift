@@ -43,17 +43,13 @@ def run_game(screen, ui):
     dragon_events = DragonEvents(grid_comp.grid, origin=(sc.OFFSET_X, sc.OFFSET_Y), tile_size=sc.TILE_SIZE)
 
     dragons = []
-    x, y = 0, 0
-    dragonnet_test = Dragonnet(x, y)
-    cell = grid_comp.grid.cells[y][x]
-    grid_comp.grid.add_occupant(dragonnet_test, cell)
+    dragonnet_test = Dragonnet(0, 0)
+    grid_comp.grid.add_occupant(dragonnet_test, dragonnet_test.cell)
     x, y = 0, 1
-    dragon_geant_test = DragonGeant(x, y)
-    cell = grid_comp.grid.cells[y][x]
-    grid_comp.grid.add_occupant(dragon_geant_test, cell)
+    dragon_geant_test = DragonGeant(0, 1)
+    grid_comp.grid.add_occupant(dragon_geant_test, dragon_geant_test.cell)
     dragons.append(dragon_geant_test)
     dragons.append(dragonnet_test)
-    dragonnet_test.hp = 4
 
     purse_test = spawn_random_purse(grid_comp.grid)
     print(grid_comp.grid)
@@ -143,11 +139,11 @@ def run_game(screen, ui):
                     if TypeEntitiesEnum.DRAGON in occupant.type_entity:
                         if occupant.is_dead():
                             print("Dragon mort détecté :", occupant.name)
-                            occupant.update(grid_comp.grid)
+                            occupant.update()
                             cell.remove_occupant(occupant)
                         else:
                             occupant.draw(screen)
-                            occupant.update(grid_comp.grid)
+                            occupant.update()
         #
         # for dragon in dragons:
         #     if not dragon.is_dead():

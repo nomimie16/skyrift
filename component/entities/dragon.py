@@ -7,6 +7,7 @@ import screen_const as sc
 from component.entities.entity import Entity
 from component.enum.type_entities import TypeEntitiesEnum
 from component.grid import Cell, Grid
+from component.path_finding import find_path
 from component.position import Position
 from const import DRAGONNET_COST, DRAGON_MOYEN_COST, DRAGON_GEANT_COST
 
@@ -31,77 +32,93 @@ class Dragon(Entity):
         self._anim_counter = 0
         self._type: List[TypeEntitiesEnum] = [TypeEntitiesEnum.DRAGON]
 
+        self.path = []
+
     def reset_speed(self):
         """Réinitialise la vitesse à sa valeur de base."""
         self._actual_speed = self._speed_base
         self._speed_modifier = 0
 
+    # def move_dragon(self, target_x: int, target_y: int, grid: Grid):
+    #     """
+    #     Mouvement du dragon
+    #     :param grid:
+    #     :param target_x: (int) abscisse du nouvelle emplacement du drgaon
+    #     :param target_y: (int) ordonnée du nouvelle emplacement du drgaon
+    #     :return: None
+    #     """
+    #     self._target_cell = grid.cells[target_y][target_x]
+    #     print(f"Déplacement du dragon {self.name} vers la cellule ({target_x}, {target_y})")
+    #     self._moving = True
+
+    # def move_dragon(self, target_x: int, target_y: int, grid: Grid):
+    #     """
+    #     Mouvement du dragon
+    #     :param grid:
+    #     :param target_x: (int) abscisse du nouvelle emplacement du drgaon
+    #     :param target_y: (int) ordonnée du nouvelle emplacement du drgaon
+    #     :return: None
+    #     """
+    #     self._moving = True
+    #     start: Cell = self.cell
+    #     goal: Cell = grid.cells[target_y][target_x]
+    #
+    #     path = grid.find_path(start, goal, grid)
+    #     if path:
+    #         self.path = path
+
     def move_dragon(self, target_x: int, target_y: int, grid: Grid):
-        """
-        Mouvement du dragon
-        :param grid:
-        :param target_x: (int) abscisse du nouvelle emplacement du drgaon
-        :param target_y: (int) ordonnée du nouvelle emplacement du drgaon
-        :return: None
-        """
         self._target_cell = grid.cells[target_y][target_x]
-        print(f"Déplacement du dragon {self.name} vers la cellule ({target_x}, {target_y})")
         self._moving = True
 
-    def update(self, grid: Grid):
+        print(f"Déplacement du dragon {self.name} vers la cellule ({target_x}, {target_y})")
+        self.path = find_path(grid, self.cell, self._target_cell)
+        if self.path:
+            print("Chemin trouvé :", self.path)
+        else:
+            print("Pas de chemin possible")
+
+    def update(self):
         """
         Met à jour la position du dragon lors de son déplacement
-        :param grid: Grid
-        :return: None
         """
-        if not self._moving or not self._target_cell:
+        if not self._moving or not self.path:
             return
+
+        # La prochaine cellule cible
+        target_cell = self.path[0]
 
         current_px = self.pixel_pos
         target_px = Position(
-            self._target_cell.position.x * sc.TILE_SIZE + sc.OFFSET_X,
-            self._target_cell.position.y * sc.TILE_SIZE + sc.OFFSET_Y
+            target_cell.position.x * sc.TILE_SIZE + sc.OFFSET_X,
+            target_cell.position.y * sc.TILE_SIZE + sc.OFFSET_Y
         )
 
         dx = target_px.x - current_px.x
         dy = target_px.y - current_px.y
 
         moved = False
-        # mpuvement horizontal
+
+        # Mouvement horizontal
         if dx != 0:
             moved = True
-            if dx > 0:
-                direction = 1
-            else:
-                direction = -1
-            current_px.x += min(0.5, abs(dx)) * direction
-            if direction > 0:
-                self.update_direction("droite")
-            else:
-                self.update_direction("gauche")
+            direction = 1 if dx > 0 else -1
+            current_px.x += min(self._actual_speed * 0.1, abs(dx)) * direction
+            self.update_direction("droite" if direction > 0 else "gauche")
 
-        # mouvement vertical
+        # Mouvement vertical
         elif dy != 0:
             moved = True
-            if dy > 0:
-                direction = 1
-            else:
-                direction = -1
-            current_px.y += min(0.5, abs(dy)) * direction
+            direction = 1 if dy > 0 else -1
+            current_px.y += min(self._actual_speed * 0.1, abs(dy)) * direction
 
-        # À l'arrivée
-        if not moved:
-            self._moving = False
-            self._index_img = 0
-
-            new_cell = grid.cells[self._target_cell.position.y][self._target_cell.position.x]
-            #
-            # old_cell = self.cell
-            # old_cell.remove_occupant(self)
-            self.cell = new_cell
-            self._target_cell = None
-
-            return
+        if not moved or (dx == 0 and dy == 0):
+            self.cell = target_cell
+            self.path.pop(0)
+            if not self.path:
+                self._moving = False
+                self._target_cell = None
+                self._index_img = 0
 
         self._anim_counter += 1
         if self._anim_counter >= 50:
