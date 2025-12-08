@@ -94,3 +94,5 @@ Récompense : 90 Skygold
 
 !!! info "Information :"
     Ne mettez pas tous vos oeufs dans le même panier ! Établissez une stratégie basée sur plusieurs types de dragons.
+!!! info "Information :"
+    Les tours de défenses protègent votre base, mais sont tout aussi onéreuses qu'un dragon géant : assurez vous que la situation justifie son achat !
