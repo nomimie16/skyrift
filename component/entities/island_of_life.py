@@ -1,14 +1,11 @@
-from component.entities.entity import Entity
-from component.entities.static_entity import StaticEntity
+from component.entities.island_of_life_effect import IslandOfLifeEffect
+from component.entities.zone_entity import ZoneEntity
+from component.enum.type_entities import TypeEntitiesEnum
 
 
-class IslandOfLife(StaticEntity):
+class IslandOfLife(ZoneEntity):
     def __init__(self, x, y):
-        super().__init__(x, y, name="Île de Vie", sprite_path="assets/sprites/life_island.png", width=4, height=4)
-
-    def heal(self, entity: Entity):
-        """Soigne une entité si elle se trouve sur l'île
-        @:param entity: entité présente sur l'île
-        """
-        if self.rect.collidepoint(entity.position.x, entity.position.y):
-            entity.hp += 2
+        super().__init__(x, y, sprite_path="assets/img/ile_de_vie.png", width=4, height=4,
+                         zone_effect=IslandOfLifeEffect())
+        self.name = "Île de vie"
+        self.type_entity = [TypeEntitiesEnum.ISLAND_OF_LIFE, TypeEntitiesEnum.EFFECT_ZONE]

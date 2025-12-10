@@ -2,8 +2,8 @@ class Position:
 
     def __init__(self, x: int, y: int):
         """x et y sont les coordonnées sr la grille"""
-        self.x: int = x
-        self.y: int = y
+        self._x: int = x
+        self._y: int = y
 
     def move(self, x: int, y: int) -> None:
         """
@@ -17,15 +17,26 @@ class Position:
         self.x += x
         self.y += y
 
-    def get_x(self) -> int:
+    @property
+    def x(self) -> int:
         """Retourne le x de la position"""
-        return self.x
+        return self._x
 
-    def get_y(self) -> int:
+    @x.setter
+    def x(self, value: int) -> None:
+        """Définit le x de la position"""
+        self._x = value
+
+    @property
+    def y(self) -> int:
         """Retourne le y de la position"""
-        return self.y
+        return self._y
+
+    @y.setter
+    def y(self, value: int) -> None:
+        """Définit le y de la position"""
+        self._y = value
 
     def __str__(self):
         """Affichage de la position"""
         return f"({self.x}, {self.y})"
-
