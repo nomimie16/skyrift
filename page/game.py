@@ -26,8 +26,8 @@ def run_game(screen, ui):
     right_open = False
 
     # positions initiales (panneaux fermés)
-    current_left_x = -180
-    current_right_x = screen.get_width() - 20  
+    current_left_x = -200
+    current_right_x = screen.get_width()  
 
     economy = Economy()
 
@@ -78,6 +78,14 @@ def run_game(screen, ui):
             if action == "pause":
                 return "pause"
             if event.type == pygame.MOUSEBUTTONDOWN:
+                # ouverture et fermeture des panneaux
+                if left_button_rect.collidepoint(event.pos):
+                    left_open = not left_open
+                    continue
+                if right_button_rect.collidepoint(event.pos):
+                    right_open = not right_open
+                    continue
+
                 # TODO : refactoriser ca
                 clicked_buy_button = False
                 for button in buy_buttons:
@@ -89,7 +97,7 @@ def run_game(screen, ui):
 
                                 # Créer une instance du dragon aux coordonnées (0, 0)
                                 dragon_class = button["dragon"].__class__
-                                new_dragon = dragon_class(SPAWN_POS[0], SPAWN_POS[1]) # TODO : choisir la position correctement et empecher l'achat si un dragon est deja sur la case de spawn
+                                new_dragon = dragon_class(SPAWN_POS[0], SPAWN_POS[1])
                                 dragons.append(new_dragon)
 
                                 # ajoute le dragon a la grille
@@ -104,6 +112,7 @@ def run_game(screen, ui):
                                 print("Impossible d'acheter : la case de spawn est occupée.")
                         else:
                             print("Impossible d'acheter : fonds insuffisants.")
+                        clicked_buy_button = True
 
                 if not clicked_buy_button:
                     cell = grid_comp.handle_click(event.pos)
@@ -151,23 +160,11 @@ def run_game(screen, ui):
         #         dragon.draw(screen)
 
         # ======================================================================================
-
+        
         # Dessiner les side panels et récupérer leurs rectangles (ils doivent être dessinés APRES les dragons)
-        left_rect, right_rect, current_left_x, current_right_x, buy_buttons = draw_sidepanels(
+        left_button_rect, right_button_rect, current_left_x, current_right_x, buy_buttons = draw_sidepanels(
             screen, left_open, right_open, current_left_x, current_right_x, economy
         )
-
-        # Gérer l'ouverture/fermeture des panneaux
-        mouse = pygame.mouse.get_pos()
-        if left_rect.collidepoint(mouse):
-            left_open = True
-        else:
-            left_open = False
-
-        if right_rect.collidepoint(mouse):
-            right_open = True
-        else:
-            right_open = False
 
         pygame.display.flip()
 

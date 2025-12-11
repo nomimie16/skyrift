@@ -1,7 +1,7 @@
 #####################
 # ONGLET SIDEPANELS #
 #####################
-# TODO : faire en sorte que le panneau se deploie via un petit bouton, sans le faire depasser
+import math
 import pygame
 from component.entities.dragon import Dragonnet, DragonMoyen, DragonGeant
 
@@ -22,7 +22,7 @@ def get_cache():
         cache['font_title'] = pygame.font.Font("assets/font/BoldPixels.ttf", 24)
         cache['font_small'] = pygame.font.Font("assets/font/BoldPixels.ttf", 18)
         cache['font_tiny'] = pygame.font.Font("assets/font/BoldPixels.ttf", 16)
-        
+
         # icones
         try:
             stat_icon = pygame.image.load("assets/img/HP_icon.png").convert_alpha()
@@ -38,6 +38,21 @@ def get_cache():
         except Exception as e:
             print(f"Erreur chargement icone or: {e}")
             cache['gold_icon'] = None
+
+        # fleches pour les boutons de deploiement
+        try:
+            right_arrow_icon = pygame.image.load("assets/img/right-arrow.png").convert_alpha()
+            cache['right_arrow_icon'] = pygame.transform.scale(right_arrow_icon, (20, 20))
+        except Exception as e:
+            print(f"Erreur chargement fleche droite: {e}")
+            cache['right_arrow_icon'] = None
+
+        try:
+            left_arrow_icon = pygame.image.load("assets/img/left-arrow.png").convert_alpha()
+            cache['left_arrow_icon'] = pygame.transform.scale(left_arrow_icon, (20, 20))
+        except Exception as e:
+            print(f"Erreur chargement fleche gauche: {e}")
+            cache['left_arrow_icon'] = None
 
         # dragon (instances boutiques)
         cache['dragons'] = [dragon_class(0, 0) for dragon_class in DRAGONS_DATA]
@@ -65,9 +80,18 @@ def draw_shop(surface, x_offset, y_start, gold):
     y += 35
 
     # afficher l'or disponible
-    gold_text = font_small.render(f"Gold: {gold}", True, (255, 215, 0))
-    gold_rect = gold_text.get_rect(center=(panel_width // 2, y + gold_text.get_height() // 2))
+    gold_text = font_small.render(f"{gold}", True, (255, 215, 0))
+    # texte + icone
+    space: int = 4
+    total_width = gold_text.get_width() + (15 + space)  # largeur icone + espace
+    gold_text_x = (panel_width - total_width) // 2
+    gold_rect = gold_text.get_rect(left=gold_text_x, top=y)
     surface.blit(gold_text, gold_rect)
+    # icone
+    if gold_icon:
+        coin_x = gold_text_x + gold_text.get_width() + space
+        coin_rect = gold_icon.get_rect(left=coin_x, top=y + 2)
+        surface.blit(gold_icon, coin_rect)
     y += 30
 
     buy_buttons = []
@@ -141,14 +165,45 @@ def draw_shop(surface, x_offset, y_start, gold):
 
     return buy_buttons
 
+def draw_toggle_button(surface, x, y, size, is_open):
+    """Dessine un bouton demi-circulaire qui gere le deploiement du panneau"""
+    color = (100, 150, 100) if is_open else (100, 100, 100)
+
+    # On définit deux points afin de ne creer qu'un demi cercle
+    points = []
+    for angle in range(-90, 91, 5):
+        rad = math.radians(angle)
+        px = x + size * math.cos(rad)
+        py = y + size * math.sin(rad)
+        points.append((px, py))
+    points.append((x, y))
+
+    if len(points) > 2:
+        pygame.draw.polygon(surface, color, points)
+        pygame.draw.polygon(surface, (255, 255, 255), points, 2)
+
+    # fleche
+    res = get_cache()
+    if is_open:
+        arrow_icon = res['left_arrow_icon'] 
+    else:
+        arrow_icon = res['right_arrow_icon']
+
+    if arrow_icon:
+        arrow_x = x + 8 if is_open else x + 10
+        arrow_rect = arrow_icon.get_rect(center=(arrow_x, y))
+        surface.blit(arrow_icon, arrow_rect)
+
 def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right_x, economy=None):
     panel_width = 200
     screen_height = screen.get_height()
     animation_speed = 8
+    button_size = 20
+    button_y = screen_height // 2
 
     # calculer les positions cibles
-    target_left_x = 0 if left_open else -panel_width + 20
-    target_right_x = screen.get_width() - panel_width if right_open else screen.get_width() - 20
+    target_left_x = 0 if left_open else -panel_width
+    target_right_x = screen.get_width() - panel_width if right_open else screen.get_width()
 
     # animation gauche
     if current_left_x < target_left_x:
@@ -179,10 +234,18 @@ def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right
 
     screen.blit(left_panel, (current_left_x, 0))
 
+    left_button_x = current_left_x + panel_width
+    left_button_rect = pygame.Rect(left_button_x - button_size, button_y - button_size, button_size * 2, button_size * 2)
+    draw_toggle_button(screen, left_button_x, button_y, button_size, left_open)
+
     # onglet droit
-    right_rect = pygame.Rect(current_right_x, 0, panel_width, screen_height)
     right_panel = pygame.Surface((panel_width, screen_height))
     right_panel.fill((50, 50, 50))
     screen.blit(right_panel, (current_right_x, 0))
 
-    return left_rect, right_rect, current_left_x, current_right_x, buy_buttons
+    # Bouton pour ouvrir/fermer le panneau droit
+    right_button_x = current_right_x
+    right_button_rect = pygame.Rect(right_button_x - button_size, button_y - button_size, button_size * 2, button_size * 2)
+    draw_toggle_button(screen, right_button_x, button_y, button_size, right_open)
+
+    return left_button_rect, right_button_rect, current_left_x, current_right_x, buy_buttons
