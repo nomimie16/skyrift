@@ -1,4 +1,4 @@
-INITIAL_GOLD: int = 100
+INITIAL_GOLD: int = 1000 # TODO : remttre ca a 100
 GOLD_PER_TURN: int = 75 # managed in the main game loop
 
 

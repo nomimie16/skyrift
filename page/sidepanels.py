@@ -1,27 +1,9 @@
 #####################
 # ONGLET SIDEPANELS #
 #####################
+# TODO : faire en sorte que le panneau se deploie via un petit bouton, sans le faire depasser
 import pygame
 from component.entities.dragon import Dragonnet, DragonMoyen, DragonGeant
-
-# Charger les sprites des dragons pour la boutique
-try:
-    dragonnet_img = pygame.image.load("assets\sprites\dragonnet_bleu_droite.png").convert_alpha()
-    dragonnet_img = pygame.transform.scale(dragonnet_img, (50, 50))
-except:
-    dragonnet_img = None
-
-try:
-    dragon_moyen_img = pygame.image.load("assets/sprites/dragon_moyen_bleu_droite.png").convert_alpha()
-    dragon_moyen_img = pygame.transform.scale(dragon_moyen_img, (50, 50))
-except:
-    dragon_moyen_img = None
-
-try:
-    dragon_geant_img = pygame.image.load("assets/sprites/dragon_geant_bleu_droite.png").convert_alpha()
-    dragon_geant_img = pygame.transform.scale(dragon_geant_img, (50, 50))
-except:
-    dragon_geant_img = None
 
 # Données des dragons
 DRAGONS_DATA = [

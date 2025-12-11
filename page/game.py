@@ -9,6 +9,8 @@ from page.component.map_builder import MapBuilder
 from page.sidepanels import draw_sidepanels
 from economy import Economy
 
+SPAWN_POS = (0, 0) # TODO : mettre ca au bon endroit
+
 
 def run_game(screen, ui):
     WHITE = (240, 240, 240)
@@ -76,25 +78,53 @@ def run_game(screen, ui):
             if action == "pause":
                 return "pause"
             if event.type == pygame.MOUSEBUTTONDOWN:
-                cell = grid_comp.handle_click(event.pos)
-                if cell is None:
-                    continue
+                # TODO : refactoriser ca
+                clicked_buy_button = False
+                for button in buy_buttons:
+                    if button["rect"].collidepoint(event.pos):
+                        if button["can_afford"]:
+                            if grid_comp.grid.cells[SPAWN_POS[0]][SPAWN_POS[1]].occupants == []:
+                                economy.spend_gold(button["cost"])
+                                remaining_gold = economy.get_gold()
 
-                occ = None
-                for o in cell.occupants:
-                    if TypeEntitiesEnum.DRAGON in o.type_entity:
-                        occ = o
-                        break
-                    elif occ is not None:
-                        occ = o
+                                # Créer une instance du dragon aux coordonnées (0, 0)
+                                dragon_class = button["dragon"].__class__
+                                new_dragon = dragon_class(SPAWN_POS[0], SPAWN_POS[1]) # TODO : choisir la position correctement et empecher l'achat si un dragon est deja sur la case de spawn
+                                dragons.append(new_dragon)
 
-                if occ is not None:
-                    if TypeEntitiesEnum.DRAGON in occ.type_entity:
-                        dragon_events.handle_click(event.pos, occ)
+                                # ajoute le dragon a la grille
+                                cell = grid_comp.grid.cells[SPAWN_POS[0]][SPAWN_POS[1]]
+                                grid_comp.grid.add_occupant(new_dragon, cell)
+
+
+                                # logs
+                                print(f"{button['name']} acheté ! argent restant : {remaining_gold}")
+                                print(f"inventaire de dragons : {[d.name for d in dragons]}")
+                            else:
+                                print("Impossible d'acheter : la case de spawn est occupée.")
+                        else:
+                            print("Impossible d'acheter : fonds insuffisants.")
+
+                if not clicked_buy_button:
+                    cell = grid_comp.handle_click(event.pos)
+                    if cell is None:
+                        continue
+
+                    occ = None
+                    for o in cell.occupants:
+                        if TypeEntitiesEnum.DRAGON in o.type_entity:
+                            occ = o
+                            break
+                        elif occ is not None:
+                            occ = o
+
+                    if occ is not None:
+                        if TypeEntitiesEnum.DRAGON in occ.type_entity:
+                            dragon_events.handle_click(event.pos, occ)
+                        else:
+                            dragon_events.handle_click(event.pos)
                     else:
                         dragon_events.handle_click(event.pos)
-                else:
-                    dragon_events.handle_click(event.pos)
 
         # ======================================================================================
         # Appliquer les effets des zones sur les dragons
