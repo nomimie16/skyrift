@@ -1,6 +1,6 @@
 ---
 title: Structures
-summary : Présentation des structures du jeu et de leur effets
+summary : Présentation des structures du jeu et de leur effets.
 ---
 ---
 Pour faire apparaitre vos dragons et détruire la base ennemie, le jeu contient différents type de structures qui offrent différents effets.
@@ -42,9 +42,9 @@ Ile de vie                              | Volcan                             | T
 
     * Rôle : Point de récupération de vie 
 
-    * Vie gagnée :  PV/tour
+    * Vie gagnée :  2 pv/tour
      
-    * Objectif : Approche toi de celle ci et ses pouvoirs prendrons effet sur toi.
+    * Objectif : Approche toi de celle ci et ses pouvoirs de régénérations prendrons effet sur toi.
 
 * ### Le volcan
     Un endroit bouillant qui serait préférable d'éviter...

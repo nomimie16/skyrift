@@ -5,6 +5,11 @@ summary : Sources et remerciements
 ---
 
 ## Équipe de développement
+* [LIGNIER Noémie](https://github.com/nomimie16) - Rôle à définir
+* [GERME Charlotte](https://github.com/chharlote) - Rôle à définir
+* [FAILLIE Chloé](https://github.com/ChloeXena) - Rôle à définir
+* [CHATELAIN Lilou](https://github.com/liiloouu16) - Rôle à définir
+* [ARABAH Yanis](https://github.com/Yanisssssse) - Rôle à définir
 
 
 ## Graphismes et sprites
