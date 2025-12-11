@@ -18,6 +18,7 @@ Si vous recherchez une information précise, utilisez la fonction de recherche i
 
 ## Généralité sur Skyrift 🌍
 /// details | Qu'est-ce que Skyrift ?
+
 ///
 
 /// details | A qui est destiné ce jeu ?

@@ -31,4 +31,3 @@ markdown_extensions:
   - pymdownx.tabbed
   - codehilite
   - admonition
-  - pymdownx.blocks.details
