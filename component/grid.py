@@ -32,7 +32,7 @@ class Cell:
         for occ in self.occupants:
             if TypeEntitiesEnum.DRAGON in occ.type_entity:
                 dragons.append(occ)
-            if TypeEntitiesEnum.EFFECT_ZONE in occ.type_entity:
+            if TypeEntitiesEnum.GOOD_EFFECT_ZONE in occ.type_entity or TypeEntitiesEnum.BAD_EFFECT_ZONE in occ.type_entity:
                 zones.append(occ)
 
         for z in zones:
@@ -126,6 +126,16 @@ class Grid:
             print("Occupant placed at", cell.occupants)
             print(f"Cell ({x}, {y}) is already occupied")
         return True
+
+    def free_cells(self):
+        """Récupère toutes les cases libres"""
+        free_cells = []
+        for y in range(self.nb_rows):
+            for x in range(self.nb_columns):
+                current_cell = self.cells[y][x]
+                if len(current_cell.occupants) == 0:
+                    free_cells.append(current_cell)
+        return free_cells
 
     def distance(self, occupant1, occupant2):
         x1, y1 = occupant1.position.x, occupant1.position.y

@@ -127,7 +127,7 @@ class MapBuilder:
         self.build_bases()
         self.spawn_random_volcano()
         self.spawn_random_island_of_life()
-        self.sapwn_random_tornado()
+        # self.sapwn_random_tornado()
         return self.grid
 
     def can_place_cell(self, position: Position, width: int, height: int, min_gap: int = 3):
