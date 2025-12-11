@@ -80,9 +80,18 @@ def draw_shop(surface, x_offset, y_start, gold):
     y += 35
 
     # afficher l'or disponible
-    gold_text = font_small.render(f"Gold: {gold}", True, (255, 215, 0))
-    gold_rect = gold_text.get_rect(center=(panel_width // 2, y + gold_text.get_height() // 2))
+    gold_text = font_small.render(f"{gold}", True, (255, 215, 0))
+    # texte + icone
+    space: int = 4
+    total_width = gold_text.get_width() + (15 + space)  # largeur icone + espace
+    gold_text_x = (panel_width - total_width) // 2
+    gold_rect = gold_text.get_rect(left=gold_text_x, top=y)
     surface.blit(gold_text, gold_rect)
+    # icone
+    if gold_icon:
+        coin_x = gold_text_x + gold_text.get_width() + space
+        coin_rect = gold_icon.get_rect(left=coin_x, top=y + 2)
+        surface.blit(gold_icon, coin_rect)
     y += 30
 
     buy_buttons = []
