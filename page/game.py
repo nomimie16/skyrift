@@ -6,7 +6,8 @@ from component.enum.type_entities import TypeEntitiesEnum
 from events.dragonEvents import DragonEvents
 from page.component.grid_component import GridComponent
 from page.component.map_builder import MapBuilder
-from sidepanels import draw_sidepanels
+from page.sidepanels import draw_sidepanels
+from economy import Economy
 
 
 def run_game(screen, ui):
@@ -20,6 +21,12 @@ def run_game(screen, ui):
     # État des panneaux
     left_open = False
     right_open = False
+
+    # positions initiales (panneaux fermés)
+    current_left_x = -180
+    current_right_x = screen.get_width() - 20  
+
+    economy = Economy()
 
     # Création de la grille et de la map
     grid_comp = GridComponent(
@@ -63,9 +70,6 @@ def run_game(screen, ui):
 
         # Events
         dragon_events.draw(screen)
-
-        # Dessiner les side panels et récupérer leurs rectangles
-        left_rect, right_rect = draw_sidepanels(screen, left_open, right_open)
 
         for event in pygame.event.get():
             action = ui.handle_event(event)
@@ -117,6 +121,11 @@ def run_game(screen, ui):
         #         dragon.draw(screen)
 
         # ======================================================================================
+
+        # Dessiner les side panels et récupérer leurs rectangles (ils doivent être dessinés APRES les dragons)
+        left_rect, right_rect, current_left_x, current_right_x, buy_buttons = draw_sidepanels(
+            screen, left_open, right_open, current_left_x, current_right_x, economy
+        )
 
         # Gérer l'ouverture/fermeture des panneaux
         mouse = pygame.mouse.get_pos()
