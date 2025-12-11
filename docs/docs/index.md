@@ -2,6 +2,7 @@
 title: Documentation Skyrift
 summary: Documentation complète pour comprendre et utiliser Skyrift
 sidebar_title: Accueil
+show_datetime: true
 external_links:
   "Accéder au github": https://github.com/nomimie16/skyrift
 ---

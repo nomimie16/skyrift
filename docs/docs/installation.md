@@ -1,7 +1,7 @@
 ---
 title: Installation et configuration
 summary: Téléchargement et installation du jeu
-# show_datetime: true
+show_datetime: true
 ---
 ---
 

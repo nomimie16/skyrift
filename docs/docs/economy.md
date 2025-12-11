@@ -29,13 +29,13 @@ Le temps est la source de revenus principale. A chaque tour les joueurs sont ré
 De manière aléatoire, des bourses feront leur apparition dans les cieux. 
 
 * Revenus : 50 Skygold.
-* Emplacement : Alétoire
+* Emplacement : Aléatoire
 
 ### Récompenses de combat
 
-Vous pouvez gagner des Skygold en éliminant des unités ennemies
+De plus, vous pouvez gagner des Skygold en éliminant des unités ennemies
 
-Pour chaque unité ennemie éliminée :
+Pour chaque unité ennemie éliminée vous obtenez :
 
 /// tab | Dragonnet
 ``` 
