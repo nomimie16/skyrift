@@ -6,7 +6,10 @@ from component.enum.type_entities import TypeEntitiesEnum
 from events.dragonEvents import DragonEvents
 from page.component.grid_component import GridComponent
 from page.component.map_builder import MapBuilder
-from sidepanels import draw_sidepanels
+from page.sidepanels import draw_sidepanels
+from economy import Economy
+
+SPAWN_POS = (0, 0) # TODO : mettre ca au bon endroit
 
 
 def run_game(screen, ui):
@@ -20,6 +23,12 @@ def run_game(screen, ui):
     # État des panneaux
     left_open = False
     right_open = False
+
+    # positions initiales (panneaux fermés)
+    current_left_x = -180
+    current_right_x = screen.get_width() - 20  
+
+    economy = Economy()
 
     # Création de la grille et de la map
     grid_comp = GridComponent(
@@ -64,33 +73,58 @@ def run_game(screen, ui):
         # Events
         dragon_events.draw(screen)
 
-        # Dessiner les side panels et récupérer leurs rectangles
-        left_rect, right_rect = draw_sidepanels(screen, left_open, right_open)
-
         for event in pygame.event.get():
             action = ui.handle_event(event)
             if action == "pause":
                 return "pause"
             if event.type == pygame.MOUSEBUTTONDOWN:
-                cell = grid_comp.handle_click(event.pos)
-                if cell is None:
-                    continue
+                # TODO : refactoriser ca
+                clicked_buy_button = False
+                for button in buy_buttons:
+                    if button["rect"].collidepoint(event.pos):
+                        if button["can_afford"]:
+                            if grid_comp.grid.cells[SPAWN_POS[0]][SPAWN_POS[1]].occupants == []:
+                                economy.spend_gold(button["cost"])
+                                remaining_gold = economy.get_gold()
 
-                occ = None
-                for o in cell.occupants:
-                    if TypeEntitiesEnum.DRAGON in o.type_entity:
-                        occ = o
-                        break
-                    elif occ is not None:
-                        occ = o
+                                # Créer une instance du dragon aux coordonnées (0, 0)
+                                dragon_class = button["dragon"].__class__
+                                new_dragon = dragon_class(SPAWN_POS[0], SPAWN_POS[1]) # TODO : choisir la position correctement et empecher l'achat si un dragon est deja sur la case de spawn
+                                dragons.append(new_dragon)
 
-                if occ is not None:
-                    if TypeEntitiesEnum.DRAGON in occ.type_entity:
-                        dragon_events.handle_click(event.pos, occ)
+                                # ajoute le dragon a la grille
+                                cell = grid_comp.grid.cells[SPAWN_POS[0]][SPAWN_POS[1]]
+                                grid_comp.grid.add_occupant(new_dragon, cell)
+
+
+                                # logs
+                                print(f"{button['name']} acheté ! argent restant : {remaining_gold}")
+                                print(f"inventaire de dragons : {[d.name for d in dragons]}")
+                            else:
+                                print("Impossible d'acheter : la case de spawn est occupée.")
+                        else:
+                            print("Impossible d'acheter : fonds insuffisants.")
+
+                if not clicked_buy_button:
+                    cell = grid_comp.handle_click(event.pos)
+                    if cell is None:
+                        continue
+
+                    occ = None
+                    for o in cell.occupants:
+                        if TypeEntitiesEnum.DRAGON in o.type_entity:
+                            occ = o
+                            break
+                        elif occ is not None:
+                            occ = o
+
+                    if occ is not None:
+                        if TypeEntitiesEnum.DRAGON in occ.type_entity:
+                            dragon_events.handle_click(event.pos, occ)
+                        else:
+                            dragon_events.handle_click(event.pos)
                     else:
                         dragon_events.handle_click(event.pos)
-                else:
-                    dragon_events.handle_click(event.pos)
 
         # ======================================================================================
         # Appliquer les effets des zones sur les dragons
@@ -117,6 +151,11 @@ def run_game(screen, ui):
         #         dragon.draw(screen)
 
         # ======================================================================================
+
+        # Dessiner les side panels et récupérer leurs rectangles (ils doivent être dessinés APRES les dragons)
+        left_rect, right_rect, current_left_x, current_right_x, buy_buttons = draw_sidepanels(
+            screen, left_open, right_open, current_left_x, current_right_x, economy
+        )
 
         # Gérer l'ouverture/fermeture des panneaux
         mouse = pygame.mouse.get_pos()
