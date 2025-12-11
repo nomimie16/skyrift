@@ -1,6 +1,6 @@
 ---
 title: Structures
-summary : Présentation des structures du jeu et de leur effets
+summary : Présentation des structures du jeu et de leur effets.
 ---
 ---
 Pour faire apparaitre vos dragons et détruire la base ennemie, le jeu contient différents type de structures qui offrent différents effets.
