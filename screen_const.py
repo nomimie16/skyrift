@@ -1,10 +1,13 @@
 import pygame
-from win32api import GetSystemMetrics
+import tkinter as tk
 
 # Calcul des constantes de la grille
 
-taille_ecran = GetSystemMetrics(1)
-screen = pygame.display.set_mode((taille_ecran, taille_ecran))
+_root = tk.Tk()
+_root.withdraw()
+_taille_ecran = _root.winfo_screenheight()
+_root.destroy()
+screen = pygame.display.set_mode((_taille_ecran, _taille_ecran))
 
 TILE_SIZE = 40
 TOP_PCT = 0.10
