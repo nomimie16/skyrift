@@ -1,20 +1,19 @@
 import pygame
-from win32api import GetSystemMetrics  # Récuperer la taille de l'écran
 
-from game import run_game  # Fenêtre principale du jeu
-from launch import run_launch  # Introduction vidéo
-from pause import run_pause  # Page de pause
-from rules import run_rules  # Page des règles du jeu
-from settings import run_settings  # Page de paramètres
-from startGame import run_start  # Première fenêtre du jeu
-from ui import UIOverlay  # Import de l'interface commune du jeu
+from page.game import run_game  # Fenêtre principale du jeu
+from page.launch import run_launch  # Introduction vidéo
+from page.pause import run_pause  # Page de pause
+from page.rules import run_rules  # Page des règles du jeu
+from page.settings import run_settings  # Page de paramètres
+from page.startGame import run_start  # Première fenêtre du jeu
+from page.ui import UIOverlay  # Import de l'interface commune du jeu
+from screen_const import SCREEN_H  # Import des constantes d'écran
 
 # Initialiser Pygame
 pygame.init()
 
 # Créer la fenêtre
-taille_ecran = GetSystemMetrics(1)  # hauteur de l'écran
-screen = pygame.display.set_mode((taille_ecran, taille_ecran))
+screen = pygame.display.set_mode((SCREEN_H, SCREEN_H))
 pygame.display.set_caption("SkyRift")
 
 # Création de l'interface commune (icons)
