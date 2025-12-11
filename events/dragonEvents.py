@@ -164,7 +164,6 @@ class DragonEvents:
                 return
         self.move_cells = []
         self.attack_cells = []
-        print(self.grid)
 
         # Clique sur un dragon
         if occupant and TypeEntitiesEnum.DRAGON in occupant.type_entity:

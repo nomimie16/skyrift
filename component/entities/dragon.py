@@ -39,34 +39,6 @@ class Dragon(Entity):
         self._actual_speed = self._speed_base
         self._speed_modifier = 0
 
-    # def move_dragon(self, target_x: int, target_y: int, grid: Grid):
-    #     """
-    #     Mouvement du dragon
-    #     :param grid:
-    #     :param target_x: (int) abscisse du nouvelle emplacement du drgaon
-    #     :param target_y: (int) ordonnée du nouvelle emplacement du drgaon
-    #     :return: None
-    #     """
-    #     self._target_cell = grid.cells[target_y][target_x]
-    #     print(f"Déplacement du dragon {self.name} vers la cellule ({target_x}, {target_y})")
-    #     self._moving = True
-
-    # def move_dragon(self, target_x: int, target_y: int, grid: Grid):
-    #     """
-    #     Mouvement du dragon
-    #     :param grid:
-    #     :param target_x: (int) abscisse du nouvelle emplacement du drgaon
-    #     :param target_y: (int) ordonnée du nouvelle emplacement du drgaon
-    #     :return: None
-    #     """
-    #     self._moving = True
-    #     start: Cell = self.cell
-    #     goal: Cell = grid.cells[target_y][target_x]
-    #
-    #     path = grid.find_path(start, goal, grid)
-    #     if path:
-    #         self.path = path
-
     def move_dragon(self, target_x: int, target_y: int, grid: Grid):
         self._target_cell = grid.cells[target_y][target_x]
         self._moving = True
