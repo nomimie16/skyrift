@@ -3,7 +3,9 @@ from typing import List
 
 from component.entities.base import Base
 from component.entities.island_of_life import IslandOfLife
+from component.entities.tornado import Tornado
 from component.entities.volcano import Volcano
+from component.grid import Cell
 from component.position import Position
 
 
@@ -22,6 +24,7 @@ class MapBuilder:
         self.base2 = None
         self.volcano = None
         self.life_island = None
+        self.tornado = None
 
     def build_bases(self):
         """
@@ -30,13 +33,13 @@ class MapBuilder:
         - base2 : bas droite
         """
         self.base1 = Base(1, 1, sprite_path="assets/img/base.png")
-        self.grid.add_static_occupants(self.base1, self.base1.position, self.base1.height, self.base1.width)
+        self.grid.add_static_occupants(self.base1, self.base1.cell, self.base1.height, self.base1.width)
 
         base2_x = self.grid.nb_columns - 5
         base2_y = self.grid.nb_rows - 5
-        base2_pos = Position(base2_x, base2_y)
+        base2_cell = Cell(base2_x, base2_y)
         self.base2 = Base(base2_x, base2_y, sprite_path="assets/img/base_ennemie.png")
-        self.grid.add_static_occupants(self.base2, base2_pos, self.base2.height, self.base2.width)
+        self.grid.add_static_occupants(self.base2, base2_cell, self.base2.height, self.base2.width)
         # TODO: ajouter base aux joueurs
 
     def spawn_random_volcano(self):
@@ -47,19 +50,19 @@ class MapBuilder:
         possible_cells: List = []
         for row in self.grid.cells:
             for cell in row:
-                if cell.occupant is None:
+                if len(cell.occupants) == 0:
                     pos = cell.position
                     if self.can_place_cell(pos, temp.width, temp.height, 3):
                         possible_cells.append(cell)
         if not possible_cells:
             return None
 
-        chosen_cell: Position = random.choice(possible_cells)
+        chosen_cell: Cell = random.choice(possible_cells)
 
         self.volcano = Volcano(chosen_cell.position.x, chosen_cell.position.y)
         self.grid.add_static_occupants(
             self.volcano,
-            chosen_cell.position,
+            chosen_cell,
             self.volcano.width,
             self.volcano.height
         )
@@ -72,7 +75,7 @@ class MapBuilder:
         possible_cells = []
         for row in self.grid.cells:
             for cell in row:
-                if cell.occupant is None:
+                if len(cell.occupants) == 0:
                     pos = cell.position
                     if self.can_place_cell(pos, temp.width, temp.height, 7):
                         possible_cells.append(cell)
@@ -84,9 +87,34 @@ class MapBuilder:
         self.life_island = IslandOfLife(chosen_cell.position.x, chosen_cell.position.y)
         self.grid.add_static_occupants(
             self.life_island,
-            chosen_cell.position,
+            chosen_cell,
             self.life_island.width,
             self.life_island.height
+        )
+
+    def sapwn_random_tornado(self):
+        """
+        Fait spawn une tornade à une position aléatoire
+        """
+        temp = Tornado(0, 0)
+        possible_cells = []
+        for row in self.grid.cells:
+            for cell in row:
+                if len(cell.occupants) == 0:
+                    pos = cell.position
+                    if self.can_place_cell(pos, temp.width, temp.height, 5):
+                        possible_cells.append(cell)
+        if not possible_cells:
+            return None
+
+        chosen_cell = random.choice(possible_cells)
+
+        self.tornado = Tornado(chosen_cell.position.x, chosen_cell.position.y)
+        self.grid.add_static_occupants(
+            self.tornado,
+            chosen_cell,
+            self.tornado.width,
+            self.tornado.height
         )
 
     def build_map(self):
@@ -99,7 +127,7 @@ class MapBuilder:
         self.build_bases()
         self.spawn_random_volcano()
         self.spawn_random_island_of_life()
-
+        # self.sapwn_random_tornado()
         return self.grid
 
     def can_place_cell(self, position: Position, width: int, height: int, min_gap: int = 3):
@@ -113,27 +141,27 @@ class MapBuilder:
         :param min_gap: nombre minimal de cases vides entre les bords
         :return: True si l’occupant peut être placé, False sinon
         """
-        x0, y0 = position.get_x(), position.get_y()
-        volcano_cells: List = []
+        x0, y0 = position.x, position.y
+        target_cells: List = []
         min_dist = None
 
         for y in range(y0, y0 + height):
             for x in range(x0, x0 + width):
                 if not (0 <= x < self.grid.nb_columns) or not (0 <= y < self.grid.nb_rows):
                     return False
-                if self.grid.cells[y][x].occupant is not None:
+                if len(self.grid.cells[y][x].occupants) > 0:
                     return False
 
         for y in range(y0, y0 + height):
             for x in range(x0, x0 + width):
-                volcano_cells.append((x, y))
+                target_cells.append((x, y))
 
         for row in self.grid.cells:
             for cell in row:
-                if cell.occupant is not None:
+                if len(cell.occupants) > 0:
                     ox, oy = cell.position.x, cell.position.y
-                    for (vx, vy) in volcano_cells:
-                        dist = abs(vx - ox) + abs(vy - oy)
+                    for (tx, ty) in target_cells:
+                        dist = abs(tx - ox) + abs(ty - oy)
 
                         if min_dist is None or dist < min_dist:
                             min_dist = dist

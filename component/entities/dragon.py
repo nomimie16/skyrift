@@ -6,6 +6,8 @@ import pygame
 import screen_const as sc
 from component.entities.entity import Entity
 from component.enum.type_entities import TypeEntitiesEnum
+from component.grid import Cell, Grid
+from component.path_finding import find_path
 from component.position import Position
 from const import DRAGONNET_COST, DRAGON_MOYEN_COST, DRAGON_GEANT_COST
 
@@ -18,73 +20,82 @@ class Dragon(Entity):
                  attack_damage: int,
                  cost: int):
         super().__init__(x_cell, y_cell, name, type_entity, max_hp, attack_damage, attack_range, sprite_path)
-        self.grid_pos = Position(x_cell, y_cell)  # position sur la grille
-        self._pixel_pos = Position(
-            x_cell * sc.TILE_SIZE + sc.OFFSET_X,
-            y_cell * sc.TILE_SIZE + sc.OFFSET_Y
-        )  # position pour l'affichage
         self._speed_base: int = speed  # speed de base du dragon
         self._actual_speed: int = speed  # speed actuel du dragon
         self._speed_modifier: int = 0  # nombre de speed en plus ou en moins à celui de base
         self._cost: int = cost
         self._index_img: int = 0
         self._moving: bool = False
-        self._target_cell: Position | None = None
+        self._target_cell: Cell | None = None
         self._sprite_sheet = pygame.image.load(sprite_path)
         self._imageSprite = [self._sprite_sheet.subsurface(x * 64, 0, 64, 64) for x in range(4)]
         self._anim_counter = 0
         self._type: List[TypeEntitiesEnum] = [TypeEntitiesEnum.DRAGON]
 
+        self.path = []
+
     def reset_speed(self):
         """Réinitialise la vitesse à sa valeur de base."""
-        self._actual_speed = self.base_speed
+        self._actual_speed = self._speed_base
         self._speed_modifier = 0
 
-    def move_dragon(self, x_cell: int, y_cell: int):
-        """
-        Mouvement du dragon
-        :param x_cell: (int) abscisse du nouvelle emplacement du drgaon
-        :param y_cell: (int) ordonnée du nouvelle emplacement du drgaon
-        :return: None
-        """
-        self._target_cell = Position(x_cell, y_cell)
-        print(f"Déplacement du dragon {self.name} vers la cellule ({x_cell}, {y_cell})")
+    def move_dragon(self, target_x: int, target_y: int, grid: Grid):
+        self._target_cell = grid.cells[target_y][target_x]
         self._moving = True
+
+        print(f"Déplacement du dragon {self.name} vers la cellule ({target_x}, {target_y})")
+        self.path = find_path(grid, self.cell, self._target_cell)
+        if self.path:
+            print("Chemin trouvé :", self.path)
+        else:
+            print("Pas de chemin possible")
 
     def update(self):
         """
         Met à jour la position du dragon lors de son déplacement
-        :return: None
         """
-        if not self._moving or not self._target_cell:
+        if not self._moving or not self.path:
             return
 
-        target_x = self._target_cell.x * sc.TILE_SIZE + sc.OFFSET_X
-        target_y = self._target_cell.y * sc.TILE_SIZE + sc.OFFSET_Y
+        # La prochaine cellule cible
+        target_cell = self.path[0]
 
-        dx = target_x - self._pixel_pos.x
-        dy = target_y - self._pixel_pos.y
+        current_px = self.pixel_pos
+        target_px = Position(
+            target_cell.position.x * sc.TILE_SIZE + sc.OFFSET_X,
+            target_cell.position.y * sc.TILE_SIZE + sc.OFFSET_Y
+        )
 
+        dx = target_px.x - current_px.x
+        dy = target_px.y - current_px.y
+
+        moved = False
+
+        # Mouvement horizontal
         if dx != 0:
-            step_x = min(0.5, abs(dx)) * (1 if dx > 0 else -1)
-            self._pixel_pos.x += step_x
-            self.update_direction("droite" if dx > 0 else "gauche")
+            moved = True
+            direction = 1 if dx > 0 else -1
+            current_px.x += min(self._actual_speed * 0.1, abs(dx)) * direction
+            self.update_direction("droite" if direction > 0 else "gauche")
+
+        # Mouvement vertical
         elif dy != 0:
-            step_y = min(0.5, abs(dy)) * (1 if dy > 0 else -1)
-            self._pixel_pos.y += step_y
+            moved = True
+            direction = 1 if dy > 0 else -1
+            current_px.y += min(self._actual_speed * 0.1, abs(dy)) * direction
 
-        if self._pixel_pos.x == target_x and self._pixel_pos.y == target_y:
-            self._moving = False
-            self.grid_pos.x = self._target_cell.x
-            self.grid_pos.y = self._target_cell.y
-            self._target_cell = None
-            self._index_img = 0
+        if not moved or (dx == 0 and dy == 0):
+            self.cell = target_cell
+            self.path.pop(0)
+            if not self.path:
+                self._moving = False
+                self._target_cell = None
+                self._index_img = 0
 
-        if self._moving:
-            self._anim_counter += 1
-            if self._anim_counter >= 50:
-                self._anim_counter = 0
-                self._index_img = (self._index_img + 1) % len(self._imageSprite)
+        self._anim_counter += 1
+        if self._anim_counter >= 50:
+            self._anim_counter = 0
+            self._index_img = (self._index_img + 1) % len(self._imageSprite)
 
     def update_direction(self, direction: str):
         """
@@ -139,6 +150,14 @@ class Dragon(Entity):
     @actual_speed.setter
     def actual_speed(self, value: int):
         self._actual_speed = value
+
+    @property
+    def speed_modifier(self) -> int:
+        return self._speed_modifier
+
+    @speed_modifier.setter
+    def speed_modifier(self, value: int):
+        self._speed_modifier = value
 
     @property
     def attack_damage(self) -> int:
@@ -205,12 +224,22 @@ class Dragon(Entity):
         self._imageSprite = value
 
     def __str__(self):
-        return super().__str__()
+        return (
+            f"Dragon(name={self._name}, "
+            f"HP={self._hp}/{self._max_hp}, "
+            f"Attack={self._attack_damage}, "
+            f"Range={self._attack_range}, "
+            f"Speed={self._actual_speed}, "
+            f"Cost={self._cost}, "
+            f"Cell=({self.cell.position.x}, {self.cell.position.y}), "
+            f"Moving={self._moving})"
+        )
 
 
 class Dragonnet(Dragon):
     def __init__(self, x: int, y: int):
-        super().__init__(x, y, name="Dragonnet", type_entity=[TypeEntitiesEnum.DRAGONNET, TypeEntitiesEnum.DRAGON],
+        super().__init__(x, y, name="Dragonnet",
+                         type_entity=[TypeEntitiesEnum.DRAGONNET, TypeEntitiesEnum.DRAGON, TypeEntitiesEnum.OBSTACLE],
                          max_hp=50, attack_range=1,
                          sprite_path="assets/sprites/dragonnet/dragonnet_rouge_droite.png",
                          speed=6, attack_damage=10, cost=DRAGONNET_COST)
@@ -219,7 +248,7 @@ class Dragonnet(Dragon):
 class DragonMoyen(Dragon):
     def __init__(self, x: int, y: int):
         super().__init__(x, y, name="Dragon", type_entity=[TypeEntitiesEnum.DRAGON_MOYEN, TypeEntitiesEnum.DRAGON,
-                                                           ],
+                                                           TypeEntitiesEnum.OBSTACLE],
                          max_hp=120, attack_range=2,
                          sprite_path="assets/sprites/dragon_moyen/dragon_moyen_rouge_droite.png",
                          speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST)
@@ -228,7 +257,8 @@ class DragonMoyen(Dragon):
 class DragonGeant(Dragon):
     def __init__(self, x: int, y: int):
         super().__init__(x, y, name="Dragon Géant",
-                         type_entity=[TypeEntitiesEnum.DRAGON_GEANT, TypeEntitiesEnum.DRAGON], max_hp=250,
+                         type_entity=[TypeEntitiesEnum.DRAGON_GEANT, TypeEntitiesEnum.DRAGON,
+                                      TypeEntitiesEnum.OBSTACLE], max_hp=250,
                          attack_range=3,
                          sprite_path="assets/sprites/dragon_geant/dragon_geant_bleu_droite.png",
                          speed=2, attack_damage=40, cost=DRAGON_GEANT_COST)

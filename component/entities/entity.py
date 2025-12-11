@@ -2,16 +2,16 @@ from typing import List
 
 import pygame
 
-import screen_const as sc
 from component.enum.type_entities import TypeEntitiesEnum
-from component.grid import Grid
+from component.grid import Cell
 from component.position import Position
 
 
 class Entity:
     def __init__(self, x: int, y: int, name: str, type_entity: List[TypeEntitiesEnum], max_hp: int, attack_damage: int,
                  attack_range: int, sprite_path: str):
-        self._position: Position = Position(x, y)
+        self._cell: Cell = Cell(x, y)
+        self._pixel_pos = self.cell.get_pixel_position()
         self._name: str = name
         self._type_entity: List[TypeEntitiesEnum] = type_entity
         self._max_hp: int = max_hp
@@ -26,9 +26,7 @@ class Entity:
         Affichage d'une entité
         @:param surface: Surface sur laquelle l'entité est placée
         """
-        x = self._position.x * sc.TILE_SIZE + sc.OFFSET_X
-        y = self._position.y * sc.TILE_SIZE + sc.OFFSET_Y
-        surface.blit(self._sprite, (x, y))
+        surface.blit(self._sprite, self._cell.get_pixel_position().to_tuple())
 
     def take_damage(self, amount):
         """
@@ -44,33 +42,30 @@ class Entity:
         """
         return self._hp <= 0
 
-    def attack(self, target, amount):
+    def attack(self, target):
         """
         attaque la cible choisie
         @param target : l'entité ciblée
-        @param amount : le nombre de degats a infliger
         """
-        target.take_damage(amount)
-
-    def attack(self, target_entity):
-        """
-        Attaque une autre entité en lui infligeant des dégâts
-        @:param target_entity: Entité cible de l'attaque
-        @:param damage: Montant des dégâts infligés
-        """
-        print("distance :", Grid.distance(self, target_entity), "range:", self._attack_range)
-        if Grid.distance(self, target_entity) <= self._attack_range:
-            target_entity.take_damage(self._attack_damage)
+        target.take_damage(self.attack_damage)
 
     # ------- Getters et Setters -------
 
     @property
-    def position(self) -> Position:
-        return self._position
+    def cell(self) -> Cell:
+        return self._cell
 
-    @position.setter
-    def position(self, value: Position):
-        self._position = value
+    @cell.setter
+    def cell(self, value: Cell):
+        self._cell = value
+
+    @property
+    def pixel_pos(self) -> Position:
+        return self._pixel_pos
+
+    @pixel_pos.setter
+    def pixel_pos(self, value):
+        self._pixel_pos = value
 
     @property
     def name(self) -> str:
@@ -102,7 +97,7 @@ class Entity:
 
     @hp.setter
     def hp(self, value: int):
-        self._hp = max(0, min(value, self._max_hp))  # clamp entre 0 et max_hp
+        self._hp = max(0, min(value, self._max_hp))
 
     # ------- Getters et Setters -------
 

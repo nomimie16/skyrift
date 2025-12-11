@@ -4,13 +4,16 @@ import pygame
 
 import screen_const as sc
 from component.enum.type_entities import TypeEntitiesEnum
+from component.grid import Cell
 from component.position import Position
 
 
 class StaticEntity:
-    def __init__(self, x: int, y: int, name: str, type_entity: List[TypeEntitiesEnum], sprite_path: str, width: int,
+    def __init__(self, x_cell: int, y_cell: int, name: str, type_entity: List[TypeEntitiesEnum], sprite_path: str,
+                 width: int,
                  height: int):
-        self._position = Position(x, y)
+        self._cell = Cell(x_cell, y_cell)
+        self._pixel_pos = self.cell.get_pixel_position()
         self._name = name
         self._type_entity: List[TypeEntitiesEnum] = type_entity
         self._sprite_path = sprite_path
@@ -19,15 +22,11 @@ class StaticEntity:
         self._height = height
 
     def draw(self, surface):
-        pixel_x = (self.position.x - (self.width - 1)) * sc.TILE_SIZE + sc.OFFSET_X
-        pixel_y = (self.position.y - (self.height - 1)) * sc.TILE_SIZE + sc.OFFSET_Y
-
         scaled = pygame.transform.scale(
             self._sprite,
             (self.width * sc.TILE_SIZE, self.height * sc.TILE_SIZE)
         )
-
-        surface.blit(scaled, (pixel_x, pixel_y))
+        surface.blit(scaled, (self._pixel_pos.x, self._pixel_pos.y))
 
     @property
     def rect(self):
@@ -36,12 +35,20 @@ class StaticEntity:
     # ------- Getters et Setters -------
 
     @property
-    def position(self) -> Position:
-        return self._position
+    def cell(self) -> Cell:
+        return self._cell
 
-    @position.setter
-    def position(self, value: Position):
-        self._position = value
+    @cell.setter
+    def cell(self, value: Cell):
+        self._cell = value
+
+    @property
+    def pixel_pos(self) -> Position:
+        return self._pixel_pos
+
+    @cell.setter
+    def cell(self, value: Position):
+        self._pixel_pos = value
 
     @property
     def name(self):

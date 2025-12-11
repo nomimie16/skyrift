@@ -4,10 +4,70 @@ summary : Questions fréquentes et dépannage
 ---
 ---
 
-## Installation et débuts
+## Informations générales 💡
+/// details | Que contient cette FAQ ?
+Cette FAQ a été conçue dans le but de repondre aux questions les plus fréquemment posées.
+Les réponses sont toujours écrites de façon à être comprises par tous. Les réponses peuvent également être complétées avec des liens vers d'autres pages du site ou un site externe.
+///
 
-## Unités et structures
+/// details | Comment bien utiliser cette FAQ ?
+Pour tirer le meilleur parti de cette FAQ, parcourez les catégories et sélectionnez les questions qui correspondent à votre besoin.  
+Chaque réponse est rédigée de manière simple et claire afin de vous guider rapidement.
+Si vous recherchez une information précise, utilisez la fonction de recherche intégrée de la page avec CTRL + F + "Votre recherche".
+///
 
-## Combat et stratégie
+## Généralité sur Skyrift 🌍
+/// details | Qu'est-ce que Skyrift ?
 
-## Paramètres et performance
+///
+
+/// details | A qui est destiné ce jeu ?
+///
+
+/// details |Quel est le but du jeu ?
+///
+
+/// details | Sur quelles plateformes fonctionne le jeu ?
+///
+
+/// details | Doit-on disposer d'un ordinateur puissant pour pouvoir jouer à Skyrift ?
+///
+
+## Installation et débuts 📥
+/// details | Comment installer Skyrift ?
+Pour installer SkyRift, veuillez vous rendre dans la section [installation](./installation.md) et suivre les instructions.
+///
+
+/// details | Quel espace est nécessaire pour installer Skyrift ?
+///
+
+
+## Unités et structures 🐲
+/// details | Question 1
+///
+
+/// details | Question 2
+///
+
+/// details | Question 3
+///
+
+## Combat et stratégie ⚔️
+/// details | Question 1
+///
+
+/// details | Question 2
+///
+
+/// details | Question 3
+///
+
+## Paramètres et performance ⚙️
+/// details | Question 1
+///
+
+/// details | Question 2
+///
+
+/// details | Question 3
+///
