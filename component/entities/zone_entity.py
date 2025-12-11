@@ -9,8 +9,9 @@ class ZoneEntity(StaticEntity):
     Elle s'étend sur une ou plusieurs cellules.
     """
 
-    def __init__(self, x: int, y: int, sprite_path: str, width: int, height: int, zone_effect: EffectZone):
-        super().__init__(x, y, name="Zone", type_entity=[TypeEntitiesEnum.EFFECT_ZONE],
+    def __init__(self, x: int, y: int, sprite_path: str, width: int, height: int, type_entity: list[TypeEntitiesEnum],
+                 zone_effect: EffectZone):
+        super().__init__(x, y, name="Zone", type_entity=type_entity,
                          sprite_path=sprite_path, width=width, height=height)
         self._zone_effect = zone_effect
 
