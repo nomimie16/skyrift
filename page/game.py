@@ -1,5 +1,6 @@
 import pygame
 
+from const import SPAWN_POS
 import screen_const as sc
 from component.entities.dragon import Dragonnet, DragonGeant
 from component.entities.purse import spawn_random_purse
@@ -9,8 +10,6 @@ from page.component.grid_component import GridComponent
 from page.component.map_builder import MapBuilder
 from page.sidepanels import draw_sidepanels
 from economy import Economy
-
-SPAWN_POS = (0, 0) # TODO : mettre ca au bon endroit
 
 
 def run_game(screen, ui):
@@ -71,7 +70,7 @@ def run_game(screen, ui):
         purse_test.draw(screen)
 
         # Events
-        dragon_events.draw(screen)
+        dragon_events.draw(screen, sidebar_open=left_open)
 
         for event in pygame.event.get():
             action = ui.handle_event(event)
@@ -101,7 +100,7 @@ def run_game(screen, ui):
                                 dragons.append(new_dragon)
 
                                 # ajoute le dragon a la grille
-                                cell = grid_comp.grid.cells[SPAWN_POS[0]][SPAWN_POS[1]]
+                                cell = grid_comp.grid.cells[SPAWN_POS[1]][SPAWN_POS[0]]
                                 grid_comp.grid.add_occupant(new_dragon, cell)
 
 
