@@ -1,15 +1,15 @@
 import pygame
 
-from const import SPAWN_POS
 import screen_const as sc
 from component.entities.dragon import Dragonnet, DragonGeant
 from component.entities.purse import spawn_random_purse
 from component.enum.type_entities import TypeEntitiesEnum
+from const import SPAWN_POS
+from economy import Economy
 from events.dragonEvents import DragonEvents
 from page.component.grid_component import GridComponent
 from page.component.map_builder import MapBuilder
 from page.sidepanels import draw_sidepanels
-from economy import Economy
 
 
 def run_game(screen, ui):
@@ -26,7 +26,7 @@ def run_game(screen, ui):
 
     # positions initiales (panneaux fermés)
     current_left_x = -200
-    current_right_x = screen.get_width()  
+    current_right_x = screen.get_width()
 
     economy = Economy()
 
@@ -70,7 +70,7 @@ def run_game(screen, ui):
         purse_test.draw(screen)
 
         # Events
-        dragon_events.draw(screen, sidebar_open=left_open)
+        dragon_events.draw(screen)
 
         for event in pygame.event.get():
             action = ui.handle_event(event)
@@ -102,7 +102,6 @@ def run_game(screen, ui):
                                 # ajoute le dragon a la grille
                                 cell = grid_comp.grid.cells[SPAWN_POS[1]][SPAWN_POS[0]]
                                 grid_comp.grid.add_occupant(new_dragon, cell)
-
 
                                 # logs
                                 print(f"{button['name']} acheté ! argent restant : {remaining_gold}")
@@ -159,7 +158,7 @@ def run_game(screen, ui):
         #         dragon.draw(screen)
 
         # ======================================================================================
-        
+
         # Dessiner les side panels et récupérer leurs rectangles (ils doivent être dessinés APRES les dragons)
         left_button_rect, right_button_rect, current_left_x, current_right_x, buy_buttons = draw_sidepanels(
             screen, left_open, right_open, current_left_x, current_right_x, economy

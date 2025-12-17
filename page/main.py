@@ -7,15 +7,15 @@ from page.rules import run_rules  # Page des règles du jeu
 from page.settings import run_settings  # Page de paramètres
 from page.startGame import run_start  # Première fenêtre du jeu
 from page.ui import UIOverlay  # Import de l'interface commune du jeu
-from screen_const import SCREEN_H  # Import des constantes d'écran
 
 # Initialiser Pygame
 pygame.init()
 
 # Créer la fenêtre
-screen = pygame.display.set_mode((SCREEN_H, SCREEN_H))
-pygame.display.set_caption("SkyRift")
+# screen = pygame.display.set_mode((SCREEN_H, SCREEN_H))
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
+pygame.display.set_caption("SkyRift")
 # Création de l'interface commune (icons)
 ui = UIOverlay(screen)
 
