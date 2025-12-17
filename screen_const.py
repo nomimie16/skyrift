@@ -1,5 +1,6 @@
-import pygame
 import tkinter as tk
+
+import pygame
 
 # Calcul des constantes de la grille
 
@@ -7,13 +8,13 @@ _root = tk.Tk()
 _root.withdraw()
 _taille_ecran = _root.winfo_screenheight()
 _root.destroy()
-screen = pygame.display.set_mode((_taille_ecran, _taille_ecran))
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
 TILE_SIZE = 40
 TOP_PCT = 0.10
-BOTTOM_PCT = 0.10
-LEFT_PCT = 0.05
-RIGHT_PCT = 0.05
+BOTTOM_PCT = 0.03
+LEFT_PCT = 0.10
+RIGHT_PCT = 0.10
 SCREEN_W, SCREEN_H = screen.get_size()
 
 MARGIN_TOP = int(SCREEN_H * TOP_PCT)
