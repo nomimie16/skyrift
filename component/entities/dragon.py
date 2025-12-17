@@ -251,6 +251,23 @@ class Dragonnet(Dragon):
                          sprite_path="assets/sprites/dragonnet/dragonnet_bleu_droite.png",
                          speed=6, attack_damage=10, cost=DRAGONNET_COST, player=player)
 
+    def draw(self, surface):
+        """
+        Affichage du dragonnet
+        :param surface: Surface sur laquelle le dragonnet est placé
+        """
+        sprite = self._imageSprite[self._index_img]
+
+        scaled_width = int(sprite.get_width() * 0.7)
+        scaled_height = int(sprite.get_height() * 0.7)
+
+        scaled_sprite = pygame.transform.scale(sprite, (scaled_width, scaled_height))
+
+        x = self._pixel_pos.x + (sc.TILE_SIZE - scaled_width) // 2
+        y = self._pixel_pos.y + (sc.TILE_SIZE - scaled_height) // 2
+
+        surface.blit(scaled_sprite, (x, y))
+
 class DragonMoyen(Dragon):
     def __init__(self, x: int, y: int, player: Player=None):
         super().__init__(x, y, name="Dragon", type_entity=[TypeEntitiesEnum.DRAGON_MOYEN, TypeEntitiesEnum.DRAGON,
@@ -258,6 +275,23 @@ class DragonMoyen(Dragon):
                          max_hp=120, attack_range=2,
                          sprite_path="assets/sprites/dragon_moyen/dragon_moyen_bleu_droite.png",
                          speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST, player=player)
+
+    def draw(self, surface):
+        """
+        Affichage du dragon moyen
+        :param surface: Surface sur laquelle le dragon est placé
+        """
+        sprite = self._imageSprite[self._index_img]
+
+        scaled_width = int(sprite.get_width() * 0.9)
+        scaled_height = int(sprite.get_height() * 0.9)
+
+        scaled_sprite = pygame.transform.scale(sprite, (scaled_width, scaled_height))
+
+        x = self._pixel_pos.x + (sc.TILE_SIZE - scaled_width) // 2
+        y = self._pixel_pos.y + (sc.TILE_SIZE - scaled_height) // 2
+
+        surface.blit(scaled_sprite, (x, y))
 
 
 class DragonGeant(Dragon):
