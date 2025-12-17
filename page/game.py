@@ -70,7 +70,7 @@ def run_game(screen, ui):
         purse_test.draw(screen)
 
         # Events
-        dragon_events.draw(screen, sidebar_open=left_open)
+        dragon_events.draw(screen)
 
         for event in pygame.event.get():
             action = ui.handle_event(event)
