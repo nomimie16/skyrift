@@ -149,11 +149,11 @@ def run_game(screen, ui):
 
                     if occ is not None:
                         if TypeEntitiesEnum.DRAGON in occ.type_entity:
-                            dragon_events.handle_click(event.pos, occ, turn.current_player())
+                            dragon_events.handle_click(event.pos, occ, turn.current_player(), turn)
                         else:
-                            dragon_events.handle_click(event.pos, None, turn.current_player())
+                            dragon_events.handle_click(event.pos, None, turn.current_player(), turn)
                     else:
-                        dragon_events.handle_click(event.pos, None, turn.current_player())
+                        dragon_events.handle_click(event.pos, None, turn.current_player(), turn)
         # ======================================================================================
         # Appliquer les effets des zones sur les dragons
         for row in grid_comp.grid.cells:
