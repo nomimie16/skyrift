@@ -3,6 +3,7 @@
 #####################
 import math
 import pygame
+from player import Player
 from component.entities.dragon import Dragonnet, DragonMoyen, DragonGeant
 
 # Données des dragons
@@ -15,7 +16,7 @@ DRAGONS_DATA = [
 # cache pour les ressources afin de ne les charger qu'une seule fois depuis le disque
 cache = {}
 
-def get_cache():
+def get_cache(current_player: Player):
     """Charge et met en cache les ressources une seule fois pour optimiser les performances du panneau"""
     if not cache:
         # polices
@@ -55,14 +56,18 @@ def get_cache():
             cache['left_arrow_icon'] = None
 
         # dragon (instances boutiques)
-        cache['dragons'] = [dragon_class(0, 0) for dragon_class in DRAGONS_DATA]
+        cache['dragons'] = [dragon_class(0, 0, current_player) for dragon_class in DRAGONS_DATA]
+    
+    if cache['dragons'][0]._owner != current_player:
+        # mettre à jour le propriétaire des dragons en cache
+        cache['dragons'] = [dragon_class(0, 0, current_player) for dragon_class in DRAGONS_DATA]
 
     return cache
 
-def draw_shop(surface, x_offset, y_start, gold):
+def draw_shop(surface, x_offset, y_start, gold, current_player: Player):
     """Dessine la boutique de dragons dans le panneau gauche"""
     # recupere les ressources depuis le cache
-    res = get_cache()
+    res = get_cache(current_player)
     font_title = res['font_title']
     font_small = res['font_small']
     font_tiny = res['font_tiny']
@@ -165,7 +170,7 @@ def draw_shop(surface, x_offset, y_start, gold):
 
     return buy_buttons
 
-def draw_toggle_button(surface, x, y, size, is_open):
+def draw_toggle_button(surface, x, y, size, is_open, current_player: Player):
     """Dessine un bouton demi-circulaire qui gere le deploiement du panneau"""
     color = (100, 150, 100) if is_open else (100, 100, 100)
 
@@ -183,7 +188,7 @@ def draw_toggle_button(surface, x, y, size, is_open):
         pygame.draw.polygon(surface, (255, 255, 255), points, 2)
 
     # fleche
-    res = get_cache()
+    res = get_cache(current_player)
     if is_open:
         arrow_icon = res['left_arrow_icon'] 
     else:
@@ -194,7 +199,7 @@ def draw_toggle_button(surface, x, y, size, is_open):
         arrow_rect = arrow_icon.get_rect(center=(arrow_x, y))
         surface.blit(arrow_icon, arrow_rect)
 
-def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right_x, economy=None):
+def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right_x, economy, current_player: Player):
     panel_width = 200
     screen_height = screen.get_height()
     animation_speed = 8
@@ -222,21 +227,20 @@ def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right
     left_panel = pygame.Surface((panel_width, screen_height))
     left_panel.fill((50, 50, 50))
 
-    # dessiner la boutique si l'économie est fournie
+    # dessiner la boutique
     buy_buttons = []
-    if economy:
-        gold = economy.get_gold()
-        buy_buttons = draw_shop(left_panel, 0, 20, gold)
+    gold = economy.get_gold()
+    buy_buttons = draw_shop(left_panel, 0, 20, gold, current_player)
 
-        # ajuster les positions des boutons pour l'écran absolu
-        for button in buy_buttons:
-            button["rect"].x += current_left_x
+    # ajuster les positions des boutons pour l'écran absolu
+    for button in buy_buttons:
+        button["rect"].x += current_left_x
 
     screen.blit(left_panel, (current_left_x, 0))
 
     left_button_x = current_left_x + panel_width
     left_button_rect = pygame.Rect(left_button_x - button_size, button_y - button_size, button_size * 2, button_size * 2)
-    draw_toggle_button(screen, left_button_x, button_y, button_size, left_open)
+    draw_toggle_button(screen, left_button_x, button_y, button_size, left_open, current_player)
 
     # onglet droit
     right_panel = pygame.Surface((panel_width, screen_height))
@@ -246,6 +250,6 @@ def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right
     # Bouton pour ouvrir/fermer le panneau droit
     right_button_x = current_right_x
     right_button_rect = pygame.Rect(right_button_x - button_size, button_y - button_size, button_size * 2, button_size * 2)
-    draw_toggle_button(screen, right_button_x, button_y, button_size, right_open)
+    draw_toggle_button(screen, right_button_x, button_y, button_size, right_open, current_player)
 
     return left_button_rect, right_button_rect, current_left_x, current_right_x, buy_buttons

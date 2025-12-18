@@ -112,7 +112,7 @@ def run_game(screen, ui):
                 for button in buy_buttons:
                     if button["rect"].collidepoint(event.pos):
                         if button["can_afford"]:
-                            if grid_comp.grid.cells[SPAWN_POS[0]][SPAWN_POS[1]].occupants == []:
+                            if grid_comp.grid.cells[SPAWN_POS[1]][SPAWN_POS[0]].occupants == []:
                                 player.economy.spend_gold(button["cost"])
                                 remaining_gold = player.economy.get_gold()
 
@@ -182,7 +182,7 @@ def run_game(screen, ui):
 
         # Dessiner les side panels et récupérer leurs rectangles (ils doivent être dessinés APRES les dragons)
         left_button_rect, right_button_rect, current_left_x, current_right_x, buy_buttons = draw_sidepanels(
-            screen, left_open, right_open, current_left_x, current_right_x, player.economy
+            screen, left_open, right_open, current_left_x, current_right_x, player.economy, turn.current_player()
         )
 
         # Dessiner le bouton tour suivant (temporaire)
