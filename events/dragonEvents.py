@@ -2,6 +2,7 @@ from typing import List
 
 import pygame
 
+from player import Player
 from component.entities.dragon import Dragon
 from component.entities.entity import Entity
 from component.entities.static_entity import StaticEntity
@@ -117,18 +118,19 @@ class DragonEvents:
                 if 0 < dist <= max_attack_range:
                     cell = self.grid.cells[y][x]
                     for occupant in cell.occupants:
-                        if TypeEntitiesEnum.DRAGON in occupant.type_entity:
+                        if TypeEntitiesEnum.DRAGON in occupant.type_entity and occupant._owner != dragon._owner:
                             possible_cells.append(cell)
 
         return possible_cells
 
-    def handle_click(self, mouse_pos: Position, occupant: Entity | StaticEntity | None = None):
+    def handle_click(self, mouse_pos: Position, occupant: Entity | StaticEntity | None = None, player: Player=None):
         """
         Gère le clic sur la grille :
         - sélection d'un dragon
         - déplacement si dragon sélectionné
         @param mouse_pos: Position (x,y) du clic souris en pixels
         @param occupant: occupant de la case cliquée (s'il y en a un)
+        @param player: joueur effectuant l'action
         @return: None
         """
         cell = Cell.get_cell_by_pixel(self.grid, mouse_pos)
@@ -151,7 +153,7 @@ class DragonEvents:
             # Attaque
             if cell in self.attack_cells:
                 for occupant in cell.occupants:
-                    if TypeEntitiesEnum.DRAGON in occupant.type_entity and isinstance(occupant, Dragon):
+                    if TypeEntitiesEnum.DRAGON in occupant.type_entity and isinstance(occupant, Dragon) and occupant._owner != player:
                         print("hp avant attaque:", occupant.hp)
                         self.selected_dragon.attack(occupant)
                         print("hp après attaque:", occupant.hp)
@@ -168,6 +170,10 @@ class DragonEvents:
         # Clique sur un dragon
         if occupant and TypeEntitiesEnum.DRAGON in occupant.type_entity:
             if isinstance(occupant, Dragon):
+                # Vérifier que le dragon appartient au joueur actuel
+                if player is not None and occupant._owner != player:
+                    print("Ce dragon n'appartient pas à votre joueur !")
+                    return
                 self.selected_dragon = occupant
                 self.move_cells = self.compute_move_cells(self.selected_dragon)
                 self.attack_cells = self.compute_attack_cells(self.selected_dragon)
