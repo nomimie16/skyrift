@@ -22,8 +22,8 @@ def run_game(screen, ui):
     # img_test_rect = img_test.get_rect()
     # img_test_rect.topleft = (100, 100)
 
-    p1: Player = Player(name="Yanis")
-    p2: Player = Player(name="Player 2")
+    p1: Player = Player(name="Yanis", color="bleu")
+    p2: Player = Player(name="Player 2", color="rouge")
     turn: Turn = Turn(p1, p2)
     player: Player = turn.current_player()
 

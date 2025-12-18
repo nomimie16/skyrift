@@ -28,11 +28,15 @@ class Dragon(Entity):
         self._index_img: int = 0
         self._moving: bool = False
         self._target_cell: Cell | None = None
-        self._sprite_sheet = pygame.image.load(sprite_path)
-        self._imageSprite = [self._sprite_sheet.subsurface(x * 64, 0, 64, 64) for x in range(4)]
         self._anim_counter = 0
         self._type: List[TypeEntitiesEnum] = [TypeEntitiesEnum.DRAGON]
         self._owner: Player = player
+
+        if self._owner:
+            self.sprite_path = sprite_path.replace("bleu", self._owner._color)
+
+        self._sprite_sheet = pygame.image.load(self._sprite_path)
+        self._imageSprite = [self._sprite_sheet.subsurface(x * 64, 0, 64, 64) for x in range(4)]
 
         self.path = []
 
@@ -244,7 +248,7 @@ class Dragonnet(Dragon):
         super().__init__(x, y, name="Dragonnet",
                          type_entity=[TypeEntitiesEnum.DRAGONNET, TypeEntitiesEnum.DRAGON, TypeEntitiesEnum.OBSTACLE],
                          max_hp=50, attack_range=1,
-                         sprite_path="assets/sprites/dragonnet/dragonnet_rouge_droite.png",
+                         sprite_path="assets/sprites/dragonnet/dragonnet_bleu_droite.png",
                          speed=6, attack_damage=10, cost=DRAGONNET_COST, player=player)
 
 class DragonMoyen(Dragon):
@@ -252,7 +256,7 @@ class DragonMoyen(Dragon):
         super().__init__(x, y, name="Dragon", type_entity=[TypeEntitiesEnum.DRAGON_MOYEN, TypeEntitiesEnum.DRAGON,
                                                            TypeEntitiesEnum.OBSTACLE],
                          max_hp=120, attack_range=2,
-                         sprite_path="assets/sprites/dragon_moyen/dragon_moyen_rouge_droite.png",
+                         sprite_path="assets/sprites/dragon_moyen/dragon_moyen_bleu_droite.png",
                          speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST, player=player)
 
 
