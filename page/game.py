@@ -82,7 +82,12 @@ def run_game(screen, ui):
         builder.volcano.draw(screen)
         builder.life_island.draw(screen)
 
-        purse_test.draw(screen)
+        # Dessine les bourses pour chaque cellule en parcourant la grille
+        for row in grid_comp.grid.cells:
+            for cell in row:
+                for occupant in cell.occupants:
+                    if TypeEntitiesEnum.PLAYER_EFFECT_ZONE in occupant.type_entity:
+                        occupant.draw(screen)
 
         # Events
         dragon_events.draw(screen)

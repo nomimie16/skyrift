@@ -45,6 +45,29 @@ class Dragon(Entity):
         self._actual_speed = self._speed_base
         self._speed_modifier = 0
 
+    def _check_purse_collection(self):
+        """
+        Vérifie si le dragon s'est arrêté sur une bourse, et la collecte si tel est le cas
+        """
+        if not self.cell or not self._owner:
+            return
+
+        # cherche si une bourse est présente dans la cellule
+        purse = None
+        for occupant in self.cell.occupants:
+            if TypeEntitiesEnum.PLAYER_EFFECT_ZONE in occupant.type_entity:
+                purse = occupant
+                break
+
+        if purse:
+            # Ajoute l'or au joueur propriétaire du dragon
+            amount = purse.amount
+            self._owner.economy.earn_gold(amount)
+            print(f"{self._owner.name} a collecté une bourse de {amount} gold ! Total : {self._owner.economy.get_gold()}")
+
+            # Supprime la bourse de la grille
+            self.cell.remove_occupant(purse)
+
     def move_dragon(self, target_x: int, target_y: int, grid: Grid):
         self._target_cell = grid.cells[target_y][target_x]
         self._moving = True
@@ -98,6 +121,8 @@ class Dragon(Entity):
                 self._moving = False
                 self._target_cell = None
                 self._index_img = 0
+                # Vérifier si le dragon s'est arrêté sur une bourse
+                self._check_purse_collection()
 
         self._anim_counter += 1
         if self._anim_counter >= 50:
