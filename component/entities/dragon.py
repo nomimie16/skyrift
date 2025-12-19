@@ -4,6 +4,7 @@ from typing import List
 import pygame
 
 import screen_const as sc
+from player import Player
 from component.entities.entity import Entity
 from component.enum.type_entities import TypeEntitiesEnum
 from component.grid import Cell, Grid
@@ -18,7 +19,7 @@ class Dragon(Entity):
                  attack_range: int, sprite_path: str,
                  speed: int,
                  attack_damage: int,
-                 cost: int):
+                 cost: int, player: Player):
         super().__init__(x_cell, y_cell, name, type_entity, max_hp, attack_damage, attack_range, sprite_path)
         self._speed_base: int = speed  # speed de base du dragon
         self._actual_speed: int = speed  # speed actuel du dragon
@@ -27,10 +28,15 @@ class Dragon(Entity):
         self._index_img: int = 0
         self._moving: bool = False
         self._target_cell: Cell | None = None
-        self._sprite_sheet = pygame.image.load(sprite_path)
-        self._imageSprite = [self._sprite_sheet.subsurface(x * 64, 0, 64, 64) for x in range(4)]
         self._anim_counter = 0
         self._type: List[TypeEntitiesEnum] = [TypeEntitiesEnum.DRAGON]
+        self._owner: Player = player
+
+        if self._owner:
+            self.sprite_path = sprite_path.replace("bleu", self._owner._color)
+
+        self._sprite_sheet = pygame.image.load(self._sprite_path)
+        self._imageSprite = [self._sprite_sheet.subsurface(x * 64, 0, 64, 64) for x in range(4)]
 
         self.path = []
 
@@ -47,6 +53,7 @@ class Dragon(Entity):
         self.path = find_path(grid, self.cell, self._target_cell)
         if self.path:
             print("Chemin trouvé :", self.path)
+            print("Proprietaire du dragon : ", self._owner.name)
         else:
             print("Pas de chemin possible")
 
@@ -237,38 +244,38 @@ class Dragon(Entity):
 
 
 class Dragonnet(Dragon):
-    def __init__(self, x: int, y: int):
+    def __init__(self, x: int, y: int, player: Player=None):
         super().__init__(x, y, name="Dragonnet",
                          type_entity=[TypeEntitiesEnum.DRAGONNET, TypeEntitiesEnum.DRAGON, TypeEntitiesEnum.OBSTACLE],
                          max_hp=50, attack_range=1,
-                         sprite_path="assets/sprites/dragonnet/dragonnet_rouge_droite.png",
-                         speed=6, attack_damage=10, cost=DRAGONNET_COST)
-
+                         sprite_path="assets/sprites/dragonnet/dragonnet_bleu_droite.png",
+                         speed=6, attack_damage=10, cost=DRAGONNET_COST, player=player)
 
 class DragonMoyen(Dragon):
-    def __init__(self, x: int, y: int):
+    def __init__(self, x: int, y: int, player: Player=None):
         super().__init__(x, y, name="Dragon", type_entity=[TypeEntitiesEnum.DRAGON_MOYEN, TypeEntitiesEnum.DRAGON,
                                                            TypeEntitiesEnum.OBSTACLE],
                          max_hp=120, attack_range=2,
-                         sprite_path="assets/sprites/dragon_moyen/dragon_moyen_rouge_droite.png",
-                         speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST)
+                         sprite_path="assets/sprites/dragon_moyen/dragon_moyen_bleu_droite.png",
+                         speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST, player=player)
 
 
 class DragonGeant(Dragon):
-    def __init__(self, x: int, y: int):
+    def __init__(self, x: int, y: int, player: Player=None):
         super().__init__(x, y, name="Dragon Géant",
                          type_entity=[TypeEntitiesEnum.DRAGON_GEANT, TypeEntitiesEnum.DRAGON,
                                       TypeEntitiesEnum.OBSTACLE], max_hp=250,
                          attack_range=3,
                          sprite_path="assets/sprites/dragon_geant/dragon_geant_bleu_droite.png",
-                         speed=2, attack_damage=40, cost=DRAGON_GEANT_COST)
+                         speed=2, attack_damage=40, cost=DRAGON_GEANT_COST, player=player)
 
 
 if __name__ == '__main__':
     # Création des dragons
-    d1 = Dragonnet(0, 0)
-    d2 = DragonMoyen(5, 10)
-    d3 = DragonGeant(12, 3)
+    player = Player()
+    d1 = Dragonnet(0, 0, player=player)
+    d2 = DragonMoyen(5, 10, player=player)
+    d3 = DragonGeant(12, 3, player=player)
 
     print("=== TEST DRAGONS ===")
     print(f"Dragonnet -> Pos: {d1.position}, HP: {d1.hp}, Speed: {d1.speed}, Cost: {d1.cost}, Sprite: {d1.sprite_path}")

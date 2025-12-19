@@ -2,6 +2,7 @@ from typing import List
 
 import pygame
 
+from player import Player
 from component.entities.dragon import Dragon
 from component.entities.entity import Entity
 from component.entities.static_entity import StaticEntity
@@ -117,18 +118,20 @@ class DragonEvents:
                 if 0 < dist <= max_attack_range:
                     cell = self.grid.cells[y][x]
                     for occupant in cell.occupants:
-                        if TypeEntitiesEnum.DRAGON in occupant.type_entity:
+                        if TypeEntitiesEnum.DRAGON in occupant.type_entity and occupant._owner != dragon._owner:
                             possible_cells.append(cell)
 
         return possible_cells
 
-    def handle_click(self, mouse_pos: Position, occupant: Entity | StaticEntity | None = None):
+    def handle_click(self, mouse_pos: Position, occupant: Entity | StaticEntity | None = None, player: Player=None, turn=None):
         """
         Gère le clic sur la grille :
         - sélection d'un dragon
         - déplacement si dragon sélectionné
         @param mouse_pos: Position (x,y) du clic souris en pixels
         @param occupant: occupant de la case cliquée (s'il y en a un)
+        @param player: joueur effectuant l'action
+        @param turn: instance de Turn pour vérifier les restrictions d'actions
         @return: None
         """
         cell = Cell.get_cell_by_pixel(self.grid, mouse_pos)
@@ -141,6 +144,13 @@ class DragonEvents:
 
             # Déplacement
             if cell in self.move_cells:
+                if turn and not turn.can_move():
+                    print("Vous avez déjà déplacé un dragon ce tour !")
+                    self.selected_dragon = None
+                    self.move_cells = []
+                    self.attack_cells = []
+                    return
+
                 current_cell = self.grid.cells[self.selected_dragon.cell.position.y][
                     self.selected_dragon.cell.position.x]
 
@@ -148,14 +158,30 @@ class DragonEvents:
                 self.grid.add_occupant(self.selected_dragon, cell)
                 self.selected_dragon.move_dragon(cell.position.x, cell.position.y, self.grid)
 
+                if turn:
+                    turn.use_move()
+                    print(f"Dragon déplacé ({turn.moves_used}/{turn.moves_used + (1 if turn.can_move() else 0)} déplacements utilisés)")
+
             # Attaque
             if cell in self.attack_cells:
+                if turn and not turn.can_attack():
+                    print("Vous avez déjà attaqué ce tour !")
+                    self.selected_dragon = None
+                    self.move_cells = []
+                    self.attack_cells = []
+                    return
+
                 for occupant in cell.occupants:
-                    if TypeEntitiesEnum.DRAGON in occupant.type_entity and isinstance(occupant, Dragon):
+                    if TypeEntitiesEnum.DRAGON in occupant.type_entity and isinstance(occupant, Dragon) and occupant._owner != player:
                         print("hp avant attaque:", occupant.hp)
                         self.selected_dragon.attack(occupant)
                         print("hp après attaque:", occupant.hp)
                         attacked = True
+
+                        if turn:
+                            turn.use_attack()
+                            print(f"Attaque effectuée ({turn.attacks_used}/{turn.attacks_used + (1 if turn.can_attack() else 0)} attaques utilisées)")
+
             self.selected_dragon = None
 
             if attacked:
@@ -168,9 +194,27 @@ class DragonEvents:
         # Clique sur un dragon
         if occupant and TypeEntitiesEnum.DRAGON in occupant.type_entity:
             if isinstance(occupant, Dragon):
+                # Vérifier que le dragon appartient au joueur actuel
+                if player is not None and occupant._owner != player:
+                    print("Ce dragon n'appartient pas à votre joueur !")
+                    return
                 self.selected_dragon = occupant
-                self.move_cells = self.compute_move_cells(self.selected_dragon)
-                self.attack_cells = self.compute_attack_cells(self.selected_dragon)
+
+                # One ne montre les cellules que si le joueur peut encore bouger
+                if turn and turn.can_move():
+                    self.move_cells = self.compute_move_cells(self.selected_dragon)
+                else:
+                    self.move_cells = []
+                    if turn and not turn.can_move():
+                        print("Vous avez déjà déplacé un dragon ce tour !")
+
+                # De même que pour le mouvement, on ne montre les cellules d'attaque que si le joueur peut encore attaquer
+                if turn and turn.can_attack():
+                    self.attack_cells = self.compute_attack_cells(self.selected_dragon)
+                else:
+                    self.attack_cells = []
+                    if turn and not turn.can_attack():
+                        print("Vous avez déjà attaqué ce tour !")
             return
 
     def draw(self, surface):
