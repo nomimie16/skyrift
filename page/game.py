@@ -4,7 +4,7 @@ import screen_const as sc
 from component.entities.dragon import Dragonnet, DragonGeant
 from component.entities.purse import spawn_random_purse
 from component.enum.type_entities import TypeEntitiesEnum
-from const import SPAWN_POS
+from const import SPAWN_POS_P1, SPAWN_POS_P2
 from economy import Economy
 from player import Player
 from turn import Turn
@@ -112,17 +112,28 @@ def run_game(screen, ui):
                 for button in buy_buttons:
                     if button["rect"].collidepoint(event.pos):
                         if button["can_afford"]:
-                            if grid_comp.grid.cells[SPAWN_POS[1]][SPAWN_POS[0]].occupants == []:
+                            # La position de spawn dépend du joueur actuel
+                            if turn.current_player() == p1:
+                                spawn_pos = SPAWN_POS_P1
+                            else:
+                                spawn_pos = SPAWN_POS_P2
+
+                            if grid_comp.grid.cells[spawn_pos[1]][spawn_pos[0]].occupants == []:
                                 player.economy.spend_gold(button["cost"])
                                 remaining_gold = player.economy.get_gold()
 
                                 # Créer une instance du dragon aux coordonnées (0, 0)
                                 dragon_class = button["dragon"].__class__
-                                new_dragon = dragon_class(SPAWN_POS[0], SPAWN_POS[1], player=turn.current_player())
+                                new_dragon = dragon_class(spawn_pos[0], spawn_pos[1], player=turn.current_player())
+
+                                # Si le dragon est a p2, sa base est en bas a droite -> il doit donc être orienté vers la gauche
+                                if turn.current_player() == p2:
+                                    new_dragon.update_direction("gauche")
+
                                 dragons.append(new_dragon)
 
                                 # ajoute le dragon a la grille
-                                cell = grid_comp.grid.cells[SPAWN_POS[1]][SPAWN_POS[0]]
+                                cell = grid_comp.grid.cells[spawn_pos[1]][spawn_pos[0]]
                                 grid_comp.grid.add_occupant(new_dragon, cell)
 
                                 # logs
