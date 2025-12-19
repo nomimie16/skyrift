@@ -9,7 +9,8 @@ from component.position import Position
 
 
 class StaticEntity:
-    def __init__(self, x_cell: int, y_cell: int, name: str, type_entity: List[TypeEntitiesEnum], sprite_path: str,
+    def __init__(self, x_cell: int, y_cell: int, name: str, type_entity: List[TypeEntitiesEnum],
+                 sprite_path: str | None,
                  width: int,
                  height: int):
         self._cell = Cell(x_cell, y_cell)
@@ -17,7 +18,8 @@ class StaticEntity:
         self._name = name
         self._type_entity: List[TypeEntitiesEnum] = type_entity
         self._sprite_path = sprite_path
-        self._sprite = pygame.image.load(sprite_path).convert_alpha()
+        if sprite_path:
+            self._sprite = pygame.image.load(sprite_path).convert_alpha()
         self._width = width
         self._height = height
 

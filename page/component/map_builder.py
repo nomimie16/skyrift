@@ -4,7 +4,7 @@ from typing import List
 from component.entities.base import Base
 from component.entities.island_of_life import IslandOfLife
 from component.entities.tornado import Tornado
-from component.entities.volcano import Volcano
+from component.entities.volcano.volcano import Volcano
 from component.grid import Cell
 from component.position import Position
 
@@ -60,11 +60,23 @@ class MapBuilder:
         chosen_cell: Cell = random.choice(possible_cells)
 
         self.volcano = Volcano(chosen_cell.position.x, chosen_cell.position.y)
+
+        obstacle_cell = self.grid.cells[
+            chosen_cell.position.y + 3
+            ][chosen_cell.position.x]
+
         self.grid.add_static_occupants(
-            self.volcano,
+            self.volcano.obstacle,
+            obstacle_cell,
+            self.volcano.obstacle.width,
+            self.volcano.obstacle.height
+        )
+
+        self.grid.add_static_occupants(
+            self.volcano.effect_zone,
             chosen_cell,
-            self.volcano.width,
-            self.volcano.height
+            self.volcano.effect_zone.width,
+            self.volcano.effect_zone.height
         )
 
     def spawn_random_island_of_life(self):

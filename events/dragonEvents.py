@@ -11,7 +11,6 @@ from component.grid import Grid, Cell
 from component.position import Position
 
 
-# TODO logique d'attaque à implémenter
 class DragonEvents:
     """
     Gère la sélection, les déplacements et les zones d'action des dragons
