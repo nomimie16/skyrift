@@ -3,6 +3,10 @@ from component.enum.type_entities import TypeEntitiesEnum
 
 
 class Tower(Entity):
+    """
+    Tour de défense
+    """
+
     def __init__(self, x: int, y: int):
         super().__init__(x, y, name="Tour de défense", type_entity=[TypeEntitiesEnum.TOWER, TypeEntitiesEnum.OBSTACLE],
                          max_hp=300,

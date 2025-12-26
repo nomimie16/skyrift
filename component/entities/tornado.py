@@ -12,6 +12,10 @@ from component.position import Position
 
 
 class Tornado(ZoneEntity):
+    """
+    Tornade qui se déplace aléatoirement sur la grille
+    """
+
     def __init__(self, x_cell: int, y_cell: int, width: int = 1, height: int = 1):
         super().__init__(x_cell, y_cell, sprite_path="assets/sprites/dragonnet.png", width=width, height=height,
                          type_entity=[TypeEntitiesEnum.EFFECT_ZONE, TypeEntitiesEnum.BAD_EFFECT_ZONE,
@@ -32,9 +36,10 @@ class Tornado(ZoneEntity):
     #     self.duration -= 1
     #     # return self.duration > 0
 
-    def move_tornado(self, grid: Grid):
+    def move_tornado(self, grid: Grid) -> None:
         """
         Mouvement du dragon
+        :param grid: Grille sur laquelle la tornade se déplace
         :return: None
         """
         possible_cells = grid.get_adjacent_free_cells(self._cell)
@@ -43,7 +48,12 @@ class Tornado(ZoneEntity):
             self._target_cell = possible_cells[randint(0, len(possible_cells) - 1)]
             self._moving = True
 
-    def update(self, grid: Grid):
+    def update(self, grid: Grid) -> Grid | None:
+        """
+        Mise à jour de la position de la tornade
+        :param grid: Grille sur laquelle la tornade se déplace
+        :return: Grille mise à jour ou None
+        """
         if not self._moving or not self._target_cell:
             return
 
@@ -77,10 +87,11 @@ class Tornado(ZoneEntity):
             self._index_img = 0
         return grid
 
-    def draw(self, surface):
+    def draw(self, surface) -> None:
         """
         Affichage de la tornade
-        @:param surface: Surface sur laquelle la tornade se déplace
+        :param surface: Surface sur laquelle la tornade se déplace
+        :return: None
         """
 
         surface.blit(
@@ -93,9 +104,9 @@ class Tornado(ZoneEntity):
 
     # ------- Getters et Setters -------
     @property
-    def duration(self):
+    def duration(self) -> int:
         return self._duration
 
     @duration.setter
-    def duration(self, value: int):
+    def duration(self, value: int) -> None:
         self._duration = value

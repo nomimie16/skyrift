@@ -1,18 +1,17 @@
 class Position:
 
     def __init__(self, x: int, y: int):
-        """x et y sont les coordonnées sr la grille"""
+        """x et y sont les coordonnées sr la grille
+        """
         self._x: int = x
         self._y: int = y
 
     def move(self, x: int, y: int) -> None:
         """
         Déplace la position actuelle de la position
-        Args:
-            x (int): Décalage horizontal à ajouter à la coordonnée x
-            y (int): Décalage vertical à ajouter à la coordonnée y
-        Returns:
-            None: Met à jour l'objet Position directement
+        :param x: Déplacement en x
+        :param y: Déplacement en y
+        :return: None
         """
         self.x += x
         self.y += y

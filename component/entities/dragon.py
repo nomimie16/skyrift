@@ -63,7 +63,8 @@ class Dragon(Entity):
             # Ajoute l'or au joueur propriétaire du dragon
             amount = purse.amount
             self._owner.economy.earn_gold(amount)
-            print(f"{self._owner.name} a collecté une bourse de {amount} gold ! Total : {self._owner.economy.get_gold()}")
+            print(
+                f"{self._owner.name} a collecté une bourse de {amount} gold ! Total : {self._owner.economy.get_gold()}")
 
             # Supprime la bourse de la grille
             self.cell.remove_occupant(purse)
@@ -166,13 +167,15 @@ class Dragon(Entity):
             )
         )
 
+        self.draw_health_bar(surface)
+
     # ------- Getters et Setters -------
     @property
     def speed_base(self) -> int:
         return self._speed_base
 
     @speed_base.setter
-    def speed_base(self, value: int):
+    def speed_base(self, value: int) -> None:
         self._speed_base = value
 
     @property
@@ -180,7 +183,7 @@ class Dragon(Entity):
         return self._actual_speed
 
     @actual_speed.setter
-    def actual_speed(self, value: int):
+    def actual_speed(self, value: int) -> None:
         self._actual_speed = value
 
     @property
@@ -188,7 +191,7 @@ class Dragon(Entity):
         return self._speed_modifier
 
     @speed_modifier.setter
-    def speed_modifier(self, value: int):
+    def speed_modifier(self, value: int) -> None:
         self._speed_modifier = value
 
     @property
@@ -196,7 +199,7 @@ class Dragon(Entity):
         return self._attack_damage
 
     @attack_damage.setter
-    def attack_damage(self, value: int):
+    def attack_damage(self, value: int) -> None:
         self._attack_damage = value
 
     @property
@@ -204,7 +207,7 @@ class Dragon(Entity):
         return self._attack_range
 
     @attack_range.setter
-    def attack_range(self, value: int):
+    def attack_range(self, value: int) -> None:
         self._attack_range = value
 
     @property
@@ -212,7 +215,7 @@ class Dragon(Entity):
         return self._cost
 
     @cost.setter
-    def cost(self, value: int):
+    def cost(self, value: int) -> None:
         self._cost = value
 
     @property
@@ -220,7 +223,7 @@ class Dragon(Entity):
         return self._movement_points
 
     @movement_points.setter
-    def movement_points(self, value: int):
+    def movement_points(self, value: int) -> None:
         self._movement_points = value
 
     @property
@@ -228,7 +231,7 @@ class Dragon(Entity):
         return self._moving
 
     @moving.setter
-    def moving(self, value: bool):
+    def moving(self, value: bool) -> None:
         self._moving = value
 
     @property
@@ -236,7 +239,7 @@ class Dragon(Entity):
         return self._target_place
 
     @target_place.setter
-    def target_place(self, value: Position | None):
+    def target_place(self, value: Position | None) -> None:
         self._target_place = value
 
     @property
@@ -244,7 +247,7 @@ class Dragon(Entity):
         return self._index_img
 
     @index_img.setter
-    def index_img(self, value: int):
+    def index_img(self, value: int) -> None:
         self._index_img = value
 
     @property
@@ -252,7 +255,7 @@ class Dragon(Entity):
         return self._imageSprite
 
     @image_sprite.setter
-    def image_sprite(self, value: list):
+    def image_sprite(self, value: list) -> None:
         self._imageSprite = value
 
     def __str__(self):
@@ -269,6 +272,8 @@ class Dragon(Entity):
 
 
 class Dragonnet(Dragon):
+    """Classe représentant un dragonnet."""
+
     def __init__(self, x: int, y: int, player: Player = None):
         super().__init__(x, y, name="Dragonnet",
                          type_entity=[TypeEntitiesEnum.DRAGONNET, TypeEntitiesEnum.DRAGON, TypeEntitiesEnum.OBSTACLE],
@@ -276,10 +281,11 @@ class Dragonnet(Dragon):
                          sprite_path="assets/sprites/dragonnet/dragonnet_bleu_droite.png",
                          speed=6, attack_damage=10, cost=DRAGONNET_COST, player=player)
 
-    def draw(self, surface):
+    def draw(self, surface) -> None:
         """
         Affichage du dragonnet
         :param surface: Surface sur laquelle le dragonnet est placé
+        :return: None
         """
         sprite = self._imageSprite[self._index_img]
 
@@ -292,9 +298,12 @@ class Dragonnet(Dragon):
         y = self._pixel_pos.y + (sc.TILE_SIZE - scaled_height) // 2
 
         surface.blit(scaled_sprite, (x, y))
+        self.draw_health_bar(surface)
 
 
 class DragonMoyen(Dragon):
+    """Classe représentant un dragon moyen."""
+
     def __init__(self, x: int, y: int, player: Player = None):
         super().__init__(x, y, name="Dragon", type_entity=[TypeEntitiesEnum.DRAGON_MOYEN, TypeEntitiesEnum.DRAGON,
                                                            TypeEntitiesEnum.OBSTACLE],
@@ -302,10 +311,11 @@ class DragonMoyen(Dragon):
                          sprite_path="assets/sprites/dragon_moyen/dragon_moyen_bleu_droite.png",
                          speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST, player=player)
 
-    def draw(self, surface):
+    def draw(self, surface) -> None:
         """
         Affichage du dragon moyen
         :param surface: Surface sur laquelle le dragon est placé
+        :return: None
         """
         sprite = self._imageSprite[self._index_img]
 
@@ -318,9 +328,12 @@ class DragonMoyen(Dragon):
         y = self._pixel_pos.y + (sc.TILE_SIZE - scaled_height) // 2
 
         surface.blit(scaled_sprite, (x, y))
+        self.draw_health_bar(surface)
 
 
 class DragonGeant(Dragon):
+    """Classe représentant un dragon géant."""
+
     def __init__(self, x: int, y: int, player: Player = None):
         super().__init__(x, y, name="Dragon Géant",
                          type_entity=[TypeEntitiesEnum.DRAGON_GEANT, TypeEntitiesEnum.DRAGON,

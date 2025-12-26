@@ -9,6 +9,8 @@ from component.position import Position
 
 
 class StaticEntity:
+    """Classe de base pour les entités statiques (bâtiments, obstacles, zones d'effet, etc.)"""
+
     def __init__(self, x_cell: int, y_cell: int, name: str, type_entity: List[TypeEntitiesEnum],
                  sprite_path: str | None,
                  width: int,
@@ -23,7 +25,12 @@ class StaticEntity:
         self._width = width
         self._height = height
 
-    def draw(self, surface):
+    def draw(self, surface) -> None:
+        """
+        Dessine l'entité statique à l'écran
+        :param surface: Surface sur laquelle dessiner l'entité
+        :return:
+        """
         scaled = pygame.transform.scale(
             self._sprite,
             (self.width * sc.TILE_SIZE, self.height * sc.TILE_SIZE)
@@ -31,7 +38,11 @@ class StaticEntity:
         surface.blit(scaled, (self._pixel_pos.x, self._pixel_pos.y))
 
     @property
-    def rect(self):
+    def rect(self) -> pygame.Rect:
+        """
+        Retourne le rectangle englobant de l'entité statique
+        :return:
+        """
         return pygame.Rect(self._position.x, self._position.y, self._width, self._height)
 
     # ------- Getters et Setters -------
@@ -41,7 +52,7 @@ class StaticEntity:
         return self._cell
 
     @cell.setter
-    def cell(self, value: Cell):
+    def cell(self, value: Cell) -> None:
         self._cell = value
 
     @property
@@ -49,15 +60,15 @@ class StaticEntity:
         return self._pixel_pos
 
     @cell.setter
-    def cell(self, value: Position):
+    def cell(self, value: Position) -> None:
         self._pixel_pos = value
 
     @property
-    def name(self):
+    def name(self) -> str:
         return self._name
 
     @name.setter
-    def name(self, name):
+    def name(self, name) -> None:
         self._name = name
 
     @property
@@ -65,33 +76,33 @@ class StaticEntity:
         return self._type_entity
 
     @type_entity.setter
-    def type_entity(self, value: List[TypeEntitiesEnum]):
+    def type_entity(self, value: List[TypeEntitiesEnum]) -> None:
         self._type_entity = value
 
     @property
-    def sprite_path(self):
+    def sprite_path(self) -> str:
         return self._sprite_path
 
     @sprite_path.setter
-    def sprite_path(self, sprite_path):
+    def sprite_path(self, sprite_path) -> None:
         self._sprite_path = sprite_path
 
     @property
-    def sprite(self):
+    def sprite(self) -> pygame.Surface:
         return self._sprite
 
     @property
-    def width(self):
+    def width(self) -> int:
         return self._width
 
     @width.setter
-    def width(self, width):
+    def width(self, width) -> None:
         self._width = width
 
     @property
-    def height(self):
+    def height(self) -> int:
         return self._height
 
     @height.setter
-    def height(self, height):
+    def height(self, height) -> None:
         self._height = height
