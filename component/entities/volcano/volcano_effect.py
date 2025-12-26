@@ -7,7 +7,7 @@ class VolcanoEffect(EffectZone):
     Effet de volcan : brûle et ralentit le dragon.
     """
 
-    def __init__(self, damage: int = 2, speed_penalty: int = -1):
+    def __init__(self, damage: int = 5, speed_penalty: int = -1):
         self.damage = damage
         self.speed_penalty = speed_penalty
 

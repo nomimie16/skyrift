@@ -4,13 +4,13 @@ from typing import List
 import pygame
 
 import screen_const as sc
-from player import Player
 from component.entities.entity import Entity
 from component.enum.type_entities import TypeEntitiesEnum
 from component.grid import Cell, Grid
 from component.path_finding import find_path
 from component.position import Position
 from const import DRAGONNET_COST, DRAGON_MOYEN_COST, DRAGON_GEANT_COST
+from player import Player
 
 
 class Dragon(Entity):
@@ -269,7 +269,7 @@ class Dragon(Entity):
 
 
 class Dragonnet(Dragon):
-    def __init__(self, x: int, y: int, player: Player=None):
+    def __init__(self, x: int, y: int, player: Player = None):
         super().__init__(x, y, name="Dragonnet",
                          type_entity=[TypeEntitiesEnum.DRAGONNET, TypeEntitiesEnum.DRAGON, TypeEntitiesEnum.OBSTACLE],
                          max_hp=50, attack_range=1,
@@ -293,8 +293,9 @@ class Dragonnet(Dragon):
 
         surface.blit(scaled_sprite, (x, y))
 
+
 class DragonMoyen(Dragon):
-    def __init__(self, x: int, y: int, player: Player=None):
+    def __init__(self, x: int, y: int, player: Player = None):
         super().__init__(x, y, name="Dragon", type_entity=[TypeEntitiesEnum.DRAGON_MOYEN, TypeEntitiesEnum.DRAGON,
                                                            TypeEntitiesEnum.OBSTACLE],
                          max_hp=120, attack_range=2,
@@ -320,7 +321,7 @@ class DragonMoyen(Dragon):
 
 
 class DragonGeant(Dragon):
-    def __init__(self, x: int, y: int, player: Player=None):
+    def __init__(self, x: int, y: int, player: Player = None):
         super().__init__(x, y, name="Dragon Géant",
                          type_entity=[TypeEntitiesEnum.DRAGON_GEANT, TypeEntitiesEnum.DRAGON,
                                       TypeEntitiesEnum.OBSTACLE], max_hp=250,

@@ -1,17 +1,15 @@
 import pygame
 
 import screen_const as sc
-from component.entities.dragon import Dragonnet, DragonGeant
 from component.entities.purse import spawn_random_purse
 from component.enum.type_entities import TypeEntitiesEnum
 from const import SPAWN_POS_P1, SPAWN_POS_P2
-from economy import Economy
-from player import Player
-from turn import Turn
 from events.dragonEvents import DragonEvents
 from page.component.grid_component import GridComponent
 from page.component.map_builder import MapBuilder
 from page.sidepanels import draw_sidepanels
+from player import Player
+from turn import Turn
 
 
 def run_game(screen, ui):
@@ -47,13 +45,6 @@ def run_game(screen, ui):
     dragon_events = DragonEvents(grid_comp.grid, origin=(sc.OFFSET_X, sc.OFFSET_Y), tile_size=sc.TILE_SIZE)
 
     dragons = []
-    dragonnet_test = Dragonnet(0, 0, player=p1)
-    grid_comp.grid.add_occupant(dragonnet_test, dragonnet_test.cell)
-    x, y = 0, 1
-    dragon_geant_test = DragonGeant(0, 1, player=p2)
-    grid_comp.grid.add_occupant(dragon_geant_test, dragon_geant_test.cell)
-    dragons.append(dragon_geant_test)
-    dragons.append(dragonnet_test)
 
     purse_test = spawn_random_purse(grid_comp.grid)
     print(grid_comp.grid)
@@ -101,6 +92,12 @@ def run_game(screen, ui):
                 if next_turn_button_rect.collidepoint(event.pos):
                     print("tour de ", turn.current_player().name, "terminé")
                     turn.next()
+
+                    # Appliquer ou retirer les effets des zones sur les dragons
+                    for row in grid_comp.grid.cells:
+                        for cell in row:
+                            cell.apply_zone_effects_end_turn()
+
                     player = turn.current_player()
                     print("tour de ", turn.current_player().name, "commencé")
                     continue
@@ -171,10 +168,6 @@ def run_game(screen, ui):
                     else:
                         dragon_events.handle_click(event.pos, None, turn.current_player(), turn)
         # ======================================================================================
-        # Appliquer les effets des zones sur les dragons
-        for row in grid_comp.grid.cells:
-            for cell in row:
-                cell.apply_effects()
 
         # Supprimer les dragons morts de la grille
         for row in grid_comp.grid.cells:

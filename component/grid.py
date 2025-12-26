@@ -25,19 +25,25 @@ class Cell:
                 print("Removing occupant:", occupant.name)
                 self._occupants.remove(occupant)
 
-    def apply_effects(self):
+    def apply_zone_effects_end_turn(self) -> None:
+        """
+        Applique les effets de zone aux dragons présents dans la cellule en fin de tour
+        :return None
+        """
         dragons = []
         zones = []
 
         for occ in self.occupants:
             if TypeEntitiesEnum.DRAGON in occ.type_entity:
                 dragons.append(occ)
-            if TypeEntitiesEnum.GOOD_EFFECT_ZONE in occ.type_entity or TypeEntitiesEnum.BAD_EFFECT_ZONE in occ.type_entity:
+            if (TypeEntitiesEnum.GOOD_EFFECT_ZONE in occ.type_entity or
+                    TypeEntitiesEnum.BAD_EFFECT_ZONE in occ.type_entity):
                 zones.append(occ)
 
-        for z in zones:
-            for d in dragons:
-                z.effect.apply_effect(d)
+        for dragon in dragons:
+            dragon.reset_speed()
+            for zone in zones:
+                zone.effect.apply_effect(dragon)
 
     def get_pixel_position(self):
         """Retourne la position en pixel de la cellule"""

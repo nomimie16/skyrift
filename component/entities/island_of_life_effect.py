@@ -7,9 +7,9 @@ class IslandOfLifeEffect(EffectZone):
     Effet de volcan : brûle et ralentit le dragon.
     """
 
-    def __init__(self, hp: int = 2):
+    def __init__(self, hp: int = 7):
         self.hp = hp
 
     def apply_effect(self, entity: Entity):
-        entity.hp += 2
+        entity.hp += self.hp
         print(("entity hp after island of life effect:", entity.hp))
