@@ -2,6 +2,7 @@ from typing import List
 
 import pygame
 
+import screen_const as sc
 from component.enum.type_entities import TypeEntitiesEnum
 from component.grid import Cell
 from component.position import Position
@@ -27,6 +28,43 @@ class Entity:
         @:param surface: Surface sur laquelle l'entité est placée
         """
         surface.blit(self._sprite, self._cell.get_pixel_position().to_tuple())
+
+    def draw_health_bar(self, surface):
+        """
+        Dessine la barre de vie de l'entité
+        @:param surface: Surface sur laquelle dessiner la barre de vie
+        """
+        if self._hp <= 0:
+            return
+
+        BAR_WIDTH = sc.TILE_SIZE
+        BAR_HEIGHT = 6
+        OFFSET_Y = -10
+
+        x = self._pixel_pos.x
+        y = self._pixel_pos.y + OFFSET_Y
+
+        hp_ratio = self._hp / self._max_hp
+        current_width = int(BAR_WIDTH * hp_ratio)
+
+        if hp_ratio > 0.6:
+            color = (0, 200, 0)  # Vert
+        elif hp_ratio > 0.3:
+            color = (255, 165, 0)  # Orange
+        else:
+            color = (200, 0, 0)  # Rouge
+
+        pygame.draw.rect(
+            surface,
+            (0, 0, 0),
+            (x, y, BAR_WIDTH, BAR_HEIGHT)
+        )
+
+        pygame.draw.rect(
+            surface,
+            color,
+            (x, y, current_width, BAR_HEIGHT)
+        )
 
     def take_damage(self, amount):
         """

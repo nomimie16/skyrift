@@ -63,7 +63,8 @@ class Dragon(Entity):
             # Ajoute l'or au joueur propriétaire du dragon
             amount = purse.amount
             self._owner.economy.earn_gold(amount)
-            print(f"{self._owner.name} a collecté une bourse de {amount} gold ! Total : {self._owner.economy.get_gold()}")
+            print(
+                f"{self._owner.name} a collecté une bourse de {amount} gold ! Total : {self._owner.economy.get_gold()}")
 
             # Supprime la bourse de la grille
             self.cell.remove_occupant(purse)
@@ -165,6 +166,7 @@ class Dragon(Entity):
                 int(self._pixel_pos.y + (sc.TILE_SIZE - self._imageSprite[self._index_img].get_height()) / 2)
             )
         )
+        self.draw_health_bar(surface)
 
     # ------- Getters et Setters -------
     @property
@@ -292,6 +294,7 @@ class Dragonnet(Dragon):
         y = self._pixel_pos.y + (sc.TILE_SIZE - scaled_height) // 2
 
         surface.blit(scaled_sprite, (x, y))
+        self.draw_health_bar(surface)
 
 
 class DragonMoyen(Dragon):
@@ -318,6 +321,7 @@ class DragonMoyen(Dragon):
         y = self._pixel_pos.y + (sc.TILE_SIZE - scaled_height) // 2
 
         surface.blit(scaled_sprite, (x, y))
+        self.draw_health_bar(surface)
 
 
 class DragonGeant(Dragon):
