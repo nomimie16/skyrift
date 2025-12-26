@@ -13,7 +13,12 @@ class Base(Entity):
         self.width = 4
         self.height = 4
 
-    def draw(self, surface):
+    def draw(self, surface) -> None:
+        """
+        Dessine la base à l'écran
+        :param surface: Surface sur laquelle dessiner la base
+        :return: None
+        """
         pixel_x = (self.position.x - (self.width - 1)) * sc.TILE_SIZE + sc.OFFSET_X
         pixel_y = (self.position.y - (self.height - 1)) * sc.TILE_SIZE + sc.OFFSET_Y
 

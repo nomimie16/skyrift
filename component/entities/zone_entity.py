@@ -17,5 +17,9 @@ class ZoneEntity(StaticEntity):
         self._zone_effect = zone_effect
 
     @property
-    def effect(self):
+    def effect(self) -> EffectZone:
+        """
+        Retourne l'effet de zone associé à cette entité.
+        :return: EffectZone
+        """
         return self._zone_effect

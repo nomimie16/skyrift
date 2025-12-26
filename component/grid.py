@@ -6,23 +6,24 @@ from component.position import Position
 
 
 class Cell:
-    """Definition of a grid cell"""
+    """ Cellule de la grille """
 
     def __init__(self, x, y):
         self._position = Position(x, y)
         self._occupants: List = []
 
-    def remove_occupant(self, occupant=None):
+    def remove_occupant(self, occupant=None) -> None:
         """
         Supprime :
         - soit un occupant précis
         - soit tous les occupants si occupant == None
+        :param occupant: occupant à supprimer ou None pour tout supprimer
+        :return: None
         """
         if occupant is None:
             self._occupants.clear()
         else:
             if occupant in self._occupants:
-                print("Removing occupant:", occupant.name)
                 self._occupants.remove(occupant)
 
     def apply_zone_effects_end_turn(self) -> None:
@@ -45,14 +46,21 @@ class Cell:
             for zone in zones:
                 zone.effect.apply_effect(dragon)
 
-    def get_pixel_position(self):
-        """Retourne la position en pixel de la cellule"""
+    def get_pixel_position(self) -> Position:
+        """Retourne la position en pixel de la cellule
+        :return: Position en pixel
+        """
         pixel_x = self.position.x * sc.TILE_SIZE + sc.OFFSET_X
         pixel_y = self.position.y * sc.TILE_SIZE + sc.OFFSET_Y
         return Position(pixel_x, pixel_y)
 
     @staticmethod
-    def get_cell_by_pixel(grid: 'Grid', pixel_pos):
+    def get_cell_by_pixel(grid: 'Grid', pixel_pos) -> 'Cell | None':
+        """Retourne la cellule correspondant à une position en pixel
+        :param grid: Grille de jeu
+        :param pixel_pos: Position en pixel (x, y)
+        :return: Cellule correspondante ou None si hors grille
+        """
         px, py = pixel_pos
         col = (px - sc.OFFSET_X) // sc.TILE_SIZE
         row = (py - sc.OFFSET_Y) // sc.TILE_SIZE
@@ -93,15 +101,21 @@ class Cell:
 
 
 class Grid:
-    """Game board grid"""
+    """Grille de jeu"""
 
     def __init__(self, nb_columns: int = sc.COLS, nb_rows: int = sc.ROWS):
         self.nb_columns = nb_columns
         self.nb_rows = nb_rows
         self.cells = [[Cell(x, y) for x in range(nb_columns)] for y in range(nb_rows)]
 
-    def add_static_occupants(self, occupant, cell: Cell, width: int, height: int):
-        """Place un occupant statique sur la grille"""
+    def add_static_occupants(self, occupant, cell: Cell, width: int, height: int) -> bool:
+        """Place un occupant statique sur la grille
+        :param occupant: occupant à placer
+        :param cell: cellule de départ
+        :param width: largeur en cellules
+        :param height: hauteur en cellules
+        :return: True si placement réussi, False sinon
+        """
         x0, y0 = cell.position.x, cell.position.y
 
         for y in range(y0, y0 + height):
@@ -116,12 +130,17 @@ class Grid:
 
         return True
 
-    def add_occupant(self, occupant, cell: Cell):
-        """Place an occupant (e.g., a dragon) on the grid"""
+    def add_occupant(self, occupant, cell: Cell) -> bool:
+        """
+        Place un occupant sur la grille
+        :param occupant: occupant à placer
+        :param cell: cellule où placer l'occupant
+        :return: True si placement réussi, False sinon
+        """
+
         x = cell.position.x
         y = cell.position.y
         if not (0 <= x < self.nb_columns) or not (0 <= y < self.nb_rows):
-            print(f"Position ({x}, {y}) is out of grid")
             return False
         cell = self.cells[y][x]
         if len(cell.occupants) > 0:
@@ -129,12 +148,14 @@ class Grid:
             occupant.cell = cell
         else:
             cell.occupants.append(occupant)
-            print("Occupant placed at", cell.occupants)
-            print(f"Cell ({x}, {y}) is already occupied")
+
         return True
 
-    def free_cells(self):
-        """Récupère toutes les cases libres"""
+    def free_cells(self) -> List[Cell]:
+        """
+        Récupère toutes les cases libres
+        :return: Liste des cellules libres
+        """
         free_cells = []
         for y in range(self.nb_rows):
             for x in range(self.nb_columns):
@@ -143,7 +164,12 @@ class Grid:
                     free_cells.append(current_cell)
         return free_cells
 
-    def distance(self, occupant1, occupant2):
+    def distance(self, occupant1, occupant2) -> int:
+        """Calcule la distance de Manhattan entre deux occupants
+        :param occupant1: Premier occupant
+        :param occupant2: Second occupant
+        :return: Distance de Manhattan
+        """
         x1, y1 = occupant1.position.x, occupant1.position.y
         x2, y2 = occupant2.position.x, occupant2.position.y
 

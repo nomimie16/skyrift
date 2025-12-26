@@ -9,6 +9,8 @@ from component.position import Position
 
 
 class Entity:
+    """Classe de base pour toutes les entités du jeu"""
+
     def __init__(self, x: int, y: int, name: str, type_entity: List[TypeEntitiesEnum], max_hp: int, attack_damage: int,
                  attack_range: int, sprite_path: str):
         self._cell: Cell = Cell(x, y)
@@ -22,17 +24,19 @@ class Entity:
         self._sprite_path: str = sprite_path
         self._sprite = pygame.image.load(sprite_path).convert_alpha()
 
-    def draw(self, surface):
+    def draw(self, surface) -> None:
         """
         Affichage d'une entité
-        @:param surface: Surface sur laquelle l'entité est placée
+        :param surface: Surface sur laquelle l'entité est placée
+        :return: None
         """
         surface.blit(self._sprite, self._cell.get_pixel_position().to_tuple())
 
-    def draw_health_bar(self, surface):
+    def draw_health_bar(self, surface) -> None:
         """
         Dessine la barre de vie de l'entité
-        @:param surface: Surface sur laquelle dessiner la barre de vie
+        :param: surface: Surface sur laquelle dessiner la barre de vie
+        :return: None
         """
         if self._hp <= 0:
             return
@@ -66,24 +70,26 @@ class Entity:
             (x, y, current_width, BAR_HEIGHT)
         )
 
-    def take_damage(self, amount):
+    def take_damage(self, amount) -> None:
         """
         Inflige des dégâts à l'entité
-        @:param amount:
+        :param: amount: montant des dégâts
+        :return: None
         """
         self._hp = max(0, self._hp - amount)
 
-    def is_dead(self):
+    def is_dead(self) -> bool:
         """
         Vérifie si l'entité est morte
         :return: boolean
         """
         return self._hp <= 0
 
-    def attack(self, target):
+    def attack(self, target) -> None:
         """
         attaque la cible choisie
-        @param target : l'entité ciblée
+        :param: target : l'entité ciblée
+        :return: None
         """
         target.take_damage(self.attack_damage)
 
@@ -94,7 +100,7 @@ class Entity:
         return self._cell
 
     @cell.setter
-    def cell(self, value: Cell):
+    def cell(self, value: Cell) -> None:
         self._cell = value
 
     @property
@@ -102,7 +108,7 @@ class Entity:
         return self._pixel_pos
 
     @pixel_pos.setter
-    def pixel_pos(self, value):
+    def pixel_pos(self, value) -> None:
         self._pixel_pos = value
 
     @property
@@ -110,7 +116,7 @@ class Entity:
         return self._name
 
     @name.setter
-    def name(self, value: str):
+    def name(self, value: str) -> None:
         self._name = value
 
     @property
@@ -118,7 +124,7 @@ class Entity:
         return self._type_entity
 
     @type_entity.setter
-    def type_entity(self, value: List[TypeEntitiesEnum]):
+    def type_entity(self, value: List[TypeEntitiesEnum]) -> None:
         self._type_entity = value
 
     @property
@@ -126,7 +132,7 @@ class Entity:
         return self._max_hp
 
     @max_hp.setter
-    def max_hp(self, value: int):
+    def max_hp(self, value: int) -> None:
         self._max_hp = value
 
     @property
@@ -134,17 +140,15 @@ class Entity:
         return self._hp
 
     @hp.setter
-    def hp(self, value: int):
+    def hp(self, value: int) -> None:
         self._hp = max(0, min(value, self._max_hp))
-
-    # ------- Getters et Setters -------
 
     @property
     def attack_damage(self) -> int:
         return self._attack_damage
 
     @attack_damage.setter
-    def attack_damage(self, value: int):
+    def attack_damage(self, value: int) -> None:
         self._attack_damage = value
 
     @property
@@ -152,7 +156,7 @@ class Entity:
         return self._attack_range
 
     @attack_range.setter
-    def attack_range(self, value: int):
+    def attack_range(self, value: int) -> None:
         self._attack_range = value
 
     @property
@@ -160,7 +164,7 @@ class Entity:
         return self._sprite
 
     @sprite.setter
-    def sprite(self, value):
+    def sprite(self, value) -> None:
         self._sprite = value
 
     @property
@@ -168,6 +172,6 @@ class Entity:
         return self._sprite_path
 
     @sprite_path.setter
-    def sprite_path(self, value: str):
+    def sprite_path(self, value: str) -> None:
         self._sprite_path = value
         self._sprite = pygame.image.load(value).convert_alpha()
