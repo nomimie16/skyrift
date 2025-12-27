@@ -3,6 +3,7 @@ from typing import List
 import screen_const as sc
 from component.enum.type_entities import TypeEntitiesEnum
 from component.position import Position
+from const import SPAWN_POS_P1, SPAWN_POS_P2
 
 
 class Cell:
@@ -160,6 +161,8 @@ class Grid:
         for y in range(self.nb_rows):
             for x in range(self.nb_columns):
                 current_cell = self.cells[y][x]
+                if (x, y) in [SPAWN_POS_P1, SPAWN_POS_P2]:
+                    continue
                 if len(current_cell.occupants) == 0:
                     free_cells.append(current_cell)
         return free_cells

@@ -9,3 +9,6 @@ SPAWN_POS_P2 = (22, 15)  # Spawn pour joueur p2
 # Limites d'actions par tour
 MAX_MOVES_PER_TURN = 1
 MAX_ATTACKS_PER_TURN = 1
+
+# Pourccentage de spawn des bourses par tour
+PURSE_SPAWN_CHANCE_PER_TURN = 0.3

@@ -40,13 +40,12 @@ def run_game(screen, ui):
         tile=sc.TILE_SIZE,
         origin=(sc.OFFSET_X, sc.OFFSET_Y)
     )
-    builder = MapBuilder(grid_comp.grid)
+    builder = MapBuilder(grid_comp.grid, p1, p2)
     grid_comp.grid = builder.build_map()
     dragon_events = DragonEvents(grid_comp.grid, origin=(sc.OFFSET_X, sc.OFFSET_Y), tile_size=sc.TILE_SIZE)
 
     dragons = []
 
-    purse_test = spawn_random_purse(grid_comp.grid)
     print(grid_comp.grid)
 
     # Créer le bouton tour suivant (temporaire)
@@ -98,6 +97,7 @@ def run_game(screen, ui):
                         for cell in row:
                             cell.apply_zone_effects_end_turn()
 
+                    spawn_random_purse(grid_comp.grid)
                     player = turn.current_player()
                     print("tour de ", turn.current_player().name, "commencé")
                     continue
@@ -108,6 +108,8 @@ def run_game(screen, ui):
                 if right_button_rect.collidepoint(event.pos):
                     right_open = not right_open
                     continue
+
+                # Gestion de l'apparition des bourses
 
                 # TODO : refactoriser ca
                 clicked_buy_button = False
@@ -181,11 +183,6 @@ def run_game(screen, ui):
                         else:
                             occupant.draw(screen)
                             occupant.update()
-        #
-        # for dragon in dragons:
-        #     if not dragon.is_dead():
-        #         dragon.update(grid_comp.grid)
-        #         dragon.draw(screen)
 
         # ======================================================================================
 

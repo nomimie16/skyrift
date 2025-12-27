@@ -8,19 +8,28 @@ from component.entities.zone_entity import ZoneEntity
 from component.enum.type_entities import TypeEntitiesEnum
 from component.grid import Grid
 from component.position import Position
+from const import PURSE_SPAWN_CHANCE_PER_TURN
 
 
-def spawn_random_purse(grid: Grid, amount: int = 50) -> 'Purse':
+def spawn_random_purse(grid: Grid, amount: int = 50) -> 'Purse | None':
     """
-    Fait spawn une bourse à une position aléatoire
-    :param grid: Grille dans laquelle faire spawn la bourse
-    :param amount: Montant d'or dans la bourse
-    :return: La bourse créée
+    Fait spawn une bourse avec une probabilité donnée
     """
+
+    if Purse.instances_count >= 5:
+        return None
+
+    if random.random() > PURSE_SPAWN_CHANCE_PER_TURN:
+        return None
+
     free_cells = grid.free_cells()
+    if not free_cells:
+        return None
+
     cell = random.choice(free_cells)
     purse = Purse(cell.position.x, cell.position.y, amount)
     grid.add_occupant(purse, cell)
+
     return purse
 
 
@@ -30,6 +39,8 @@ class Purse(ZoneEntity):
     50 pièces d'or par défaut
     """
 
+    instances_count = 0
+
     def __init__(self, x_cell: int, y_cell: int, amount: int = 50):
         super().__init__(x_cell, y_cell,
                          sprite_path="assets/sprites/purse.png", width=1, height=1,
@@ -38,6 +49,8 @@ class Purse(ZoneEntity):
         self.name = "Bourse"
         self._amount: int = amount
         self._target_pos = Position(y_cell, y_cell)
+
+        Purse.instances_count += 1
 
         # self._speed = 5
         # self._arrived = False
@@ -49,6 +62,13 @@ class Purse(ZoneEntity):
     #         if abs(self._position.y - self._target_pos.y) < 1:
     #             self._position.y = self._target_pos.y
     #             self._arrived = True
+
+    def destroy(self) -> None:
+        """
+        Détruit l'instance de la bourse
+        :return: None
+        """
+        Purse.instances_count -= 1
 
     def draw(self, surface) -> None:
         """

@@ -68,6 +68,7 @@ class Dragon(Entity):
 
             # Supprime la bourse de la grille
             self.cell.remove_occupant(purse)
+            purse.destroy()
 
     def move_dragon(self, target_x: int, target_y: int, grid: Grid):
         self._target_cell = grid.cells[target_y][target_x]

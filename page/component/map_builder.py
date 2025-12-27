@@ -17,8 +17,10 @@ class MapBuilder:
     - Ile de vie (position aléatoire)
     """
 
-    def __init__(self, grid):
+    def __init__(self, grid, player1, player2):
         self.grid = grid
+        self.player1 = player1
+        self.player2 = player2
 
         self.base1 = None
         self.base2 = None
@@ -32,16 +34,17 @@ class MapBuilder:
         - base1 : haut gauche
         - base2 : bas droite
         """
-        self.base1 = Base(1, 1, sprite_path="assets/img/base.png")
+        self.base1 = Base(1, 1, sprite_path="assets/img/base.png", player=self.player1)
         self.grid.add_static_occupants(self.base1, self.base1.cell, self.base1.height, self.base1.width)
+        self.player1.base = self.base1
 
         base2_x = self.grid.nb_columns - 5
         base2_y = self.grid.nb_rows - 5
         base2_cell = Cell(base2_x, base2_y)
-        self.base2 = Base(base2_x, base2_y, sprite_path="assets/img/base_ennemie.png")
+        self.base2 = Base(base2_x, base2_y, sprite_path="assets/img/base_ennemie.png", player=self.player2)
         self.grid.add_static_occupants(self.base2, base2_cell, self.base2.height, self.base2.width)
-        # TODO: ajouter base aux joueurs
-
+        self.player2.base = self.base2
+        
     def spawn_random_volcano(self):
         """
         Fait spawn un volcan à une position aléatoire
