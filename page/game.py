@@ -1,7 +1,6 @@
 import pygame
 
 import screen_const as sc
-from component.entities.purse import spawn_random_purse
 from component.enum.type_entities import TypeEntitiesEnum
 from const import SPAWN_POS_P1, SPAWN_POS_P2
 from events.dragonEvents import DragonEvents
@@ -40,13 +39,12 @@ def run_game(screen, ui):
         tile=sc.TILE_SIZE,
         origin=(sc.OFFSET_X, sc.OFFSET_Y)
     )
-    builder = MapBuilder(grid_comp.grid)
+    builder = MapBuilder(grid_comp.grid, p1, p2)
     grid_comp.grid = builder.build_map()
     dragon_events = DragonEvents(grid_comp.grid, origin=(sc.OFFSET_X, sc.OFFSET_Y), tile_size=sc.TILE_SIZE)
 
     dragons = []
 
-    purse_test = spawn_random_purse(grid_comp.grid)
     print(grid_comp.grid)
 
     # Créer le bouton tour suivant (temporaire)

@@ -2,13 +2,13 @@ from typing import List
 
 import pygame
 
-from player import Player
 from component.entities.dragon import Dragon
 from component.entities.entity import Entity
 from component.entities.static_entity import StaticEntity
 from component.enum.type_entities import TypeEntitiesEnum
 from component.grid import Grid, Cell
 from component.position import Position
+from player import Player
 
 
 class DragonEvents:
@@ -50,6 +50,15 @@ class DragonEvents:
             return None
 
         return Position(col, row)
+
+    def _reset_selection(self) -> None:
+        """
+        Réinitialise la sélection du dragon et les zones d'action
+        :return:
+        """
+        self.selected_dragon = None
+        self.move_cells = []
+        self.attack_cells = []
 
     def compute_move_cells(self, dragon: Dragon) -> List[Cell]:
         """
@@ -119,19 +128,22 @@ class DragonEvents:
                     for occupant in cell.occupants:
                         if TypeEntitiesEnum.DRAGON in occupant.type_entity and occupant._owner != dragon._owner:
                             possible_cells.append(cell)
+                        if (TypeEntitiesEnum.BASE in occupant.type_entity and occupant.player != dragon._owner):
+                            possible_cells.append(cell)
 
         return possible_cells
 
-    def handle_click(self, mouse_pos: Position, occupant: Entity | StaticEntity | None = None, player: Player=None, turn=None):
+    def handle_click(self, mouse_pos: Position, occupant: Entity | StaticEntity | None = None, player: Player = None,
+                     turn=None):
         """
         Gère le clic sur la grille :
         - sélection d'un dragon
         - déplacement si dragon sélectionné
-        @param mouse_pos: Position (x,y) du clic souris en pixels
-        @param occupant: occupant de la case cliquée (s'il y en a un)
-        @param player: joueur effectuant l'action
-        @param turn: instance de Turn pour vérifier les restrictions d'actions
-        @return: None
+        :param mouse_pos: Position (x,y) du clic souris en pixels
+        :param occupant: occupant de la case cliquée (s'il y en a un)
+        :param player: joueur effectuant l'action
+        :param turn: instance de Turn pour vérifier les restrictions d'actions
+        :return: None
         """
         cell = Cell.get_cell_by_pixel(self.grid, mouse_pos)
         if not cell:
@@ -145,9 +157,7 @@ class DragonEvents:
             if cell in self.move_cells:
                 if turn and not turn.can_move():
                     print("Vous avez déjà déplacé un dragon ce tour !")
-                    self.selected_dragon = None
-                    self.move_cells = []
-                    self.attack_cells = []
+                    self._reset_selection()
                     return
 
                 current_cell = self.grid.cells[self.selected_dragon.cell.position.y][
@@ -159,27 +169,34 @@ class DragonEvents:
 
                 if turn:
                     turn.use_move()
-                    print(f"Dragon déplacé ({turn.moves_used}/{turn.moves_used + (1 if turn.can_move() else 0)} déplacements utilisés)")
+                    print(
+                        f"Dragon déplacé ({turn.moves_used}/{turn.moves_used + (1 if turn.can_move() else 0)} déplacements utilisés)")
 
             # Attaque
             if cell in self.attack_cells:
                 if turn and not turn.can_attack():
                     print("Vous avez déjà attaqué ce tour !")
-                    self.selected_dragon = None
-                    self.move_cells = []
-                    self.attack_cells = []
+                    self._reset_selection()
                     return
 
                 for occupant in cell.occupants:
-                    if TypeEntitiesEnum.DRAGON in occupant.type_entity and isinstance(occupant, Dragon) and occupant._owner != player:
+                    if TypeEntitiesEnum.DRAGON in occupant.type_entity and isinstance(occupant,
+                                                                                      Dragon) and occupant._owner != player:
                         print("hp avant attaque:", occupant.hp)
                         self.selected_dragon.attack(occupant)
                         print("hp après attaque:", occupant.hp)
                         attacked = True
 
-                        if turn:
-                            turn.use_attack()
-                            print(f"Attaque effectuée ({turn.attacks_used}/{turn.attacks_used + (1 if turn.can_attack() else 0)} attaques utilisées)")
+                    if (TypeEntitiesEnum.BASE in occupant.type_entity and occupant.player != player):
+                        print("hp avant attaque de la base:", occupant.hp)
+                        occupant.take_damage(self.selected_dragon.attack_damage)
+                        print("hp après attaque de la base:", occupant.hp)
+                        attacked = True
+
+                if turn and attacked:
+                    turn.use_attack()
+                    print(
+                        f"Attaque effectuée ({turn.attacks_used}/{turn.attacks_used + (1 if turn.can_attack() else 0)} attaques utilisées)")
 
             self.selected_dragon = None
 
@@ -216,7 +233,7 @@ class DragonEvents:
                         print("Vous avez déjà attaqué ce tour !")
             return
 
-    def draw(self, surface):
+    def draw(self, surface) -> None:
         """
         Affiche les zones de déplacement et d'attaque
         :param surface: surface pygame où dessiner
