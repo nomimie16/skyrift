@@ -64,7 +64,7 @@ def run_game(screen, ui):
     while running:
         # Dessiner le jeu
         screen.fill(WHITE)
-        ui.draw(screen)
+        ui.draw(screen, current_player=turn.current_player())
         # screen.blit(img_test, img_test_rect)
 
         # Grille et map
