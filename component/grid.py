@@ -127,7 +127,8 @@ class Grid:
 
                 cell = self.cells[y][x]
                 cell.occupants.append(occupant)
-                occupant.position = cell.position
+        occupant.cell = cell
+        occupant.position = cell.position
 
         return True
 
@@ -151,6 +152,22 @@ class Grid:
             cell.occupants.append(occupant)
 
         return True
+
+    def update_occupant_size(self, occupant, old_width, old_height) -> None:
+        """
+        Met à jour la grille quand un occupant change de taille.
+        :param occupant: l'occupant dont la taille a changé
+        :return: None
+        """
+        x0 = occupant.cell.position.x - 1
+        y0 = occupant.cell.position.y - occupant.height + 1
+
+        for y in range(y0, y0 + occupant.height):
+            for x in range(x0, x0 + occupant.width):
+                if 0 <= x < self.nb_columns and 0 <= y < self.nb_rows:
+                    cell = self.cells[y][x]
+                    if occupant not in cell.occupants:
+                        cell.occupants.append(occupant)
 
     def free_cells(self) -> List[Cell]:
         """

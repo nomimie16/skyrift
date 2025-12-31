@@ -6,6 +6,7 @@ import screen_const as sc
 from component.enum.type_entities import TypeEntitiesEnum
 from component.grid import Cell
 from component.position import Position
+from screen_const import TILE_SIZE
 
 
 class Entity:
@@ -32,7 +33,7 @@ class Entity:
         """
         surface.blit(self._sprite, self._cell.get_pixel_position().to_tuple())
 
-    def draw_health_bar(self, surface) -> None:
+    def draw_health_bar(self, surface, width=1, gap=0) -> None:
         """
         Dessine la barre de vie de l'entité
         :param: surface: Surface sur laquelle dessiner la barre de vie
@@ -41,12 +42,12 @@ class Entity:
         if self._hp <= 0:
             return
 
-        BAR_WIDTH = sc.TILE_SIZE
+        BAR_WIDTH = sc.TILE_SIZE * width
         BAR_HEIGHT = 6
         OFFSET_Y = -10
 
         x = self._pixel_pos.x
-        y = self._pixel_pos.y + OFFSET_Y
+        y = self._pixel_pos.y + OFFSET_Y - gap * TILE_SIZE
 
         hp_ratio = self._hp / self._max_hp
         current_width = int(BAR_WIDTH * hp_ratio)

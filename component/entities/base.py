@@ -20,8 +20,8 @@ class Base(Entity):
         :param surface: Surface sur laquelle dessiner la base
         :return: None
         """
-        pixel_x = (self.position.x - (self.width - 1)) * sc.TILE_SIZE + sc.OFFSET_X
-        pixel_y = (self.position.y - (self.height - 1)) * sc.TILE_SIZE + sc.OFFSET_Y
+        pixel_x = (self.cell.position.x - (self.width - 1)) * sc.TILE_SIZE + sc.OFFSET_X
+        pixel_y = (self.cell.position.y - (self.height - 1)) * sc.TILE_SIZE + sc.OFFSET_Y
 
         scaled = pygame.transform.scale(
             self._sprite,
@@ -29,7 +29,7 @@ class Base(Entity):
         )
 
         surface.blit(scaled, (pixel_x, pixel_y))
-        self.draw_health_bar(surface)
+        self.draw_health_bar(surface, self.width)
 
     @property
     def player(self):

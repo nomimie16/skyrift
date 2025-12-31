@@ -59,8 +59,8 @@ class StaticEntity:
     def pixel_pos(self) -> Position:
         return self._pixel_pos
 
-    @cell.setter
-    def cell(self, value: Position) -> None:
+    @pixel_pos.setter
+    def pixel_pos(self, value: Position) -> None:
         self._pixel_pos = value
 
     @property

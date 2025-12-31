@@ -130,6 +130,8 @@ class DragonEvents:
                             possible_cells.append(cell)
                         if (TypeEntitiesEnum.BASE in occupant.type_entity and occupant.player != dragon._owner):
                             possible_cells.append(cell)
+                        if (TypeEntitiesEnum.TOWER in occupant.type_entity and occupant.player != dragon._owner):
+                            possible_cells.append(cell)
 
         return possible_cells
 
@@ -182,15 +184,15 @@ class DragonEvents:
                 for occupant in cell.occupants:
                     if TypeEntitiesEnum.DRAGON in occupant.type_entity and isinstance(occupant,
                                                                                       Dragon) and occupant._owner != player:
-                        print("hp avant attaque:", occupant.hp)
                         self.selected_dragon.attack(occupant)
-                        print("hp après attaque:", occupant.hp)
                         attacked = True
 
                     if (TypeEntitiesEnum.BASE in occupant.type_entity and occupant.player != player):
-                        print("hp avant attaque de la base:", occupant.hp)
                         occupant.take_damage(self.selected_dragon.attack_damage)
-                        print("hp après attaque de la base:", occupant.hp)
+                        attacked = True
+
+                    if (TypeEntitiesEnum.TOWER in occupant.type_entity and occupant.player != player):
+                        occupant.take_damage(self.selected_dragon.attack_damage)
                         attacked = True
 
                 if turn and attacked:
