@@ -1,169 +1,126 @@
-<!-- skyrift -->
-<!-- ![ile de vie pour test ](/assets/img/skyrift.png) -->
+# Skyrift
 
-## **Présentation du jeu**
----
+Skyrift est un jeu tour par tour développé avec Pygame en lanagage Python. Ce jeu de startégie mélange mécaniques de combat et intelligence artificielle.
 
-
-### 1.1 Vue d’ensemble 
-* <ins>Nom du jeu</ins> : **Skyrift**
-* <ins>Genre</ins> : Combat, tour par tour
-* <ins>Public cible</ins> : 12 - 99 ans
-* <ins>PEGI </ins>: ![pegi 12s](/assets/img/PEGI_12.png)
-* <ins>Date de parution </ins>: 20/09/2025
-* <ins>Langue </ins>: Français
-* <ins>Plateforme </ins>: PC Windows
-* <ins>Moteur / Framework </ins>: Python 3 + Pygame
-* <ins>Joueurs </ins>: 1 joueur vs 1 joueur (local ou IA)
-
-### 1.2 Synopsis 
-
-  _Aux confins des nuages, suspendue entre ciel et lumière, s’élevait la Cité des Dragons de Rhaegal, un sanctuaire où sagesse et puissance vivaient en harmonie. Mais l’équilibre fut rompu lorsque le clan de Viserion, né des brumes et du chaos, surgit pour revendiquer le trône des cieux. Leur chef lança un ultimatum :_
-
-  _« Quittez ces terres sacrées… ou périssez ! »_
-
-  _Dès lors, deux factions s’affrontèrent sans relâche : les Dragons Protecteurs de Rhaegal, défenseurs de l’ordre et de la lumière, contre les Dragons Conquérants de Viserion, porteurs d’ombre et de destruction._
-
-  _Dans ce jeu d’action-RPG épique, vous choisissez votre camp et menez vos alliés au combat. Chaque faction possède trois types de dragons uniques._
+[![Version](https://img.shields.io/badge/version-0.13.0-blue.svg)](https://github.com/nomimie16/skyrift)
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/)
+[![Documentation](https://img.shields.io/badge/docs-online-brightgreen.svg)](https://nomimie16.github.io/skyrift)
 
 
-  _Forgez votre légende : améliorez vos dragons et affrontez votre rival dans une bataille titanesque._
+## Description
+Ce jeu développé en Python se déroule dans les cieux, où une zone de combat est générée aléatoirement avec diffréntes iles aux pouvoirs magiques. Le but du jeu est de démolir la base de votre ennemi, à l'aide de votre armée de dragons. Pour réussir à atteindre la victoire, et remporter le Skyrift, il vous faudra utiliser des tours de défense, passer aux travers d'un volcan et ramasser un maximum de Skygold pour acheter vos dragons.
 
-  _Le destin des nuages est entre vos griffes :_
+## Installation
 
-  ***Serez-vous le champion qui restaurera l’équilibre… ou l’ombre qui régnera sur les cieux ?***
+- Téléchargement de l'exécutable
+  - Rendez-vous sur le dépôt GitHub officiel : [Skyrift Github]((https://github.com/nomimie16/skyrift))
+  - Dans la section "Releases", à droite, cliquez sur la dernière version téléchargeable.
+  - Téléchargez l'exécutable correspondant à votre système.
 
-![barre ](/assets/img/bar.png)
+## Lancement du jeu
+- Lancement depuis **l'éxecutable** (bientot disponible) :
+  * Accédez au fichier skyrift.exe et lancez le fichier. Le jeu va se lancer automatiquement.
 
-### 1.3 But du jeu 
+- Lancement depuis un **terminal** de commande :
+  * Dans un terminal ouvert sur le repertoire du jeu copiez cette commande :
+  ```bash
+  python main.py
+  ```
 
-Le but du jeu est simple : **détruire la base ennemie** avant que la vôtre ne soit anéantie. Une seule forteresse peut **survivre**.
+## Dépendances
 
-Vous pouvez invoquer trois types de **dragons**, chacun ayant un rôle stratégique :
+* [Pygame](https://www.pygame.org/news) :  affichage, sprites, événements et sons
 
-* **Dragonnets** : rapides et nombreux, parfaits pour harceler l’ennemi.
+* [Pygame GUI](https://pygame-gui.readthedocs.io/en/latest/) :  Framework d’interface graphique basé sur Pygame 
 
-* **Dragons à deux têtes** : puissants et résistants, formant le cœur de vos attaques.
+* [Numpy](https://numpy.org/) : mathématiques avancés, matrices et algorithmes IA
 
-* **Dragons Géants** : lents mais titanesques, capables de renverser le cours d'une bataille.
+* [Moviepy](https://zulko.github.io/moviepy/) :
 
-En plus de vos dragons, vous pouvez construire une **tour de défense** pour protéger votre base des assauts adverses.
-Chaque choix compte : **attaquer**, **renforcer** votre défense, ou **économiser** pour invoquer un dragon plus puissant.
+* [Pytest](https://docs.pytest.org/en/stable/) : Framework de tests automatisés
 
-La victoire dépend de votre capacité à gérer vos ressources et à équilibrer offensive et défense.
+## Gameplay
+Une fois le jeu lancé vous aurez accès à l'écran du menu principal.
+Pour commencer une nouvelle partie, cliquez sur " START " et vous aurez accès au début du jeu.
 
-## **Règles et fonctionnement du jeu**
----
+Ensuite le jeu se déroule tour par tour et quand arrive votre tour, plusieurs possibilités s'offrent à vous :
 
-### 2.1 Règles 
+- **Acheter** une unité (dragon, tour ou autre..) : en cliquant sur votre base, une boutique apparait à l'écran, vous permettant d'acheter ce dont vous avez besoin pour gagner
 
-**Début de la partie**
+- **Déplacer** un dragon : les deplacements possibles s'affichent en cliquant sur un dragon existant  
 
-* Chaque joueur commence avec **100 Skygold**, la monnaie du jeu.
+- **Attaquer** un dragon adverse : les attaques deviennent possibles et visibles lorsque votre dragon se tient à une certaine distance de celui d'un ennemi
 
-* À chaque tour, vous recevez **75 Skygold** pour renforcer votre armée et préparer vos attaques.
+Il vous faudra donc choisir une action à réaliser pour poursuivre le jeu.
 
-* Des **bourses** de Skygold apparaissent aléatoirement sur la grille et rapportent **50 Skygold** lorsqu’elles sont récupérées.
+Au cours de la partie, il vous est également posssible d'accéder aux paramètres du jeu, en cliquant sur l'icone en haut a droite de l'écran. Ce menu concernant les paramètres permet :
 
-* Gérez vos **ressources** avec stratégie pour construire une force de frappe efficace et prendre l’avantage sur votre adversaire.
+- De consulter à nouveau les règles du jeu
+- D’activer ou désactiver les effets sonores
+- D’activer ou désactiver la musique
+- De quitter la partie en cours
 
+Il ne vous reste plus qu'à défendre votre base et attaquer votre ennemi pour tenter de remporter le Skyrift !
 
-**Déroulement d’un tour**
-
-* Au début de chaque tour, vous pouvez choisir d’invoquer l’un des 3 niveaux de **dragons** :
-
-    * **Dragonnet** – rapide et peu coûteux, idéal pour harceler.
-
-    * **Dragon à deux têtes** – équilibré entre puissance et résistance.
-
-    * **Dragon Géant** – très puissant et résistant, mais coûteux.
-
-* Chaque dragon peut :
-
-    * **Attaquer** les dragons ennemis adjacents.
-
-
-    * **Se déplacer** sur la grille pour prendre position ou protéger votre base.
-
-* ![warning ](/assets/img/warning.png)   **Important** : si un dragon occupe le spawn, vous ne pourrez pas en faire apparaître un autre au tour suivant. Planifiez vos attaques avec soin !
-
-**Fin de la partie**
-
-* La partie se termine lorsque la base d’un joueur atteint **0 PV**.
-
-
-* Le joueur ayant détruit la base adverse remporte la **victoire**.
-
----
-### 2.2 Unités
-
-|                         | Dragonnet | Dragon à deux têtes | Dragon géant | Tour de défense |
-|-------------------------|-----------|---------------------|--------------|-----------------|
-| Coût (skygold)          | 100       | 300                 | 600          | 600             |
-| Vitesse                 | 6         | 4                   | 2            | -               |
-| Puissance de tir/dégâts | 10        | 20                  | 40           | -               |
-| Portée tir              | 1         | 2                   | 3            | 3               |
-| Blindage / PV           | 50        | 120                 | 250          | 300             |
-
-
-## **Structure du projet**
----
-
-### 3.1 Structure générale :
-```
-- main.py  (lance le jeu)
-- assets/
-  - sounds/
-  - sprites/
-- component/
-  - entities/ (contient les unités)
-  - position.py
-- page/
-  - ui.py (affichage de l’écran de jeu)
-  - ...
-- test
-- grid.py (Classe Grille)
-- economy.py (gestion des revenu des joueur)
-- events.py (gestion des événements : clique de souris, clique de touche etc…)
+## Structure du projet 
 
 ```
-
-### 3.2 Structure des objets :
-
+ README.md
+├── assets
+│   ├── font
+│   ├── img
+│   └── sprites
+├── component
+│   ├── __pycache__
+│   ├── entities
+│   ├── enum
+│   ├── grid.py
+│   ├── path_finding.py
+│   └── position.py
+├── const.py
+├── docs
+│   ├── docs
+│   ├── mkdocs.yml
+│   └── site
+├── economy.py
+├── events
+│   └── dragonEvents.py
+├── maptest.py
+├── mkdoc
+├── page
+│   ├── component
+│   ├── game.py
+│   ├── launch.py
+│   ├── main.py
+│   ├── menu.py
+│   ├── pause.py
+│   ├── rules.py
+│   ├── settings.py
+│   ├── sidepanels.py
+│   ├── sound.py
+│   ├── startGame.py
+│   └── ui.py
+├── player.py
+├── pytest.ini
+├── requirements.txt
+├── screen_const.py
+├── test
+│   ├── components
+│   ├── test_economy.py
+│   └── test_grid.py
 ```
-- Class Entity
-  - Class Dragon
-    - Dragonnet
-    - DragonDoubleTete
-    - DragonGeant
-  - Class EffectZone
 
-- Class StaticEntity 
-  - Base
-  - Tower
-  - Volcano
-  - Tornado
-  - island of life
+## Documentation
 
-- Class Grille (contient les cases et leur état)
+Pour visualiser la documentation détaillée, rendez vous sur [https://nomimie16.github.io/skyrift/](https://nomimie16.github.io/skyrift/).
 
-- Class Economy
+* Documentation utilisateur : installation, gameplay, contrôles.
+* Documentation technique : Structure, développement, architecture.
 
-- Class Event
+## Auteurs
 
-- Class Position
-```
-
-### 3.3 Dépendances :
-
-* [Python 3.x](https://www.python.org/downloads/) (version 3.10+)
-
-* [Pygame](https://www.pygame.org/news) (affichage, sprites, son)
-
-* [Pygame GUI](https://pygame-gui.readthedocs.io/en/latest/) (interface)
-
-* [Numpy](https://numpy.org/) (maths/IA)
-
-* [Moviepy](https://zulko.github.io/moviepy/) (clip vidéos)
-
-* [Pytest](https://docs.pytest.org/en/stable/) (tests)
+* [GERME Charlotte](https://github.com/chharlote) 
+* [ARABAH Yanis](https://github.com/Yanisssssse) 
+* [LIGNIER Noémie](https://github.com/nomimie16) 
+* [CHATELAIN Lilou](https://github.com/liiloouu16) 
+* [FAILLIE Chloé](https://github.com/ChloeXena) 
