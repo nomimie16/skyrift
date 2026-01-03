@@ -43,3 +43,11 @@ class Player:  # a completer
     @property
     def color(self):
         return self._color
+
+    @property
+    def tower(self):
+        return self._tower
+
+    @tower.setter
+    def tower(self, tower):
+        self._tower = tower

@@ -166,6 +166,10 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player):
 
         # couleur du bouton selon si on peut acheter
         can_afford = gold >= entity.cost
+
+        if isinstance(entity, Tower) and current_player.tower.active:
+            can_afford = False
+
         button_color = (0, 150, 0) if can_afford else (100, 100, 100)
         pygame.draw.rect(surface, button_color, button_rect)
         pygame.draw.rect(surface, (255, 255, 255), button_rect, 2)

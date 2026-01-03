@@ -3,6 +3,7 @@ import pygame
 import screen_const as sc
 from component.entities.entity import Entity
 from component.enum.type_entities import TypeEntitiesEnum
+from component.grid import Grid
 from player import Player
 
 
@@ -24,7 +25,12 @@ class Tower(Entity):
         self._attack_damage = 30
         self._attack_range = 5
 
-    def tower_activation(self, grid):
+    def tower_activation(self, grid: Grid) -> None:
+        """
+        Activation de la tour, elle peut attaquer
+        :param grid: Grille sur laquelle est la tour
+        :return: None
+        """
         if self._active:
             return
 
@@ -33,6 +39,26 @@ class Tower(Entity):
 
         self._active = True
         self._height = 3
+        # TODO changer sprite
+        self._sprite_path = f"assets/img/tour_{self.player.color}.png"
+
+        grid.update_occupant_size(self, old_width, old_height)
+
+    def tower_disable(self, grid: Grid) -> None:
+        """
+        Désactivation de la tour, elle reviens à son état de base
+        :param grid: grille sur laquelle est là tour
+        :return:
+        """
+        if self._active:
+            self._active = False
+
+        old_width = self.width
+        old_height = self.height
+
+        self._height = 1
+        self._hp = 300
+        # TODO changer sprites
         self._sprite_path = f"assets/img/tour_{self.player.color}.png"
 
         grid.update_occupant_size(self, old_width, old_height)
@@ -53,8 +79,8 @@ class Tower(Entity):
         :return: None
         """
 
-        pixel_x = (self.position.x - (self.width - 1)) * sc.TILE_SIZE + sc.OFFSET_X
-        pixel_y = (self.position.y - (self.height - 1)) * sc.TILE_SIZE + sc.OFFSET_Y
+        pixel_x = (self.cell.position.x - (self.width - 1)) * sc.TILE_SIZE + sc.OFFSET_X
+        pixel_y = (self.cell.position.y - (self.height - 1)) * sc.TILE_SIZE + sc.OFFSET_Y
 
         scaled = pygame.transform.scale(
             self._sprite,

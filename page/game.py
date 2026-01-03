@@ -21,7 +21,6 @@ def run_game(screen, ui):
     # img_test = pygame.image.load("assets/sprites/dragonnet.png").convert_alpha()
     # img_test_rect = img_test.get_rect()
     # img_test_rect.topleft = (100, 100)
-
     p1: Player = Player(name="Yanis", color="bleu")
     p2: Player = Player(name="Player 2", color="rouge")
     turn: Turn = Turn(p1, p2)
@@ -128,19 +127,17 @@ def run_game(screen, ui):
                 for button in buy_buttons:
                     if button["rect"].collidepoint(event.pos):
                         if button["can_afford"]:
-                            player.economy.spend_gold(button["cost"])
                             remaining_gold = player.economy.get_gold()
 
                             # Achat tour de défense
                             # TODO vérification dragon dans zone de construction
-
                             if isinstance(button["dragon"], Tower):
                                 if turn.current_player() == p1:
                                     builder.tower1.tower_activation(grid_comp.grid)
                                 else:
                                     builder.tower2.tower_activation(grid_comp.grid)
                                 print(grid_comp.grid)
-
+                                player.economy.spend_gold(button["cost"])
 
                             else:  # Achat dragons
                                 if turn.current_player() == p1:
@@ -163,6 +160,7 @@ def run_game(screen, ui):
                                     # ajoute le dragon a la grille
                                     cell = grid_comp.grid.cells[spawn_pos[1]][spawn_pos[0]]
                                     grid_comp.grid.add_occupant(new_dragon, cell)
+                                    player.economy.spend_gold(button["cost"])
 
                                     # logs
                                     print(f"{button['name']} acheté ! argent restant : {remaining_gold}")
@@ -217,13 +215,16 @@ def run_game(screen, ui):
                         else:
                             occupant.draw(screen)
                             occupant.update()
+                    if TypeEntitiesEnum.TOWER in occupant.type_entity:
+                        if occupant.is_dead():
+                            print("Tour morte détectée :", occupant.name)
+                            occupant.tower_disable(grid_comp.grid)
 
         # ======================================================================================
 
         # Dessiner les side panels et récupérer leurs rectangles (ils doivent être dessinés APRES les dragons)
         left_button_rect, right_button_rect, current_left_x, current_right_x, buy_buttons = draw_sidepanels(
-            screen, left_open, right_open, current_left_x, current_right_x, player.economy, turn.current_player()
-        )
+            screen, left_open, right_open, current_left_x, current_right_x, player.economy, turn.current_player())
 
         # Dessiner le bouton tour suivant (temporaire)
         mouse_pos = pygame.mouse.get_pos()

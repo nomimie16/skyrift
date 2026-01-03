@@ -27,9 +27,9 @@ usable_h = SCREEN_H - (MARGIN_TOP + MARGIN_BOTTOM)
 
 # ROWS = usable_h // TILE_SIZE
 # COLS = usable_w // TILE_SIZE
-
-ROWS = 25
-COLS = 25
+#
+ROWS = 19
+COLS = 23
 
 GRID_W = COLS * TILE_SIZE
 GRID_H = ROWS * TILE_SIZE
