@@ -74,7 +74,16 @@ def run_game(screen, ui):
         builder.base2.draw(screen)
         builder.tower2.draw(screen)
         builder.volcano.draw(screen)
-        builder.life_island.draw(screen)
+
+        if builder.life_island:
+            builder.life_island.draw(screen)
+
+        if builder.tornado and builder.tornado.active:
+            builder.tornado.update(grid_comp.grid)
+            builder.tornado.draw(screen)
+
+        if builder.tornado is None:
+            builder.sapwn_random_tornado()
 
         # Dessine les bourses pour chaque cellule en parcourant la grille
         for row in grid_comp.grid.cells:
@@ -108,7 +117,13 @@ def run_game(screen, ui):
                         for cell in row:
                             cell.apply_zone_effects_end_turn()
 
+                    # Spawn de la bourse
                     spawn_random_purse(grid_comp.grid)
+
+                    # Spawn de la tornade
+                    if builder.tornado:
+                        builder.tornado.handle_turn(grid_comp.grid)
+
                     player = turn.current_player()
                     print("tour de ", turn.current_player().name, "commencé")
                     continue

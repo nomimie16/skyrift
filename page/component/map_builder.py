@@ -120,7 +120,8 @@ class MapBuilder:
                     if self.can_place_cell(pos, temp.width, temp.height, 7):
                         possible_cells.append(cell)
         if not possible_cells:
-            return None
+            self.life_island = None
+            return
 
         chosen_cell = random.choice(possible_cells)
 
@@ -142,10 +143,11 @@ class MapBuilder:
             for cell in row:
                 if len(cell.occupants) == 0:
                     pos = cell.position
-                    if self.can_place_cell(pos, temp.width, temp.height, 5):
+                    if self.can_place_cell(pos, temp.width, temp.height, 1):
                         possible_cells.append(cell)
         if not possible_cells:
-            return None
+            self.tornado = None
+            return
 
         chosen_cell = random.choice(possible_cells)
 
@@ -167,7 +169,7 @@ class MapBuilder:
         self.build_bases()
         self.spawn_random_volcano()
         self.spawn_random_island_of_life()
-        # self.sapwn_random_tornado()
+        self.sapwn_random_tornado()
         return self.grid
 
     def can_place_cell(self, position: Position, width: int, height: int, min_gap: int = 3):
