@@ -225,6 +225,7 @@ def run_game(screen, ui):
                     if TypeEntitiesEnum.DRAGON in occupant.type_entity:
                         if occupant.is_dead():
                             print("Dragon mort détecté :", occupant.name)
+                            occupant.grant_rewards()
                             occupant.update()
                             cell.remove_occupant(occupant)
                         else:
@@ -233,6 +234,7 @@ def run_game(screen, ui):
                     if TypeEntitiesEnum.TOWER in occupant.type_entity:
                         if occupant.is_dead():
                             print("Tour morte détectée :", occupant.name)
+                            occupant.grant_rewards()
                             occupant.tower_disable(grid_comp.grid)
 
         # ======================================================================================

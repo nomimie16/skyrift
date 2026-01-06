@@ -6,6 +6,7 @@ import screen_const as sc
 from component.enum.type_entities import TypeEntitiesEnum
 from component.grid import Cell
 from component.position import Position
+from player import Player
 from screen_const import TILE_SIZE
 
 
@@ -13,7 +14,7 @@ class Entity:
     """Classe de base pour toutes les entités du jeu"""
 
     def __init__(self, x: int, y: int, name: str, type_entity: List[TypeEntitiesEnum], max_hp: int, attack_damage: int,
-                 attack_range: int, sprite_path: str):
+                 attack_range: int, sprite_path: str, kill_reward: int = 0):
         self._cell: Cell = Cell(x, y)
         self._pixel_pos = self.cell.get_pixel_position()
         self._name: str = name
@@ -24,6 +25,8 @@ class Entity:
         self._attack_range: int = attack_range
         self._sprite_path: str = sprite_path
         self._sprite = pygame.image.load(sprite_path).convert_alpha()
+        self._kill_reward = kill_reward
+        self._last_attacker: Player | None = None
 
     def draw(self, surface) -> None:
         """
@@ -93,6 +96,14 @@ class Entity:
         :return: None
         """
         target.take_damage(self.attack_damage)
+
+    def grant_rewards(self) -> None:
+        """
+        Accorde les récompenses à l'attaquant
+        :return:
+        """
+        if self._last_attacker and self.kill_reward > 0:
+            self._last_attacker.economy.earn_gold(self.kill_reward)
 
     # ------- Getters et Setters -------
 
@@ -176,3 +187,15 @@ class Entity:
     def sprite_path(self, value: str) -> None:
         self._sprite_path = value
         self._sprite = pygame.image.load(value).convert_alpha()
+
+    @property
+    def last_attacker(self) -> Player | None:
+        return self._last_attacker
+
+    @last_attacker.setter
+    def last_attacker(self, value: Player) -> None:
+        self._last_attacker = value
+
+    @property
+    def kill_reward(self) -> int | None:
+        return self._kill_reward

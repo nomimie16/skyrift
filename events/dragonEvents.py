@@ -184,16 +184,21 @@ class DragonEvents:
                 for occupant in cell.occupants:
                     if TypeEntitiesEnum.DRAGON in occupant.type_entity and isinstance(occupant,
                                                                                       Dragon) and occupant._owner != player:
+                        occupant.last_attacker = player
                         self.selected_dragon.attack(occupant)
                         attacked = True
 
                     if (TypeEntitiesEnum.BASE in occupant.type_entity and occupant.player != player):
+                        occupant.last_attacker = player
                         occupant.take_damage(self.selected_dragon.attack_damage)
                         attacked = True
 
                     if (TypeEntitiesEnum.TOWER in occupant.type_entity and occupant.player != player):
+                        occupant.last_attacker = player
                         occupant.take_damage(self.selected_dragon.attack_damage)
                         attacked = True
+
+                    occupant.last_attacker = player
 
                 if turn and attacked:
                     turn.use_attack()
