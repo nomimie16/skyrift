@@ -259,6 +259,10 @@ class Dragon(Entity):
     def image_sprite(self, value: list) -> None:
         self._imageSprite = value
 
+    @property
+    def owner(self) -> Player:
+        return self._owner
+
     def __str__(self):
         return (
             f"Dragon(name={self._name}, "
