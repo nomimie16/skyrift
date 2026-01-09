@@ -25,8 +25,11 @@ MARGIN_RIGHT = int(SCREEN_W * RIGHT_PCT)
 usable_w = SCREEN_W - (MARGIN_LEFT + MARGIN_RIGHT)
 usable_h = SCREEN_H - (MARGIN_TOP + MARGIN_BOTTOM)
 
-ROWS = usable_h // TILE_SIZE
-COLS = usable_w // TILE_SIZE
+# ROWS = usable_h // TILE_SIZE
+# COLS = usable_w // TILE_SIZE
+#
+ROWS = 19
+COLS = 23
 
 GRID_W = COLS * TILE_SIZE
 GRID_H = ROWS * TILE_SIZE

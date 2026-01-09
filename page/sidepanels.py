@@ -2,9 +2,12 @@
 # ONGLET SIDEPANELS #
 #####################
 import math
+
 import pygame
-from player import Player
+
 from component.entities.dragon import Dragonnet, DragonMoyen, DragonGeant
+from component.entities.tower import Tower
+from player import Player
 
 # Données des dragons
 DRAGONS_DATA = [
@@ -13,8 +16,13 @@ DRAGONS_DATA = [
     DragonGeant
 ]
 
+TOWERS_DATA = [
+    Tower
+]
+
 # cache pour les ressources afin de ne les charger qu'une seule fois depuis le disque
 cache = {}
+
 
 def get_cache(current_player: Player):
     """Charge et met en cache les ressources une seule fois pour optimiser les performances du panneau"""
@@ -55,14 +63,18 @@ def get_cache(current_player: Player):
             print(f"Erreur chargement fleche gauche: {e}")
             cache['left_arrow_icon'] = None
 
-        # dragon (instances boutiques)
-        cache['dragons'] = [dragon_class(0, 0, current_player) for dragon_class in DRAGONS_DATA]
-    
-    if cache['dragons'][0]._owner != current_player:
-        # mettre à jour le propriétaire des dragons en cache
-        cache['dragons'] = [dragon_class(0, 0, current_player) for dragon_class in DRAGONS_DATA]
+        # shop_entities (instances boutiques)
+        cache['shop_entities'] = ([dragon_class(0, 0, current_player) for dragon_class in DRAGONS_DATA]
+                                  + [Tower(0, 0, f"assets/sprites/tour_{current_player.color}.png", current_player)])
+
+    else:
+        if cache['shop_entities'][0]._owner != current_player:
+            cache['shop_entities'] = ([dragon_class(0, 0, current_player) for dragon_class in DRAGONS_DATA]
+                                      + [Tower(0, 0, f"assets/sprites/tour_{current_player.color}.png",
+                                               current_player)])
 
     return cache
+
 
 def draw_shop(surface, x_offset, y_start, gold, current_player: Player):
     """Dessine la boutique de dragons dans le panneau gauche"""
@@ -73,7 +85,7 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player):
     font_tiny = res['font_tiny']
     stat_icon = res['stat_icon']
     gold_icon = res['gold_icon']
-    dragons = res['dragons']
+    entities = res['shop_entities']
 
     panel_width = 200
     y = y_start
@@ -102,7 +114,7 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player):
     buy_buttons = []
 
     # afficher chaque dragon
-    for dragon in dragons:
+    for entity in entities:
 
         # fond pour chaque dragon
         dragon_bg = pygame.Rect(x_offset + 5, y, 190, 140)
@@ -110,22 +122,30 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player):
         pygame.draw.rect(surface, (100, 100, 100), dragon_bg, 2)
 
         # image du dragon
-        if dragon.image_sprite:
-            surface.blit(dragon.image_sprite[0], (x_offset + 15, y + 25))
+        if entity.image_sprite:
+            surface.blit(entity.image_sprite[0], (x_offset + 15, y + 25))
 
         # nom du dragon
-        name_text = font_small.render(dragon.name, True, (255, 255, 255))
+        name_text = font_small.render(entity.name, True, (255, 255, 255))
         name_rect = name_text.get_rect(center=(x_offset + 95, y + 5 + name_text.get_height() // 2))
         surface.blit(name_text, name_rect)
 
         # stats
         stats_y = y + 25
-        stats = [
-            ("HP:", dragon.max_hp),
-            ("DMG:", dragon.attack_damage),
-            ("RNG:", dragon.attack_range),
-            ("SPD:", dragon.speed_base)
-        ]
+        if isinstance(entity, Tower):
+            stats = [
+                ("HP:", entity.max_hp),
+                ("DMG:", entity.attack_damage),
+                ("RNG:", entity.attack_range),
+            ]
+        else:
+            stats = [
+                ("HP:", entity.max_hp),
+                ("DMG:", entity.attack_damage),
+                ("RNG:", entity.attack_range),
+                ("SPD:", entity.speed_base),
+            ]
+
         value_x = x_offset + 175  # position fixe pour aligner les nombres a droite
         for label, value in stats:
             # afficher l'icone avant chaque stat
@@ -145,13 +165,17 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player):
         button_rect = pygame.Rect(x_offset + 15, button_y, 170, 25)
 
         # couleur du bouton selon si on peut acheter
-        can_afford = gold >= dragon.cost
+        can_afford = gold >= entity.cost
+
+        if isinstance(entity, Tower) and current_player.tower.active:
+            can_afford = False
+
         button_color = (0, 150, 0) if can_afford else (100, 100, 100)
         pygame.draw.rect(surface, button_color, button_rect)
         pygame.draw.rect(surface, (255, 255, 255), button_rect, 2)
 
         # texte du bouton
-        buy_text = font_small.render(f"{dragon.cost}", True, (255, 255, 255))
+        buy_text = font_small.render(f"{entity.cost}", True, (255, 255, 255))
         text_rect = buy_text.get_rect(center=button_rect.center)
         surface.blit(buy_text, text_rect)
         if gold_icon:
@@ -160,15 +184,16 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player):
         # ajouter le bouton à la liste (avec position absolue à l'écran)
         buy_buttons.append({
             "rect": button_rect,
-            "name": dragon.name,
-            "cost": dragon.cost,
+            "name": entity.name,
+            "cost": entity.cost,
             "can_afford": can_afford,
-            "dragon": dragon
+            "dragon": entity
         })
 
         y += 150
 
     return buy_buttons
+
 
 def draw_toggle_button(surface, x, y, size, is_open, current_player: Player):
     """Dessine un bouton demi-circulaire qui gere le deploiement du panneau"""
@@ -190,7 +215,7 @@ def draw_toggle_button(surface, x, y, size, is_open, current_player: Player):
     # fleche
     res = get_cache(current_player)
     if is_open:
-        arrow_icon = res['left_arrow_icon'] 
+        arrow_icon = res['left_arrow_icon']
     else:
         arrow_icon = res['right_arrow_icon']
 
@@ -198,6 +223,7 @@ def draw_toggle_button(surface, x, y, size, is_open, current_player: Player):
         arrow_x = x + 8 if is_open else x + 10
         arrow_rect = arrow_icon.get_rect(center=(arrow_x, y))
         surface.blit(arrow_icon, arrow_rect)
+
 
 def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right_x, economy, current_player: Player):
     panel_width = 200
@@ -239,7 +265,8 @@ def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right
     screen.blit(left_panel, (current_left_x, 0))
 
     left_button_x = current_left_x + panel_width
-    left_button_rect = pygame.Rect(left_button_x - button_size, button_y - button_size, button_size * 2, button_size * 2)
+    left_button_rect = pygame.Rect(left_button_x - button_size, button_y - button_size, button_size * 2,
+                                   button_size * 2)
     draw_toggle_button(screen, left_button_x, button_y, button_size, left_open, current_player)
 
     # onglet droit
@@ -249,7 +276,8 @@ def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right
 
     # Bouton pour ouvrir/fermer le panneau droit
     right_button_x = current_right_x
-    right_button_rect = pygame.Rect(right_button_x - button_size, button_y - button_size, button_size * 2, button_size * 2)
+    right_button_rect = pygame.Rect(right_button_x - button_size, button_y - button_size, button_size * 2,
+                                    button_size * 2)
     draw_toggle_button(screen, right_button_x, button_y, button_size, right_open, current_player)
 
     return left_button_rect, right_button_rect, current_left_x, current_right_x, buy_buttons

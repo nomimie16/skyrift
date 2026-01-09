@@ -1,3 +1,4 @@
+from random import randint
 from typing import List
 
 import screen_const as sc
@@ -127,7 +128,8 @@ class Grid:
 
                 cell = self.cells[y][x]
                 cell.occupants.append(occupant)
-                occupant.position = cell.position
+        occupant.cell = cell
+        occupant.position = cell.position
 
         return True
 
@@ -151,6 +153,22 @@ class Grid:
             cell.occupants.append(occupant)
 
         return True
+
+    def update_occupant_size(self, occupant) -> None:
+        """
+        Met à jour la grille quand un occupant change de taille.
+        :param occupant: l'occupant dont la taille a changé
+        :return: None
+        """
+        x0 = occupant.cell.position.x - 1
+        y0 = occupant.cell.position.y - occupant.height + 1
+
+        for y in range(y0, y0 + occupant.height):
+            for x in range(x0, x0 + occupant.width):
+                if 0 <= x < self.nb_columns and 0 <= y < self.nb_rows:
+                    cell = self.cells[y][x]
+                    if occupant not in cell.occupants:
+                        cell.occupants.append(occupant)
 
     def free_cells(self) -> List[Cell]:
         """
@@ -214,6 +232,83 @@ class Grid:
                 if len(adjacent_cell.occupants) == 0:
                     adjacent_cells.append(adjacent_cell)
         return adjacent_cells
+
+    def get_random_target_cell(self, origin_cell: Cell, max_distance: int = 3, width: int = 1,
+                               height: int = 1) -> Cell | None:
+        """
+        Renvoie une cellule au hasard dans un zone données
+        :param height:
+        :param width:
+        :param origin_cell:
+        :param max_distance:
+        :return:
+        """
+
+        reachable: List[Cell] = []
+        ox, oy = origin_cell.position.x, origin_cell.position.y
+
+        for row in self.cells:
+            for cell in row:
+                cx, cy = cell.position.x, cell.position.y
+
+                distance = abs(cx - ox) + abs(cy - oy)
+
+                if 1 <= distance <= max_distance and cx + width <= self.nb_columns and cy + height <= self.nb_rows:
+                    can_place = True
+                    for y in range(cy, cy + height):
+                        for x in range(cx, cx + width):
+                            if len(self.cells[y][x].occupants) > 0:
+                                can_place = False
+                                break
+                        if not can_place:
+                            break
+
+                    if can_place:
+                        reachable.append(cell)
+
+        if not reachable:
+            return None
+
+        return reachable[randint(0, len(reachable) - 1)]
+
+    def move_large_occupant(self, occupant, new_cell: Cell) -> None:
+        """
+        Déplace une entité qui fait plusieurs cases
+        :param occupant: entitée à déplacée
+        :param new_cell:
+        :return:
+        """
+        x0 = new_cell.position.x
+        y0 = new_cell.position.y
+
+        if x0 + occupant.width > self.nb_columns:
+            x0 = self.nb_columns - occupant.width
+        if y0 + occupant.height > self.nb_rows:
+            y0 = self.nb_rows - occupant.height
+
+        for row in self.cells:
+            for cell in row:
+                if occupant in cell.occupants:
+                    cell.remove_occupant(occupant)
+
+        for y in range(y0, y0 + occupant.height):
+            for x in range(x0, x0 + occupant.width):
+                self.cells[y][x].occupants.append(occupant)
+
+        occupant.cell = self.cells[y0][x0]
+        occupant.position = occupant.cell.position
+
+    def remove_large_occupant(self, occupant) -> None:
+        """
+        Supprime une entitée qui fait plusieurs cases de la grille
+        :param occupant: entitée à supprimé de la grille
+        :return:
+        """
+        for y in range(occupant.cell.position.y, occupant.cell.position.y + occupant.height):
+            for x in range(occupant.cell.position.x, occupant.cell.position.x + occupant.width):
+                if 0 <= x < self.nb_columns and 0 <= y < self.nb_rows:
+                    cell = self.cells[y][x]
+                    cell.remove_occupant(occupant)
 
     # ------- Getters et Setters -------
     @property

@@ -2,9 +2,11 @@ import pygame
 
 import screen_const as sc
 from component.entities.purse import spawn_random_purse
+from component.entities.tower import Tower
 from component.enum.type_entities import TypeEntitiesEnum
 from const import SPAWN_POS_P1, SPAWN_POS_P2
 from events.dragonEvents import DragonEvents
+from events.towerEvents import TowerEvents
 from page.component.grid_component import GridComponent
 from page.component.map_builder import MapBuilder
 from page.sidepanels import draw_sidepanels
@@ -19,7 +21,6 @@ def run_game(screen, ui):
     # img_test = pygame.image.load("assets/sprites/dragonnet.png").convert_alpha()
     # img_test_rect = img_test.get_rect()
     # img_test_rect.topleft = (100, 100)
-
     p1: Player = Player(name="Yanis", color="bleu")
     p2: Player = Player(name="Player 2", color="rouge")
     turn: Turn = Turn(p1, p2)
@@ -43,6 +44,7 @@ def run_game(screen, ui):
     builder = MapBuilder(grid_comp.grid, p1, p2)
     grid_comp.grid = builder.build_map()
     dragon_events = DragonEvents(grid_comp.grid, origin=(sc.OFFSET_X, sc.OFFSET_Y), tile_size=sc.TILE_SIZE)
+    tower_events = TowerEvents(grid_comp.grid)
 
     dragons = []
 
@@ -68,9 +70,20 @@ def run_game(screen, ui):
         # Grille et map
         grid_comp.draw(screen)
         builder.base1.draw(screen)
+        builder.tower1.draw(screen)
         builder.base2.draw(screen)
+        builder.tower2.draw(screen)
         builder.volcano.draw(screen)
-        builder.life_island.draw(screen)
+
+        if builder.life_island:
+            builder.life_island.draw(screen)
+
+        if builder.tornado and builder.tornado.active:
+            builder.tornado.update(grid_comp.grid)
+            builder.tornado.draw(screen)
+
+        if builder.tornado is None:
+            builder.sapwn_random_tornado()
 
         # Dessine les bourses pour chaque cellule en parcourant la grille
         for row in grid_comp.grid.cells:
@@ -81,12 +94,19 @@ def run_game(screen, ui):
 
         # Events
         dragon_events.draw(screen)
+        tower_events.draw(screen)
 
         for event in pygame.event.get():
             action = ui.handle_event(event)
             if action == "pause":
                 return "pause"
             if event.type == pygame.MOUSEBUTTONDOWN:
+
+                # obligée de mettre l'appel à towerevents ici sinon ça ne passe pas si on clique sur attaquer
+                if tower_events.attack_button_rect and tower_events.attack_button_rect.collidepoint(event.pos):
+                    tower_events.handle_click(event.pos, None, turn.current_player(), turn)
+                    continue
+
                 # Clic sur le bouton tour suivant (temporaire)
                 if next_turn_button_rect.collidepoint(event.pos):
                     print("tour de ", turn.current_player().name, "terminé")
@@ -97,7 +117,13 @@ def run_game(screen, ui):
                         for cell in row:
                             cell.apply_zone_effects_end_turn()
 
+                    # Spawn de la bourse
                     spawn_random_purse(grid_comp.grid)
+
+                    # Spawn de la tornade
+                    if builder.tornado:
+                        builder.tornado.handle_turn(grid_comp.grid)
+
                     player = turn.current_player()
                     print("tour de ", turn.current_player().name, "commencé")
                     continue
@@ -116,40 +142,52 @@ def run_game(screen, ui):
                 for button in buy_buttons:
                     if button["rect"].collidepoint(event.pos):
                         if button["can_afford"]:
-                            # La position de spawn dépend du joueur actuel
-                            if turn.current_player() == p1:
-                                spawn_pos = SPAWN_POS_P1
-                            else:
-                                spawn_pos = SPAWN_POS_P2
+                            remaining_gold = player.economy.get_gold()
 
-                            if grid_comp.grid.cells[spawn_pos[1]][spawn_pos[0]].occupants == []:
+                            # Achat tour de défense
+                            # TODO vérification dragon dans zone de construction
+                            if isinstance(button["dragon"], Tower):
+                                if turn.current_player() == p1:
+                                    builder.tower1.tower_activation(grid_comp.grid)
+                                else:
+                                    builder.tower2.tower_activation(grid_comp.grid)
+                                print(grid_comp.grid)
                                 player.economy.spend_gold(button["cost"])
-                                remaining_gold = player.economy.get_gold()
 
-                                # Créer une instance du dragon aux coordonnées (0, 0)
-                                dragon_class = button["dragon"].__class__
-                                new_dragon = dragon_class(spawn_pos[0], spawn_pos[1], player=turn.current_player())
+                            else:  # Achat dragons
+                                if turn.current_player() == p1:
+                                    spawn_pos = SPAWN_POS_P1
+                                else:
+                                    spawn_pos = SPAWN_POS_P2
 
-                                # Si le dragon est a p2, sa base est en bas a droite -> il doit donc être orienté vers la gauche
-                                if turn.current_player() == p2:
-                                    new_dragon.update_direction("gauche")
+                                if grid_comp.grid.cells[spawn_pos[1]][spawn_pos[0]].occupants == []:
 
-                                dragons.append(new_dragon)
+                                    # Créer une instance du dragon aux coordonnées (0, 0)
+                                    dragon_class = button["dragon"].__class__
+                                    new_dragon = dragon_class(spawn_pos[0], spawn_pos[1], player=turn.current_player())
 
-                                # ajoute le dragon a la grille
-                                cell = grid_comp.grid.cells[spawn_pos[1]][spawn_pos[0]]
-                                grid_comp.grid.add_occupant(new_dragon, cell)
+                                    # Si le dragon est a p2, sa base est en bas a droite -> il doit donc être orienté vers la gauche
+                                    if turn.current_player() == p2:
+                                        new_dragon.update_direction("gauche")
 
-                                # logs
-                                print(f"{button['name']} acheté ! argent restant : {remaining_gold}")
-                                print(f"inventaire de dragons : {[d.name for d in dragons]}")
-                            else:
-                                print("Impossible d'acheter : la case de spawn est occupée.")
+                                    dragons.append(new_dragon)
+
+                                    # ajoute le dragon a la grille
+                                    cell = grid_comp.grid.cells[spawn_pos[1]][spawn_pos[0]]
+                                    grid_comp.grid.add_occupant(new_dragon, cell)
+                                    player.economy.spend_gold(button["cost"])
+
+                                    # logs
+                                    print(f"{button['name']} acheté ! argent restant : {remaining_gold}")
+                                    print(f"inventaire de dragons : {[d.name for d in dragons]}")
+                                else:
+                                    print("Impossible d'acheter : la case de spawn est occupée.")
                         else:
                             print("Impossible d'acheter : fonds insuffisants.")
                         clicked_buy_button = True
 
                 if not clicked_buy_button:
+
                     cell = grid_comp.handle_click(event.pos)
                     if cell is None:
                         continue
@@ -159,16 +197,25 @@ def run_game(screen, ui):
                         if TypeEntitiesEnum.DRAGON in o.type_entity:
                             occ = o
                             break
-                        elif occ is not None:
-                            occ = o
+                    if occ is None:
+                        for o in cell.occupants:
+                            if TypeEntitiesEnum.TOWER in o.type_entity:
+                                occ = o
+                                break
 
-                    if occ is not None:
-                        if TypeEntitiesEnum.DRAGON in occ.type_entity:
+                    if dragon_events.selected_dragon is not None:
+                        dragon_events.handle_click(event.pos, occ, turn.current_player(), turn)
+
+                    else:
+                        if occ and TypeEntitiesEnum.DRAGON in occ.type_entity:
                             dragon_events.handle_click(event.pos, occ, turn.current_player(), turn)
+
+                        elif occ and TypeEntitiesEnum.TOWER in occ.type_entity:
+                            tower_events.handle_click(event.pos, occ, turn.current_player(), turn)
+
                         else:
                             dragon_events.handle_click(event.pos, None, turn.current_player(), turn)
-                    else:
-                        dragon_events.handle_click(event.pos, None, turn.current_player(), turn)
+
         # ======================================================================================
 
         # Supprimer les dragons morts de la grille
@@ -178,18 +225,23 @@ def run_game(screen, ui):
                     if TypeEntitiesEnum.DRAGON in occupant.type_entity:
                         if occupant.is_dead():
                             print("Dragon mort détecté :", occupant.name)
+                            occupant.grant_rewards()
                             occupant.update()
                             cell.remove_occupant(occupant)
                         else:
                             occupant.draw(screen)
                             occupant.update()
+                    if TypeEntitiesEnum.TOWER in occupant.type_entity:
+                        if occupant.is_dead():
+                            print("Tour morte détectée :", occupant.name)
+                            occupant.grant_rewards()
+                            occupant.tower_disable(grid_comp.grid)
 
         # ======================================================================================
 
         # Dessiner les side panels et récupérer leurs rectangles (ils doivent être dessinés APRES les dragons)
         left_button_rect, right_button_rect, current_left_x, current_right_x, buy_buttons = draw_sidepanels(
-            screen, left_open, right_open, current_left_x, current_right_x, player.economy, turn.current_player()
-        )
+            screen, left_open, right_open, current_left_x, current_right_x, player.economy, turn.current_player())
 
         # Dessiner le bouton tour suivant (temporaire)
         mouse_pos = pygame.mouse.get_pos()

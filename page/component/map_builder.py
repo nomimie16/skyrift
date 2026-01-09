@@ -4,6 +4,7 @@ from typing import List
 from component.entities.base import Base
 from component.entities.island_of_life import IslandOfLife
 from component.entities.tornado import Tornado
+from component.entities.tower import Tower
 from component.entities.volcano.volcano import Volcano
 from component.grid import Cell
 from component.position import Position
@@ -24,6 +25,8 @@ class MapBuilder:
 
         self.base1 = None
         self.base2 = None
+        self.tower1 = None
+        self.tower2 = None
         self.volcano = None
         self.life_island = None
         self.tornado = None
@@ -34,17 +37,39 @@ class MapBuilder:
         - base1 : haut gauche
         - base2 : bas droite
         """
-        self.base1 = Base(1, 1, sprite_path="assets/img/base.png", player=self.player1)
-        self.grid.add_static_occupants(self.base1, self.base1.cell, self.base1.height, self.base1.width)
-        self.player1.base = self.base1
 
+        # Base et tour du joueur 1
+        self.base1 = Base(1, 1, sprite_path="assets/img/base.png", player=self.player1)
+        self.grid.add_static_occupants(self.base1, self.base1.cell, self.base1.width, self.base1.height)
+
+        tower1_x = self.base1.cell.position.x - 1
+        tower1_y = self.base1.cell.position.y + 4
+
+        self.tower1 = Tower(tower1_x, tower1_y, sprite_path="assets/sprites/tour_bleu.png", player=self.player1)
+        self.grid.add_static_occupants(self.tower1, self.tower1.cell, self.tower1.width, self.tower1.height)
+        self.player1.base = self.base1
+        self.player1.tower = self.tower1
+
+        # Base et tour du joueur 2
         base2_x = self.grid.nb_columns - 5
         base2_y = self.grid.nb_rows - 5
         base2_cell = Cell(base2_x, base2_y)
         self.base2 = Base(base2_x, base2_y, sprite_path="assets/img/base_ennemie.png", player=self.player2)
-        self.grid.add_static_occupants(self.base2, base2_cell, self.base2.height, self.base2.width)
+        self.grid.add_static_occupants(self.base2, base2_cell, self.base2.width, self.base2.height)
+
+        # tower_x = self.base2.width + 1
+        # tower_y = self.base2.height - 4
+        # tower2_cell = Cell(tower_x, tower_y)
+        tower2_x = self.base2.cell.position.x - self.base2.width
+        tower2_y = self.base2.cell.position.y - self.base2.height - 1
+
+        self.tower2 = Tower(tower2_x, tower2_y, sprite_path="assets/sprites/tour_rouge.png", player=self.player2)
+
+        self.grid.add_static_occupants(self.tower2, self.tower2.cell, self.tower2.width, self.tower2.height)
+
         self.player2.base = self.base2
-        
+        self.player2.tower = self.tower2
+
     def spawn_random_volcano(self):
         """
         Fait spawn un volcan à une position aléatoire
@@ -95,7 +120,8 @@ class MapBuilder:
                     if self.can_place_cell(pos, temp.width, temp.height, 7):
                         possible_cells.append(cell)
         if not possible_cells:
-            return None
+            self.life_island = None
+            return
 
         chosen_cell = random.choice(possible_cells)
 
@@ -117,10 +143,11 @@ class MapBuilder:
             for cell in row:
                 if len(cell.occupants) == 0:
                     pos = cell.position
-                    if self.can_place_cell(pos, temp.width, temp.height, 5):
+                    if self.can_place_cell(pos, temp.width, temp.height, 1):
                         possible_cells.append(cell)
         if not possible_cells:
-            return None
+            self.tornado = None
+            return
 
         chosen_cell = random.choice(possible_cells)
 
@@ -142,7 +169,7 @@ class MapBuilder:
         self.build_bases()
         self.spawn_random_volcano()
         self.spawn_random_island_of_life()
-        # self.sapwn_random_tornado()
+        self.sapwn_random_tornado()
         return self.grid
 
     def can_place_cell(self, position: Position, width: int, height: int, min_gap: int = 3):
