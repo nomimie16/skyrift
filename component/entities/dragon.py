@@ -30,10 +30,10 @@ class Dragon(Entity):
         self._target_cell: Cell | None = None
         self._anim_counter = 0
         self._type: List[TypeEntitiesEnum] = [TypeEntitiesEnum.DRAGON]
-        self._owner: Player = player
+        self._player: Player = player
 
-        if self._owner:
-            self.sprite_path = sprite_path.replace("bleu", self._owner._color)
+        if self._player:
+            self.sprite_path = sprite_path.replace("bleu", self._player._color)
 
         self._sprite_sheet = pygame.image.load(self._sprite_path)
         self._imageSprite = [self._sprite_sheet.subsurface(x * 64, 0, 64, 64) for x in range(4)]
@@ -49,7 +49,7 @@ class Dragon(Entity):
         """
         Vérifie si le dragon s'est arrêté sur une bourse, et la collecte si tel est le cas
         """
-        if not self.cell or not self._owner:
+        if not self.cell or not self._player:
             return
 
         # cherche si une bourse est présente dans la cellule
@@ -62,9 +62,9 @@ class Dragon(Entity):
         if purse:
             # Ajoute l'or au joueur propriétaire du dragon
             amount = purse.amount
-            self._owner.economy.earn_gold(amount)
+            self._player.economy.earn_gold(amount)
             print(
-                f"{self._owner.name} a collecté une bourse de {amount} gold ! Total : {self._owner.economy.get_gold()}")
+                f"{self._player.name} a collecté une bourse de {amount} gold ! Total : {self._player.economy.get_gold()}")
 
             # Supprime la bourse de la grille
             self.cell.remove_occupant(purse)
@@ -78,7 +78,7 @@ class Dragon(Entity):
         self.path = find_path(grid, self.cell, self._target_cell)
         if self.path:
             print("Chemin trouvé :", self.path)
-            print("Proprietaire du dragon : ", self._owner.name)
+            print("Proprietaire du dragon : ", self._player.name)
         else:
             print("Pas de chemin possible")
 
@@ -260,8 +260,8 @@ class Dragon(Entity):
         self._imageSprite = value
 
     @property
-    def owner(self) -> Player:
-        return self._owner
+    def player(self) -> Player:
+        return self._player
 
     def __str__(self):
         return (

@@ -82,6 +82,11 @@ class Entity:
         """
         self._hp = max(0, self._hp - amount)
 
+    def heal(self, amount) -> None:
+        if self._hp <= 0:
+            return
+        self._hp = min(self._hp + amount, self._max_hp)
+
     def is_dead(self) -> bool:
         """
         Vérifie si l'entité est morte

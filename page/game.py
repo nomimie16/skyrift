@@ -9,6 +9,7 @@ from const import SPAWN_POS_P1, SPAWN_POS_P2
 from events.dragonEvents import DragonEvents
 from events.towerEvents import TowerEvents
 from page.component.banner_information import BannerInformation
+from page.component.damage_heal_popup import DamageAndHealPopupManager
 from page.component.grid_component import GridComponent
 from page.component.map_builder import MapBuilder
 from page.component.turn_popup import TurnPopup
@@ -31,6 +32,8 @@ def run_game(screen, ui):
     turn_popup = TurnPopup(duration=2000)
     turn_popup.show(player.name)
 
+    damage_heal_popup_manager = DamageAndHealPopupManager()
+
     # État des panneaux
     left_open = False
     right_open = False
@@ -48,8 +51,9 @@ def run_game(screen, ui):
     )
     builder = MapBuilder(grid_comp.grid, p1, p2)
     grid_comp.grid = builder.build_map()
-    dragon_events = DragonEvents(grid_comp.grid, origin=(sc.OFFSET_X, sc.OFFSET_Y), tile_size=sc.TILE_SIZE)
-    tower_events = TowerEvents(grid_comp.grid)
+    dragon_events = DragonEvents(grid_comp.grid, origin=(sc.OFFSET_X, sc.OFFSET_Y), tile_size=sc.TILE_SIZE,
+                                 damage_heal_popup_manager=damage_heal_popup_manager)
+    tower_events = TowerEvents(grid_comp.grid, damage_heal_popup_manager=damage_heal_popup_manager)
 
     # Initialisation abbnière d'informations
     grid_width = grid_comp.grid.nb_columns * grid_comp.tile
@@ -125,7 +129,7 @@ def run_game(screen, ui):
                     # Appliquer ou retirer les effets des zones sur les dragons
                     for row in grid_comp.grid.cells:
                         for cell in row:
-                            cell.apply_zone_effects_end_turn()
+                            cell.apply_zone_effects_end_turn(damage_heal_popup_manager)
 
                     # Spawn de la bourse
                     spawn_random_purse(grid_comp.grid)
@@ -242,9 +246,9 @@ def run_game(screen, ui):
                             occupant.grant_rewards()
                             occupant.update()
                             cell.remove_occupant(occupant)
-                            if occupant.owner == turn.current_player():
+                            if occupant.player == turn.current_player():
                                 event_information.show(TypeEventEnum.MORT_ALLIE)
-                            if occupant.owner != turn.current_player():
+                            if occupant.player != turn.current_player():
                                 event_information.show(TypeEventEnum.MORT_ADVERSAIRE)
                         else:
                             occupant.draw(screen)
@@ -287,6 +291,8 @@ def run_game(screen, ui):
         turn_popup.draw(screen)
 
         event_information.draw(screen)
+
+        damage_heal_popup_manager.update_and_draw(screen)
 
         pygame.display.flip()
 

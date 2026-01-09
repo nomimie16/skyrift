@@ -68,7 +68,7 @@ def get_cache(current_player: Player):
                                   + [Tower(0, 0, f"assets/sprites/tour_{current_player.color}.png", current_player)])
 
     else:
-        if cache['shop_entities'][0]._owner != current_player:
+        if cache['shop_entities'][0].player != current_player:
             cache['shop_entities'] = ([dragon_class(0, 0, current_player) for dragon_class in DRAGONS_DATA]
                                       + [Tower(0, 0, f"assets/sprites/tour_{current_player.color}.png",
                                                current_player)])

@@ -8,12 +8,12 @@ class IslandOfLifeEffect(EffectZone):
     """
 
     def __init__(self, hp: int = 7):
-        self.hp = hp
+        self.heal = hp
 
     def apply_effect(self, entity: Entity) -> None:
         """Applique l'effet de l'île de vie à l'entité donnée.
         :param: entity (Entity): L'entité à affecter.
         :return: None
         """
-        entity.hp += self.hp
+        entity.heal(self.heal)
         print(("entity hp after island of life effect:", entity.hp))
