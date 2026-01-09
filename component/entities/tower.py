@@ -14,7 +14,7 @@ class Tower(Entity):
 
     def __init__(self, x: int, y: int, sprite_path: str, player: Player = None):
         super().__init__(x, y, name="Tour de défense", type_entity=[TypeEntitiesEnum.TOWER, TypeEntitiesEnum.OBSTACLE],
-                         max_hp=300,
+                         max_hp=10,
                          attack_damage=25, attack_range=3,
                          sprite_path=sprite_path, kill_reward=90)
         self._width = 2
