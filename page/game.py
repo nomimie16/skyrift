@@ -2,13 +2,13 @@ import pygame
 
 import screen_const as sc
 from component.entities.purse import spawn_random_purse
-from component.enum.event_enum import TypeEventEnum
 from component.entities.tower import Tower
+from component.enum.event_enum import TypeEventEnum
 from component.enum.type_entities import TypeEntitiesEnum
 from const import SPAWN_POS_P1, SPAWN_POS_P2
 from events.dragonEvents import DragonEvents
-from page.component.banner_information import BannerInformation
 from events.towerEvents import TowerEvents
+from page.component.banner_information import BannerInformation
 from page.component.grid_component import GridComponent
 from page.component.map_builder import MapBuilder
 from page.component.turn_popup import TurnPopup
@@ -163,8 +163,9 @@ def run_game(screen, ui):
                                     builder.tower1.tower_activation(grid_comp.grid)
                                 else:
                                     builder.tower2.tower_activation(grid_comp.grid)
-                                print(grid_comp.grid)
                                 player.economy.spend_gold(button["cost"])
+                                event_information.show(TypeEventEnum.NOUVELLE_TOUR)
+
 
                             else:  # Achat dragons
                                 if turn.current_player() == p1:
@@ -188,6 +189,7 @@ def run_game(screen, ui):
                                     cell = grid_comp.grid.cells[spawn_pos[1]][spawn_pos[0]]
                                     grid_comp.grid.add_occupant(new_dragon, cell)
                                     player.economy.spend_gold(button["cost"])
+                                    event_information.show(TypeEventEnum.NOUVEAU_DRAGON)
 
                                     # logs
                                     print(f"{button['name']} acheté ! argent restant : {remaining_gold}")
@@ -252,6 +254,7 @@ def run_game(screen, ui):
                             print("Tour morte détectée :", occupant.name)
                             occupant.grant_rewards()
                             occupant.tower_disable(grid_comp.grid)
+                            event_information.show(TypeEventEnum.TOUR_DETRUITE)
 
         # Gestion base détruite
         if builder.base1.is_dead():
