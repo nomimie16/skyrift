@@ -14,7 +14,7 @@ class Tower(Entity):
 
     def __init__(self, x: int, y: int, sprite_path: str, player: Player = None):
         super().__init__(x, y, name="Tour de défense", type_entity=[TypeEntitiesEnum.TOWER, TypeEntitiesEnum.OBSTACLE],
-                         max_hp=300,
+                         max_hp=10,
                          attack_damage=25, attack_range=3,
                          sprite_path=sprite_path, kill_reward=90)
         self._width = 2
@@ -34,15 +34,12 @@ class Tower(Entity):
         if self._active:
             return
 
-        old_width = self.width
-        old_height = self.height
-
         self._active = True
         self._height = 3
         # TODO changer sprite
         self._sprite_path = f"assets/img/tour_{self.player.color}.png"
 
-        grid.update_occupant_size(self, old_width, old_height)
+        grid.update_occupant_size(self)
 
     def tower_disable(self, grid: Grid) -> None:
         """
@@ -53,15 +50,12 @@ class Tower(Entity):
         if self._active:
             self._active = False
 
-        old_width = self.width
-        old_height = self.height
-
         self._height = 1
-        self._hp = 300
+        self._hp = self._max_hp
         # TODO changer sprites
         self._sprite_path = f"assets/img/tour_{self.player.color}.png"
 
-        grid.update_occupant_size(self, old_width, old_height)
+        grid.update_occupant_size(self)
 
     def take_damage(self, amount) -> None:
         """
@@ -90,6 +84,7 @@ class Tower(Entity):
         surface.blit(scaled, (pixel_x, pixel_y))
 
         if self._active:
+            print("Bar de vie", self.width)
             self.draw_health_bar(surface, self.width, self.height - 1)
 
     @property
