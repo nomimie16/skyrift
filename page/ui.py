@@ -26,6 +26,10 @@ class UIOverlay:
         self.coin_text_rect = self.coin_text.get_rect()
         self.coin_text_rect.topleft = (70, 20)
         self.coin_font = pygame.font.Font(None, 50)
+        self.coin_position = (
+            self.coin_text_rect.right + 10,
+            self.coin_text_rect.centery
+        )
 
         # Joueur en cours
         self.current_player = pygame.font.Font(None, 36).render("Joueur 1", True, (0, 0, 0))
@@ -43,7 +47,13 @@ class UIOverlay:
 
             self.coin_value = current_player.economy.get_gold()
             self.coin_text = self.coin_font.render(str(self.coin_value), True, (255, 215, 0))
+            self.coin_text_rect = self.coin_text.get_rect()
+            self.coin_text_rect.topleft = (70, 20)
 
+            self.coin_position = (
+                self.coin_text_rect.right + 10,
+                self.coin_text_rect.centery
+            )
         screen.blit(self.coin_text, self.coin_text_rect)
         screen.blit(self.current_player, self.current_player_rect)
 

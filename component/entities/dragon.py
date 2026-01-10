@@ -45,9 +45,10 @@ class Dragon(Entity):
         self._actual_speed = self._speed_base
         self._speed_modifier = 0
 
-    def _check_purse_collection(self):
+    def _check_purse_collection(self) -> int | None:
         """
         Vérifie si le dragon s'est arrêté sur une bourse, et la collecte si tel est le cas
+        :return: Montant d'or collecté ou None
         """
         if not self.cell or not self._player:
             return
@@ -63,12 +64,15 @@ class Dragon(Entity):
             # Ajoute l'or au joueur propriétaire du dragon
             amount = purse.amount
             self._player.economy.earn_gold(amount)
+
             print(
                 f"{self._player.name} a collecté une bourse de {amount} gold ! Total : {self._player.economy.get_gold()}")
 
             # Supprime la bourse de la grille
             self.cell.remove_occupant(purse)
             purse.destroy()
+            return amount
+        return None
 
     def move_dragon(self, target_x: int, target_y: int, grid: Grid):
         self._target_cell = grid.cells[target_y][target_x]
@@ -82,9 +86,10 @@ class Dragon(Entity):
         else:
             print("Pas de chemin possible")
 
-    def update(self):
+    def update(self) -> int | None:
         """
         Met à jour la position du dragon lors de son déplacement
+        :return: Montant d'or collecté ou None
         """
         if not self._moving or not self.path:
             return
@@ -124,12 +129,15 @@ class Dragon(Entity):
                 self._target_cell = None
                 self._index_img = 0
                 # Vérifier si le dragon s'est arrêté sur une bourse
-                self._check_purse_collection()
+                amount = self._check_purse_collection()
+                if amount:
+                    return amount
 
         self._anim_counter += 1
         if self._anim_counter >= 50:
             self._anim_counter = 0
             self._index_img = (self._index_img + 1) % len(self._imageSprite)
+        return None
 
     def update_direction(self, direction: str):
         """

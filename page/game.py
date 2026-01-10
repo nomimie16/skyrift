@@ -10,6 +10,7 @@ from events.dragonEvents import DragonEvents
 from events.towerEvents import TowerEvents
 from page.component.banner_information import BannerInformation
 from page.component.damage_heal_popup import DamageAndHealPopupManager
+from page.component.gold_popup import GoldPopupManager
 from page.component.grid_component import GridComponent
 from page.component.map_builder import MapBuilder
 from page.component.turn_popup import TurnPopup
@@ -27,12 +28,21 @@ def run_game(screen, ui):
     # img_test_rect.topleft = (100, 100)
     p1: Player = Player(name="Yanis", color="bleu")
     p2: Player = Player(name="Player 2", color="rouge")
+
     turn: Turn = Turn(p1, p2)
     player: Player = turn.current_player()
     turn_popup = TurnPopup(duration=2000)
     turn_popup.show(player.name)
 
     damage_heal_popup_manager = DamageAndHealPopupManager()
+
+    gold_popup_manager = GoldPopupManager()
+
+    def on_gold_change(delta):
+        gold_popup_manager.spawn(*ui.coin_position, delta)
+
+    p1.economy.add_listener(on_gold_change)
+    p2.economy.add_listener(on_gold_change)
 
     # État des panneaux
     left_open = False
@@ -293,6 +303,7 @@ def run_game(screen, ui):
         event_information.draw(screen)
 
         damage_heal_popup_manager.update_and_draw(screen)
+        gold_popup_manager.update_and_draw(screen)
 
         pygame.display.flip()
 
