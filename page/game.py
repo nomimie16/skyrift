@@ -3,12 +3,17 @@ import pygame
 import screen_const as sc
 from component.entities.purse import spawn_random_purse
 from component.entities.tower import Tower
+from component.enum.event_enum import TypeEventEnum
 from component.enum.type_entities import TypeEntitiesEnum
 from const import SPAWN_POS_P1, SPAWN_POS_P2
 from events.dragonEvents import DragonEvents
 from events.towerEvents import TowerEvents
+from page.component.banner_information import BannerInformation
+from page.component.damage_heal_popup import DamageAndHealPopupManager
+from page.component.gold_popup import GoldPopupManager
 from page.component.grid_component import GridComponent
 from page.component.map_builder import MapBuilder
+from page.component.turn_popup import TurnPopup
 from page.sidepanels import draw_sidepanels
 from player import Player
 from turn import Turn
@@ -23,8 +28,21 @@ def run_game(screen, ui):
     # img_test_rect.topleft = (100, 100)
     p1: Player = Player(name="Yanis", color="bleu")
     p2: Player = Player(name="Player 2", color="rouge")
+
     turn: Turn = Turn(p1, p2)
     player: Player = turn.current_player()
+    turn_popup = TurnPopup(duration=2000)
+    turn_popup.show(player.name)
+
+    damage_heal_popup_manager = DamageAndHealPopupManager()
+
+    gold_popup_manager = GoldPopupManager()
+
+    def on_gold_change(delta):
+        gold_popup_manager.spawn(*ui.coin_position, delta)
+
+    p1.economy.add_listener(on_gold_change)
+    p2.economy.add_listener(on_gold_change)
 
     # État des panneaux
     left_open = False
@@ -43,8 +61,14 @@ def run_game(screen, ui):
     )
     builder = MapBuilder(grid_comp.grid, p1, p2)
     grid_comp.grid = builder.build_map()
-    dragon_events = DragonEvents(grid_comp.grid, origin=(sc.OFFSET_X, sc.OFFSET_Y), tile_size=sc.TILE_SIZE)
-    tower_events = TowerEvents(grid_comp.grid)
+    dragon_events = DragonEvents(grid_comp.grid, origin=(sc.OFFSET_X, sc.OFFSET_Y), tile_size=sc.TILE_SIZE,
+                                 damage_heal_popup_manager=damage_heal_popup_manager)
+    tower_events = TowerEvents(grid_comp.grid, damage_heal_popup_manager=damage_heal_popup_manager)
+
+    # Initialisation abbnière d'informations
+    grid_width = grid_comp.grid.nb_columns * grid_comp.tile
+    event_information = BannerInformation(None, x=grid_comp.origin[0], y=grid_comp.origin[1] - 40, width=grid_width,
+                                          height=40)
 
     dragons = []
 
@@ -64,7 +88,7 @@ def run_game(screen, ui):
     while running:
         # Dessiner le jeu
         screen.fill(WHITE)
-        ui.draw(screen)
+        ui.draw(screen, current_player=turn.current_player())
         # screen.blit(img_test, img_test_rect)
 
         # Grille et map
@@ -115,7 +139,7 @@ def run_game(screen, ui):
                     # Appliquer ou retirer les effets des zones sur les dragons
                     for row in grid_comp.grid.cells:
                         for cell in row:
-                            cell.apply_zone_effects_end_turn()
+                            cell.apply_zone_effects_end_turn(damage_heal_popup_manager)
 
                     # Spawn de la bourse
                     spawn_random_purse(grid_comp.grid)
@@ -125,6 +149,8 @@ def run_game(screen, ui):
                         builder.tornado.handle_turn(grid_comp.grid)
 
                     player = turn.current_player()
+                    # Affichage du popup de tour
+                    turn_popup.show(player.name)
                     print("tour de ", turn.current_player().name, "commencé")
                     continue
                 # ouverture et fermeture des panneaux
@@ -151,8 +177,9 @@ def run_game(screen, ui):
                                     builder.tower1.tower_activation(grid_comp.grid)
                                 else:
                                     builder.tower2.tower_activation(grid_comp.grid)
-                                print(grid_comp.grid)
                                 player.economy.spend_gold(button["cost"])
+                                event_information.show(TypeEventEnum.NOUVELLE_TOUR)
+
 
                             else:  # Achat dragons
                                 if turn.current_player() == p1:
@@ -176,6 +203,7 @@ def run_game(screen, ui):
                                     cell = grid_comp.grid.cells[spawn_pos[1]][spawn_pos[0]]
                                     grid_comp.grid.add_occupant(new_dragon, cell)
                                     player.economy.spend_gold(button["cost"])
+                                    event_information.show(TypeEventEnum.NOUVEAU_DRAGON)
 
                                     # logs
                                     print(f"{button['name']} acheté ! argent restant : {remaining_gold}")
@@ -228,6 +256,10 @@ def run_game(screen, ui):
                             occupant.grant_rewards()
                             occupant.update()
                             cell.remove_occupant(occupant)
+                            if occupant.player == turn.current_player():
+                                event_information.show(TypeEventEnum.MORT_ALLIE)
+                            if occupant.player != turn.current_player():
+                                event_information.show(TypeEventEnum.MORT_ADVERSAIRE)
                         else:
                             occupant.draw(screen)
                             occupant.update()
@@ -236,7 +268,15 @@ def run_game(screen, ui):
                             print("Tour morte détectée :", occupant.name)
                             occupant.grant_rewards()
                             occupant.tower_disable(grid_comp.grid)
+                            event_information.show(TypeEventEnum.TOUR_DETRUITE)
 
+        # Gestion base détruite
+        if builder.base1.is_dead():
+            print("Base 1 détruite !")
+            event_information.show(TypeEventEnum.BASE_DETRUITE)
+        if builder.base2.is_dead():
+            print("Base 2 détruite !")
+            event_information.show(TypeEventEnum.BASE_DETRUITE)
         # ======================================================================================
 
         # Dessiner les side panels et récupérer leurs rectangles (ils doivent être dessinés APRES les dragons)
@@ -256,6 +296,14 @@ def run_game(screen, ui):
         turn_text = font.render(f"tour de {player.name}", True, (0, 0, 0))
         turn_text_rect = turn_text.get_rect(center=(next_turn_button_rect.centerx, next_turn_button_rect.top - 30))
         screen.blit(turn_text, turn_text_rect)
+
+        # Dessiner le popup de tour
+        turn_popup.draw(screen)
+
+        event_information.draw(screen)
+
+        damage_heal_popup_manager.update_and_draw(screen)
+        gold_popup_manager.update_and_draw(screen)
 
         pygame.display.flip()
 

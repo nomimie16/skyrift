@@ -2,6 +2,8 @@ from enum import Enum
 
 
 class TypeEntitiesEnum(str, Enum):
+    """Énumération des types d'entités du jeu"""
+
     DRAGON = "DRAGON"
     DRAGONNET = "DRAGONNET"
     DRAGON_MOYEN = "DRAGON_MOYEN"

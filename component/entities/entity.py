@@ -82,6 +82,11 @@ class Entity:
         """
         self._hp = max(0, self._hp - amount)
 
+    def heal(self, amount) -> None:
+        if self._hp <= 0:
+            return
+        self._hp = min(self._hp + amount, self._max_hp)
+
     def is_dead(self) -> bool:
         """
         Vérifie si l'entité est morte
@@ -97,13 +102,16 @@ class Entity:
         """
         target.take_damage(self.attack_damage)
 
-    def grant_rewards(self) -> None:
+    def grant_rewards(self) -> int | None:
         """
         Accorde les récompenses à l'attaquant
-        :return:
+        :return: Montant de la récompense accordée ou None
         """
         if self._last_attacker and self.kill_reward > 0:
             self._last_attacker.economy.earn_gold(self.kill_reward)
+
+            return self.kill_reward
+        return None
 
     # ------- Getters et Setters -------
 

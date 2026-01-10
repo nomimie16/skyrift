@@ -28,7 +28,7 @@ class Cell:
             if occupant in self._occupants:
                 self._occupants.remove(occupant)
 
-    def apply_zone_effects_end_turn(self) -> None:
+    def apply_zone_effects_end_turn(self, damage_heal_popup_manager=None) -> None:
         """
         Applique les effets de zone aux dragons présents dans la cellule en fin de tour
         :return None
@@ -47,6 +47,11 @@ class Cell:
             dragon.reset_speed()
             for zone in zones:
                 zone.effect.apply_effect(dragon)
+                if damage_heal_popup_manager:
+                    if TypeEntitiesEnum.BAD_EFFECT_ZONE in zone.type_entity:
+                        damage_heal_popup_manager.spawn_for_entity(dragon, -zone.effect.damage)
+                    elif TypeEntitiesEnum.GOOD_EFFECT_ZONE in zone.type_entity:
+                        damage_heal_popup_manager.spawn_for_entity(dragon, zone.effect.heal)
 
     def get_pixel_position(self) -> Position:
         """Retourne la position en pixel de la cellule

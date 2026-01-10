@@ -30,10 +30,10 @@ class Dragon(Entity):
         self._target_cell: Cell | None = None
         self._anim_counter = 0
         self._type: List[TypeEntitiesEnum] = [TypeEntitiesEnum.DRAGON]
-        self._owner: Player = player
+        self._player: Player = player
 
-        if self._owner:
-            self.sprite_path = sprite_path.replace("bleu", self._owner._color)
+        if self._player:
+            self.sprite_path = sprite_path.replace("bleu", self._player._color)
 
         self._sprite_sheet = pygame.image.load(self._sprite_path)
         self._imageSprite = [self._sprite_sheet.subsurface(x * 64, 0, 64, 64) for x in range(4)]
@@ -45,11 +45,12 @@ class Dragon(Entity):
         self._actual_speed = self._speed_base
         self._speed_modifier = 0
 
-    def _check_purse_collection(self):
+    def _check_purse_collection(self) -> int | None:
         """
         Vérifie si le dragon s'est arrêté sur une bourse, et la collecte si tel est le cas
+        :return: Montant d'or collecté ou None
         """
-        if not self.cell or not self._owner:
+        if not self.cell or not self._player:
             return
 
         # cherche si une bourse est présente dans la cellule
@@ -62,13 +63,16 @@ class Dragon(Entity):
         if purse:
             # Ajoute l'or au joueur propriétaire du dragon
             amount = purse.amount
-            self._owner.economy.earn_gold(amount)
+            self._player.economy.earn_gold(amount)
+
             print(
-                f"{self._owner.name} a collecté une bourse de {amount} gold ! Total : {self._owner.economy.get_gold()}")
+                f"{self._player.name} a collecté une bourse de {amount} gold ! Total : {self._player.economy.get_gold()}")
 
             # Supprime la bourse de la grille
             self.cell.remove_occupant(purse)
             purse.destroy()
+            return amount
+        return None
 
     def move_dragon(self, target_x: int, target_y: int, grid: Grid):
         self._target_cell = grid.cells[target_y][target_x]
@@ -78,13 +82,14 @@ class Dragon(Entity):
         self.path = find_path(grid, self.cell, self._target_cell)
         if self.path:
             print("Chemin trouvé :", self.path)
-            print("Proprietaire du dragon : ", self._owner.name)
+            print("Proprietaire du dragon : ", self._player.name)
         else:
             print("Pas de chemin possible")
 
-    def update(self):
+    def update(self) -> int | None:
         """
         Met à jour la position du dragon lors de son déplacement
+        :return: Montant d'or collecté ou None
         """
         if not self._moving or not self.path:
             return
@@ -124,12 +129,15 @@ class Dragon(Entity):
                 self._target_cell = None
                 self._index_img = 0
                 # Vérifier si le dragon s'est arrêté sur une bourse
-                self._check_purse_collection()
+                amount = self._check_purse_collection()
+                if amount:
+                    return amount
 
         self._anim_counter += 1
         if self._anim_counter >= 50:
             self._anim_counter = 0
             self._index_img = (self._index_img + 1) % len(self._imageSprite)
+        return None
 
     def update_direction(self, direction: str):
         """
@@ -258,6 +266,10 @@ class Dragon(Entity):
     @image_sprite.setter
     def image_sprite(self, value: list) -> None:
         self._imageSprite = value
+
+    @property
+    def player(self) -> Player:
+        return self._player
 
     def __str__(self):
         return (

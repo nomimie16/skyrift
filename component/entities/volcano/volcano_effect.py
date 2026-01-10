@@ -16,7 +16,7 @@ class VolcanoEffect(EffectZone):
         :param: entity (Entity): L'entité à affecter.
         :return: None
         """
-        entity.hp -= self.damage
+        entity.take_damage(self.damage)
         entity.speed_modifier = self.speed_penalty
         entity.actual_speed = max(0, entity.speed_base + entity.speed_modifier)
 

@@ -16,7 +16,8 @@ class TowerEvents:
     Fonctionne avec un GridComponent ou toute grille avec cellules
     """
 
-    def __init__(self, grid: Grid, origin: Position = (OFFSET_X, OFFSET_Y), tile_size=TILE_SIZE):
+    def __init__(self, grid: Grid, origin: Position = (OFFSET_X, OFFSET_Y), tile_size=TILE_SIZE,
+                 damage_heal_popup_manager=None):
         """
         :param grid: instance de Grid (la grille logique)
         :param origin: tuple (x, y) pour le coin supérieur gauche de la grille
@@ -31,6 +32,8 @@ class TowerEvents:
         self.attack_cells: list[Cell] = []
 
         self.attack_button_rect: pygame.Rect | None = None
+
+        self.damage_heal_popup_manager = damage_heal_popup_manager
 
     def _pixel_to_cell(self, pos: Position) -> Position | None:
         """
@@ -78,15 +81,22 @@ class TowerEvents:
                 if 0 < dist <= max_attack_range:
                     cell = self.grid.cells[y][x]
                     for occupant in cell.occupants:
-                        if TypeEntitiesEnum.DRAGON in occupant.type_entity and occupant._owner != tower.player:
+                        if TypeEntitiesEnum.DRAGON in occupant.type_entity and occupant.player != tower.player:
                             dragons.append(occupant)
 
         return dragons
 
     def handle_click(self, mouse_pos, occupant, player, turn):
+        """
+        Gère le clic de la souris pour la sélection des tours et l'attaque
+        :param mouse_pos: Position (x,y) en pixels du clic
+        :param occupant: Occupant de la cellule cliquée
+        :param player: Joueur actuel
+        :param turn: Tour actuel
+        :return:
+        """
         cell = Cell.get_cell_by_pixel(self.grid, mouse_pos)
 
-        # Clic sur bouton attaquer
         if self.attack_button_rect and self.attack_button_rect.collidepoint(mouse_pos):
             self.attack_all(turn)
             return
@@ -95,7 +105,6 @@ class TowerEvents:
             self._reset_selection()
             return
 
-        # Clic sur une tour
         if occupant and isinstance(occupant, Tower):
             if not occupant.active:
                 print("Tour non activée")
@@ -114,11 +123,22 @@ class TowerEvents:
         self._reset_selection()
 
     def attack_all(self, turn):
+        """
+        Attaque tous les dragons dans les zones d'attaque de la tour sélectionnée
+        :param turn: Tour actuel
+        :return:
+        """
         if not self.selected_tower:
             return
 
         for dragon in self.attack_cells:
             dragon.take_damage(self.selected_tower.attack_damage)
+
+            if self.damage_heal_popup_manager:
+                self.damage_heal_popup_manager.spawn_for_entity(
+                    dragon,
+                    -self.selected_tower.attack_damage
+                )
 
         if turn:
             turn.use_attack()
@@ -151,6 +171,11 @@ class TowerEvents:
             self.draw_attack_button(surface)
 
     def draw_attack_button(self, surface):
+        """
+        Dessine le bouton d'attaque au-dessus de la tour sélectionnée
+        :param surface:
+        :return:
+        """
         if not self.selected_tower:
             self.attack_button_rect = None
             return

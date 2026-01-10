@@ -14,7 +14,7 @@ class Tower(Entity):
 
     def __init__(self, x: int, y: int, sprite_path: str, player: Player = None):
         super().__init__(x, y, name="Tour de défense", type_entity=[TypeEntitiesEnum.TOWER, TypeEntitiesEnum.OBSTACLE],
-                         max_hp=10,
+                         max_hp=300,
                          attack_damage=25, attack_range=3,
                          sprite_path=sprite_path, kill_reward=90)
         self._width = 2
@@ -84,7 +84,6 @@ class Tower(Entity):
         surface.blit(scaled, (pixel_x, pixel_y))
 
         if self._active:
-            print("Bar de vie", self.width)
             self.draw_health_bar(surface, self.width, self.height - 1)
 
     @property

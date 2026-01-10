@@ -17,7 +17,7 @@ class DragonEvents:
     Fonctionne avec un GridComponent ou toute grille avec cellules
     """
 
-    def __init__(self, grid: Grid, origin: Position, tile_size):
+    def __init__(self, grid: Grid, origin: Position, tile_size, damage_heal_popup_manager=None):
         """
         :param grid: instance de Grid (la grille logique)
         :param origin: tuple (x, y) pour le coin supérieur gauche de la grille
@@ -30,6 +30,8 @@ class DragonEvents:
         self.selected_dragon: Dragon | None = None
         self.move_cells: List = []
         self.attack_cells: List = []
+
+        self.damage_heal_popup_manager = damage_heal_popup_manager
 
     def _pixel_to_cell(self, pos: Position) -> Position | None:
         """
@@ -126,11 +128,11 @@ class DragonEvents:
                 if 0 < dist <= max_attack_range:
                     cell = self.grid.cells[y][x]
                     for occupant in cell.occupants:
-                        if TypeEntitiesEnum.DRAGON in occupant.type_entity and occupant._owner != dragon._owner:
+                        if TypeEntitiesEnum.DRAGON in occupant.type_entity and occupant.player != dragon.player:
                             possible_cells.append(cell)
-                        if (TypeEntitiesEnum.BASE in occupant.type_entity and occupant.player != dragon._owner):
+                        if (TypeEntitiesEnum.BASE in occupant.type_entity and occupant.player != dragon.player):
                             possible_cells.append(cell)
-                        if (TypeEntitiesEnum.TOWER in occupant.type_entity and occupant.player != dragon._owner):
+                        if (TypeEntitiesEnum.TOWER in occupant.type_entity and occupant.player != dragon.player):
                             possible_cells.append(cell)
 
         return possible_cells
@@ -182,20 +184,19 @@ class DragonEvents:
                     return
 
                 for occupant in cell.occupants:
-                    if TypeEntitiesEnum.DRAGON in occupant.type_entity and isinstance(occupant,
-                                                                                      Dragon) and occupant._owner != player:
-                        occupant.last_attacker = player
-                        self.selected_dragon.attack(occupant)
-                        attacked = True
+                    if (
+                            TypeEntitiesEnum.DRAGON in occupant.type_entity
+                            or TypeEntitiesEnum.BASE in occupant.type_entity
+                            or TypeEntitiesEnum.TOWER in occupant.type_entity
+                    ) and occupant.player != player:
 
-                    if (TypeEntitiesEnum.BASE in occupant.type_entity and occupant.player != player):
+                        damage = self.selected_dragon.attack_damage
                         occupant.last_attacker = player
-                        occupant.take_damage(self.selected_dragon.attack_damage)
-                        attacked = True
+                        occupant.take_damage(damage)
 
-                    if (TypeEntitiesEnum.TOWER in occupant.type_entity and occupant.player != player):
-                        occupant.last_attacker = player
-                        occupant.take_damage(self.selected_dragon.attack_damage)
+                        if self.damage_heal_popup_manager:
+                            self.damage_heal_popup_manager.spawn_for_entity(occupant, -damage)
+
                         attacked = True
 
                     occupant.last_attacker = player
@@ -218,7 +219,7 @@ class DragonEvents:
         if occupant and TypeEntitiesEnum.DRAGON in occupant.type_entity:
             if isinstance(occupant, Dragon):
                 # Vérifier que le dragon appartient au joueur actuel
-                if player is not None and occupant._owner != player:
+                if player is not None and occupant.player != player:
                     print("Ce dragon n'appartient pas à votre joueur !")
                     return
                 self.selected_dragon = occupant
