@@ -1,19 +1,18 @@
-import pytest
-from component.entities.dragon import Dragonnet
-from component.position import Position
-from component.grid import Grid
+from src.component.entities.dragon import Dragonnet
+from src.component.position import Position
+from src.component.grid import Grid
+
 
 class TestGrid:
-    
+
     def setup_method_grid(self):
         """Initialisation précédant chaque test effectué"""
-        self.grid = Grid(5,5)  
-    
-    
+        self.grid = Grid(5, 5)
+
     def setup_methode_pos(self):
         """Initialisation précédant chaque test effectué"""
-        self.position = Position(0,0) 
-    
+        self.position = Position(0, 0)
+
     def test_add_occupant(self):
         """Test de l'ajout d'un occupant dans une cellule"""
         pos = Position(2, 3)

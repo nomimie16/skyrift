@@ -1,4 +1,4 @@
-from ...component import position
+from src.component import position
 
 
 class TestPosition:

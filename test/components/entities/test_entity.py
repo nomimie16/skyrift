@@ -2,8 +2,8 @@ from unittest.mock import patch, MagicMock
 
 import pytest
 
-from component.entities.entity import Entity
-from component.enum.type_entities import TypeEntitiesEnum
+from src.component.entities.entity import Entity
+from src.enum.type_entities import TypeEntitiesEnum
 
 
 @pytest.fixture

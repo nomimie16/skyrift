@@ -2,10 +2,10 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-import screen_const as sc
-from component.entities.dragon import Dragonnet, DragonMoyen, DragonGeant, Dragon
-from component.grid import Grid
-from component.position import Position
+from src import screen_const as sc
+from src.component.entities.dragon import Dragonnet, DragonMoyen, DragonGeant, Dragon
+from src.component.grid import Grid
+from src.component.position import Position
 
 
 @pytest.fixture
