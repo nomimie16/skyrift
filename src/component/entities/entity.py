@@ -24,7 +24,10 @@ class Entity:
         self._attack_damage: int = attack_damage
         self._attack_range: int = attack_range
         self._sprite_path: str = sprite_path
-        self._sprite = pygame.image.load(sprite_path).convert_alpha()
+        if sprite_path:
+            self._sprite = pygame.image.load(sprite_path).convert_alpha()
+        else:
+            self._sprite = None
         self._kill_reward = kill_reward
         self._last_attacker: Player | None = None
 
@@ -34,6 +37,8 @@ class Entity:
         :param surface: Surface sur laquelle l'entité est placée
         :return: None
         """
+        if self._sprite is None:
+            return
         surface.blit(self._sprite, self._cell.get_pixel_position().to_tuple())
 
     def draw_health_bar(self, surface, width=1, gap=0) -> None:
