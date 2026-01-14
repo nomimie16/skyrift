@@ -51,3 +51,11 @@ class Player:  # a completer
     @tower.setter
     def tower(self, tower):
         self._tower = tower
+
+    @property
+    def base(self):
+        return self._base
+
+    @base.setter
+    def base(self, base):
+        self._base = base
