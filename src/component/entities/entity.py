@@ -113,6 +113,15 @@ class Entity:
             return self.kill_reward
         return None
 
+    def set_sprite(self, sprite_path: str):
+        """
+        Définit le sprite de l'entité
+        :param sprite_path:
+        :return:
+        """
+        self._sprite_path = sprite_path
+        self._sprite = pygame.image.load(sprite_path).convert_alpha()
+
     # ------- Getters et Setters -------
 
     @property

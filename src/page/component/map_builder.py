@@ -45,7 +45,7 @@ class MapBuilder:
         tower1_x = self.base1.cell.position.x - 1
         tower1_y = self.base1.cell.position.y + 4
 
-        self.tower1 = Tower(tower1_x, tower1_y, sprite_path="src/assets/sprites/tour_bleu.png", player=self.player1)
+        self.tower1 = Tower(tower1_x, tower1_y, sprite_path="src/assets/sprites/ile_vide.png", player=self.player1)
         self.grid.add_static_occupants(self.tower1, self.tower1.cell, self.tower1.width, self.tower1.height)
         self.player1.base = self.base1
         self.player1.tower = self.tower1
@@ -57,13 +57,10 @@ class MapBuilder:
         self.base2 = Base(base2_x, base2_y, sprite_path="src/assets/img/base_ennemie.png", player=self.player2)
         self.grid.add_static_occupants(self.base2, base2_cell, self.base2.width, self.base2.height)
 
-        # tower_x = self.base2.width + 1
-        # tower_y = self.base2.height - 4
-        # tower2_cell = Cell(tower_x, tower_y)
         tower2_x = self.base2.cell.position.x - self.base2.width
         tower2_y = self.base2.cell.position.y - self.base2.height - 1
 
-        self.tower2 = Tower(tower2_x, tower2_y, sprite_path="src/assets/sprites/tour_rouge.png", player=self.player2)
+        self.tower2 = Tower(tower2_x, tower2_y, sprite_path="src/assets/sprites/ile_vide.png", player=self.player2)
 
         self.grid.add_static_occupants(self.tower2, self.tower2.cell, self.tower2.width, self.tower2.height)
 

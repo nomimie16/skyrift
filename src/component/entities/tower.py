@@ -36,8 +36,8 @@ class Tower(Entity):
 
         self._active = True
         self._height = 3
-        # TODO changer sprite
-        self._sprite_path = f"src/assets/img/tour_{self.player.color}.png"
+        self.set_sprite(f"src/assets/sprites/tour_{self.player.color}.png")
+        print(self.sprite_path)
 
         grid.update_occupant_size(self)
 
@@ -52,8 +52,8 @@ class Tower(Entity):
 
         self._height = 1
         self._hp = self._max_hp
-        # TODO changer sprites
-        self._sprite_path = f"src/assets/img/tour_{self.player.color}.png"
+        self.set_sprite(f"src/assets/sprites/ile_vide.png")
+        print(self.sprite_path)
 
         grid.update_occupant_size(self)
 

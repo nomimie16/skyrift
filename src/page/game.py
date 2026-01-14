@@ -175,6 +175,7 @@ def run_game(screen, ui):
                             if isinstance(button["dragon"], Tower):
                                 if turn.current_player() == p1:
                                     builder.tower1.tower_activation(grid_comp.grid)
+                                    print("Tour 1 activée", builder.tower1.sprite_path)
                                 else:
                                     builder.tower2.tower_activation(grid_comp.grid)
                                 player.economy.spend_gold(button["cost"])
