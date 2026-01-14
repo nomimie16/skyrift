@@ -19,6 +19,10 @@ class Economy:
         """
         self._listeners.append(callback)
 
+    def start_turn(self):
+        """Ajoute l'or gagné au début du tour"""
+        self.earn_gold(GOLD_PER_TURN)
+
     def _notify(self, delta):
         """Notifie tous les listeners du changement"""
         for cb in self._listeners:
