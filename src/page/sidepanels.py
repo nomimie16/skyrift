@@ -122,9 +122,17 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player):
         pygame.draw.rect(surface, (70, 70, 70), dragon_bg)
         pygame.draw.rect(surface, (100, 100, 100), dragon_bg, 2)
 
-        # image du dragon
+        # image de l'entité (taille boutique)
         if entity.image_sprite:
-            surface.blit(entity.image_sprite[0], (x_offset + 15, y + 25))
+            img = entity.image_sprite[0]
+
+            if isinstance(entity, Tower):
+                shop_size = (50, 70)
+            else:
+                shop_size = (70, 70)
+
+            img_shop = pygame.transform.smoothscale(img, shop_size)
+            surface.blit(img_shop, (x_offset + 15, y + 25))
 
         # nom du dragon
         name_text = font_small.render(entity.name, True, (255, 255, 255))
