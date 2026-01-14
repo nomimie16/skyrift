@@ -73,24 +73,24 @@ def attaque_score(dragon: Dragon, target: Dragon, grid: Grid, player, enemy) -> 
 
     # cibles faibles
     if target.hp <= dragon.attack_damage:
-        score += 100  
+        score += 100
 
     # la cible peut riposter
     dist = grid.distance(dragon.cell, target.cell)
     if dist <= target.attack_range:
-        score -= 20  
+        score -= 20
 
     if target.cell == enemy.base.cell:
         score += 40  # attaquer la base ennemie
 
     if target.cell == player.base.cell:
-        score -= 30  
+        score -= 30
 
     for other_enemy in enemy.units:
         if other_enemy != target and other_enemy.cell:
             dist_ennemi = grid.distance(target.cell, other_enemy.cell)
             if dist_ennemi <= 1:
-                score += 10  
+                score += 10
 
     return score
 
@@ -119,9 +119,9 @@ def choose_best_action(dragon: Dragon, grid: Grid, player: Player, enemy: Player
     for action in actions:
         if action[0] == "attack":
             score = attaque_score(dragon, action[1], grid, player, enemy)
-        else:  
+        else:
             score = deplacement_score(dragon, action[1], grid, player, enemy)
-        
+
         if score > best_score:
             best_score = score
             best_action = action
