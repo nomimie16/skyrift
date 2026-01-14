@@ -3,6 +3,7 @@ import pygame
 from src import screen_const as sc
 from src.component.entities.entity import Entity
 from src.enum.type_entities import TypeEntitiesEnum
+from src.player import Player
 
 
 class Base(Entity):
