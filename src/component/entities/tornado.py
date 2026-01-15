@@ -19,7 +19,7 @@ class Tornado(ZoneEntity):
 
     # TODO en attente du sprite
     def __init__(self, x_cell: int, y_cell: int, width: int = 2, height: int = 3):
-        super().__init__(x_cell, y_cell, sprite_path="src/assets/sprites/dragonnet.png", width=width, height=height,
+        super().__init__(x_cell, y_cell, sprite_path="src/assets/sprites/tornade.png", width=width, height=height,
                          type_entity=[TypeEntitiesEnum.EFFECT_ZONE, TypeEntitiesEnum.BAD_EFFECT_ZONE,
                                       TypeEntitiesEnum.TORNADO],
                          zone_effect=TornadoEffect())
@@ -123,11 +123,11 @@ class Tornado(ZoneEntity):
 
         if dx != 0:
             moved = True
-            self._pixel_pos.x += min(4, abs(dx)) * (1 if dx > 0 else -1)
+            self._pixel_pos.x += min(1, abs(dx)) * (1 if dx > 0 else -1)
 
         if dy != 0:
             moved = True
-            self._pixel_pos.y += min(4, abs(dy)) * (1 if dy > 0 else -1)
+            self._pixel_pos.y += min(1, abs(dy)) * (1 if dy > 0 else -1)
 
         if not moved or (abs(dx) <= 4 and abs(dy) <= 4):
             self._pixel_pos.x = target_px.x
@@ -141,7 +141,7 @@ class Tornado(ZoneEntity):
                 self._anim_counter = 0
 
         self._anim_counter += 1
-        if self._anim_counter >= 50:
+        if self._anim_counter >= 15:
             self._anim_counter = 0
             self._index_img = (self._index_img + 1) % len(self._imageSprite)
         return grid
