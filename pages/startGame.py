@@ -4,37 +4,20 @@
 
 from pygame import *
 import pygame
+import contants_graph
 
 def run_start(screen):
-    # ===== RESSOURCES =====
     
     #Taille de l'écran
     WIDTH = screen.get_width()  
-      
-    #Couleurs
-    WHITE = (255, 255, 255)
-    TRANSLUCENT_BLUE = (0, 120, 200, 180)
-    HOVER_BLUE = (0, 140, 255, 220)
-    SHADOW = (0, 0, 0)
     
     #Images
-    fond = pygame.image.load('assets/img/bgStart.png')
+    fond = contants_graph.startBackground
     fond = fond.convert()
-    
-    #Polices
-    try:
-        FONT_TITLE = pygame.font.Font("assets/font/test1.ttf", 100)
-        FONT_BUTTON = pygame.font.Font("assets/font/BoldPixels.ttf", 36)
-    except:
-        FONT_TITLE = pygame.font.SysFont(None, 100)
-        FONT_BUTTON = pygame.font.SysFont(None, 36)
     
     #Musique
     #mixer.music.load('assets/sound/startMusic.mp3')
     #mixer.music.play(-1)
-    
-    # ===== FIN RESSOURCES =====
-
 
     # ==== CLASSE BOUTONS ======
     class Button:
@@ -49,15 +32,15 @@ def run_start(screen):
             
         def draw(self, win, mouse_pos):
             is_hover = self.rect.collidepoint(mouse_pos)
-            color = HOVER_BLUE if is_hover else TRANSLUCENT_BLUE
+            color = contants_graph.HOVER_BLUE if is_hover else contants_graph.TRANSLUCENT_BLUE
             button_surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
             pygame.draw.rect(button_surface, color, (0,0,self.width, self.height), border_radius = 16)
             win.blit(button_surface, self.rect)
             
-            text_surf = FONT_BUTTON.render(self.text, True, WHITE)
+            text_surf = contants_graph.FONT_BUTTON.render(self.text, True, contants_graph.WHITE)
             text_rect = text_surf.get_rect(center=self.rect.center)
             
-            shadow = FONT_BUTTON.render(self.text, True, SHADOW)
+            shadow = contants_graph.FONT_BUTTON.render(self.text, True, contants_graph.SHADOW)
             win.blit(shadow, (text_rect.x+2, text_rect.y+2))
             win.blit(text_surf, text_rect)
         
@@ -92,8 +75,8 @@ def run_start(screen):
         mouse_pos = pygame.mouse.get_pos()
         
         #Titre
-        title = FONT_TITLE.render("SkyRift", True, WHITE)
-        shadow = FONT_TITLE.render("SkyRift", True, SHADOW)
+        title = contants_graph.FONT_TITLE.render("SkyRift", True, contants_graph.WHITE)
+        shadow = contants_graph.FONT_TITLE.render("SkyRift", True, contants_graph.SHADOW)
         screen.blit(shadow, (WIDTH//2 - title.get_width()//2 +3, 103))
         screen.blit(title, (WIDTH//2 - title.get_width()//2, 100))        
     

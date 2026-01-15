@@ -3,17 +3,18 @@
 ########################
 
 import pygame
+import contants_graph
 
 def run_settings(screen, background, from_game):
     # === COULEURS ===
-    OVERLAY_COLOR = (0, 0, 0)
-    OVERLAY_ALPHA = 150
-    POPUP_COLOR = (240, 240, 240)
-    BUTTON_COLOR = (0, 80, 200)
-    BUTTON_TEXT_COLOR = (255, 255, 255)
+    OVERLAY_COLOR = contants_graph.OVERLAY_COLOR
+    OVERLAY_ALPHA = contants_graph.OVERLAY_ALPHA
+    POPUP_COLOR = contants_graph.POPUP_COLOR
+    BUTTON_COLOR = contants_graph.BUTTON_COLOR
+    BUTTON_TEXT_COLOR = contants_graph.BUTTON_TEXT_COLOR
     
     # === POLICE ===
-    font = pygame.font.Font(None, 48)
+    font = contants_graph.DEFAULT_FONT
 
     # === POP-UP CENTRALE ===
     popup_width, popup_height = 600, 400

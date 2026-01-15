@@ -3,17 +3,15 @@
 ######################
 
 import pygame
+import contants_graph
 
 def run_pause(screen, background):
-    # === COULEURS ===
-    OVERLAY_COLOR = (0, 0, 0)
-    OVERLAY_ALPHA = 150
-    POPUP_COLOR = (240, 240, 240)
-    BUTTON_COLOR = (0, 80, 200)
-    BUTTON_TEXT_COLOR = (255, 255, 255)
-    
-    # === POLICE ===
-    font = pygame.font.Font(None, 48)
+    OVERLAY_COLOR = contants_graph.OVERLAY_COLOR
+    OVERLAY_ALPHA = contants_graph.OVERLAY_ALPHA
+    POPUP_COLOR = contants_graph.POPUP_COLOR
+    BUTTON_COLOR = contants_graph.BUTTON_COLOR
+    BUTTON_TEXT_COLOR = contants_graph.BUTTON_TEXT_COLOR
+    FONT_BUTTON = contants_graph.FONT_BUTTON
 
     # === POP-UP CENTRALE ===
     popup_width, popup_height = 400, 500
@@ -80,25 +78,25 @@ def run_pause(screen, background):
                 
         # Bouton "Retour au jeu"
         pygame.draw.rect(screen, BUTTON_COLOR, quit_pause, border_radius=12)
-        text = font.render("Retour au jeu", True, BUTTON_TEXT_COLOR)
+        text = FONT_BUTTON.render("Retour au jeu", True, BUTTON_TEXT_COLOR)
         text_rect = text.get_rect(center=quit_pause.center)
         screen.blit(text, text_rect)
 
         # Bouton "Paramètres"
         pygame.draw.rect(screen, BUTTON_COLOR, settings, border_radius=12)
-        text = font.render("Paramètres", True, BUTTON_TEXT_COLOR)
+        text = FONT_BUTTON.render("Paramètres", True, BUTTON_TEXT_COLOR)
         text_rect = text.get_rect(center=settings.center)
         screen.blit(text, text_rect)
         
         # Bouton "Quitter le jeu"
         pygame.draw.rect(screen, BUTTON_COLOR, quit_game, border_radius=12)
-        text = font.render("Quitter le jeu", True, BUTTON_TEXT_COLOR)
+        text = FONT_BUTTON.render("Quitter le jeu", True, BUTTON_TEXT_COLOR)
         text_rect = text.get_rect(center=quit_game.center)
         screen.blit(text, text_rect)
         
         # Bouton "Règles du jeu"
         pygame.draw.rect(screen, BUTTON_COLOR, rules_btn, border_radius=12)
-        text = font.render("Règles du jeu", True, BUTTON_TEXT_COLOR)
+        text = FONT_BUTTON.render("Règles du jeu", True, BUTTON_TEXT_COLOR)
         text_rect = text.get_rect(center=rules_btn.center)
         screen.blit(text, text_rect)
         
