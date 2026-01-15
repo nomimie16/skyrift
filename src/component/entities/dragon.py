@@ -31,6 +31,8 @@ class Dragon(Entity):
         self._anim_counter = 0
         self._type: List[TypeEntitiesEnum] = [TypeEntitiesEnum.DRAGON]
         self._player: Player = player
+        self._has_moved: bool = False
+        self._has_attacked: bool = False
 
         if self._player:
             self.sprite_path = sprite_path.replace("bleu", self._player._color)
@@ -44,6 +46,11 @@ class Dragon(Entity):
         """Réinitialise la vitesse à sa valeur de base."""
         self._actual_speed = self._speed_base
         self._speed_modifier = 0
+
+    def reset_actions(self):
+        """Réinitialise les drapeaux d'action du dragon pour le nouveau tour."""
+        self._has_moved = False
+        self._has_attacked = False
 
     def _check_purse_collection(self) -> int | None:
         """
@@ -270,6 +277,22 @@ class Dragon(Entity):
     @property
     def player(self) -> Player:
         return self._player
+
+    @property
+    def has_moved(self) -> bool:
+        return self._has_moved
+
+    @has_moved.setter
+    def has_moved(self, value: bool) -> None:
+        self._has_moved = value
+
+    @property
+    def has_attacked(self) -> bool:
+        return self._has_attacked
+
+    @has_attacked.setter
+    def has_attacked(self, value: bool) -> None:
+        self._has_attacked = value
 
     def __str__(self):
         return (

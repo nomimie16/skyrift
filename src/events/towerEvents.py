@@ -112,9 +112,7 @@ class TowerEvents:
             if occupant.player != player:
                 print("Ce n’est pas votre tour")
                 return
-            if turn and not turn.can_attack():
-                print("Attaque déjà utilisée")
-                return
+
 
             self.selected_tower = occupant
             self.attack_cells = self.compute_attack_dragons(occupant)
@@ -139,9 +137,6 @@ class TowerEvents:
                     dragon,
                     -self.selected_tower.attack_damage
                 )
-
-        if turn:
-            turn.use_attack()
 
         self._reset_selection()
 
