@@ -31,6 +31,34 @@ class MapBuilder:
         self.life_island = None
         self.tornado = None
 
+    def is_map_complete(self) -> bool:
+        """
+        Vérifie si la map est complète (toutes les entités placées)
+        :return:
+        """
+        return (
+                self.base1 is not None and
+                self.base2 is not None and
+                self.tower1 is not None and
+                self.tower2 is not None and
+                self.volcano is not None and
+                self.life_island is not None and
+                self.tornado is not None
+        )
+
+    def reset(self):
+        """
+        Réinitialise la grille et les entités placées
+        """
+        self.grid.clear()
+        self.base1 = None
+        self.base2 = None
+        self.tower1 = None
+        self.tower2 = None
+        self.volcano = None
+        self.life_island = None
+        self.tornado = None
+
     def build_bases(self):
         """
         Place les bases fixes :
@@ -114,7 +142,7 @@ class MapBuilder:
             for cell in row:
                 if len(cell.occupants) == 0:
                     pos = cell.position
-                    if self.can_place_cell(pos, temp.width, temp.height, 7):
+                    if self.can_place_cell(pos, temp.width, temp.height, 3):
                         possible_cells.append(cell)
         if not possible_cells:
             self.life_island = None
@@ -156,17 +184,23 @@ class MapBuilder:
             self.tornado.height
         )
 
-    def build_map(self):
+    def build_map(self, max_tests: int = 50):
         """
         Construit la carte complète :
         - bases fixes
         - volcan aléatoire
         - ile de vie aléatoire
         """
-        self.build_bases()
-        self.spawn_random_volcano()
-        self.spawn_random_island_of_life()
-        self.sapwn_random_tornado()
+        for test in range(max_tests):
+            self.reset()
+
+            self.build_bases()
+            self.spawn_random_volcano()
+            self.spawn_random_island_of_life()
+            self.sapwn_random_tornado()
+
+            if self.is_map_complete():
+                return self.grid
         return self.grid
 
     def can_place_cell(self, position: Position, width: int, height: int, min_gap: int = 3):
