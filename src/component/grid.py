@@ -115,6 +115,15 @@ class Grid:
         self.nb_rows = nb_rows
         self.cells = [[Cell(x, y) for x in range(nb_columns)] for y in range(nb_rows)]
 
+    def clear(self) -> None:
+        """
+        Vide complètement la grille (supprime tous les occupants)
+        :return: None
+        """
+        for row in self.cells:
+            for cell in row:
+                cell.remove_occupant()
+
     def add_static_occupants(self, occupant, cell: Cell, width: int, height: int) -> bool:
         """Place un occupant statique sur la grille
         :param occupant: occupant à placer

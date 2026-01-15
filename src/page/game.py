@@ -97,17 +97,13 @@ def run_game(screen, ui):
         builder.tower1.draw(screen)
         builder.base2.draw(screen)
         builder.tower2.draw(screen)
-        builder.volcano.draw(screen)
-
+        if builder.volcano:
+            builder.volcano.draw(screen)
         if builder.life_island:
             builder.life_island.draw(screen)
-
         if builder.tornado and builder.tornado.active:
             builder.tornado.update(grid_comp.grid)
             builder.tornado.draw(screen)
-
-        if builder.tornado is None:
-            builder.sapwn_random_tornado()
 
         # Dessine les bourses pour chaque cellule en parcourant la grille
         for row in grid_comp.grid.cells:
@@ -209,10 +205,10 @@ def run_game(screen, ui):
                                     # ajoute le dragon a la grille
                                     cell = grid_comp.grid.cells[spawn_pos[1]][spawn_pos[0]]
                                     grid_comp.grid.add_occupant(new_dragon, cell)
-                                    
+
                                     # ajoute le dragon a la liste du joueur
                                     player.add_unit(new_dragon)
-                                    
+
                                     player.economy.spend_gold(button["cost"])
                                     event_information.show(TypeEventEnum.NOUVEAU_DRAGON)
 
