@@ -159,8 +159,8 @@ class DragonEvents:
 
             # Déplacement
             if cell in self.move_cells:
-                if turn and not turn.can_move():
-                    print("Vous avez déjà déplacé un dragon ce tour !")
+                if self.selected_dragon.has_moved:
+                    print("Ce dragon s'est déjà déplacé durant le tour !")
                     self._reset_selection()
                     return
 
@@ -171,15 +171,13 @@ class DragonEvents:
                 self.grid.add_occupant(self.selected_dragon, cell)
                 self.selected_dragon.move_dragon(cell.position.x, cell.position.y, self.grid)
 
-                if turn:
-                    turn.use_move()
-                    print(
-                        f"Dragon déplacé ({turn.moves_used}/{turn.moves_used + (1 if turn.can_move() else 0)} déplacements utilisés)")
+                self.selected_dragon.has_moved = True
+                print(f"Dragon déplacé - Déplacement utilisé pour ce dragon")
 
             # Attaque
             if cell in self.attack_cells:
-                if turn and not turn.can_attack():
-                    print("Vous avez déjà attaqué ce tour !")
+                if self.selected_dragon.has_attacked:
+                    print("Ce dragon a déjà attaqué durant le tour !")
                     self._reset_selection()
                     return
 
@@ -201,10 +199,9 @@ class DragonEvents:
 
                     occupant.last_attacker = player
 
-                if turn and attacked:
-                    turn.use_attack()
-                    print(
-                        f"Attaque effectuée ({turn.attacks_used}/{turn.attacks_used + (1 if turn.can_attack() else 0)} attaques utilisées)")
+                if attacked:
+                    self.selected_dragon.has_attacked = True
+                    print(f"Attaque effectuée - Attaque utilisée pour ce dragon")
 
             self.selected_dragon = None
 
@@ -225,19 +222,19 @@ class DragonEvents:
                 self.selected_dragon = occupant
 
                 # One ne montre les cellules que si le joueur peut encore bouger
-                if turn and turn.can_move():
+                if not self.selected_dragon.has_moved:
                     self.move_cells = self.compute_move_cells(self.selected_dragon)
                 else:
                     self.move_cells = []
-                    if turn and not turn.can_move():
+                    if not self.selected_dragon.has_moved:
                         print("Vous avez déjà déplacé un dragon ce tour !")
 
                 # De même que pour le mouvement, on ne montre les cellules d'attaque que si le joueur peut encore attaquer
-                if turn and turn.can_attack():
+                if not self.selected_dragon.has_attacked:
                     self.attack_cells = self.compute_attack_cells(self.selected_dragon)
                 else:
                     self.attack_cells = []
-                    if turn and not turn.can_attack():
+                    if self.selected_dragon.has_attacked:
                         print("Vous avez déjà attaqué ce tour !")
             return
 

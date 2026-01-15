@@ -136,6 +136,11 @@ def run_game(screen, ui):
                     print("tour de ", turn.current_player().name, "terminé")
                     turn.next()
 
+                    # reinitialiser toutes les actions des dragons du joueur
+                    for dragon in turn.current_player().units:
+                        print("reset actions for ", dragon.name)
+                        dragon.reset_actions()
+
                     # Appliquer ou retirer les effets des zones sur les dragons
                     for row in grid_comp.grid.cells:
                         for cell in row:
@@ -149,6 +154,7 @@ def run_game(screen, ui):
                         builder.tornado.handle_turn(grid_comp.grid)
 
                     player = turn.current_player()
+                    player.economy.start_turn()
                     # Affichage du popup de tour
                     turn_popup.show(player.name)
                     print("tour de ", turn.current_player().name, "commencé")
@@ -203,6 +209,10 @@ def run_game(screen, ui):
                                     # ajoute le dragon a la grille
                                     cell = grid_comp.grid.cells[spawn_pos[1]][spawn_pos[0]]
                                     grid_comp.grid.add_occupant(new_dragon, cell)
+                                    
+                                    # ajoute le dragon a la liste du joueur
+                                    player.add_unit(new_dragon)
+                                    
                                     player.economy.spend_gold(button["cost"])
                                     event_information.show(TypeEventEnum.NOUVEAU_DRAGON)
 

@@ -43,3 +43,7 @@ class Economy:
     def can_afford(self, amount: int):
         """return True if the player can afford the amount, False otherwise"""
         return self._gold >= amount
+    
+    def start_turn(self):
+        """Ajoute l'or gagné au début du tour"""
+        self.earn_gold(GOLD_PER_TURN)
