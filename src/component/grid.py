@@ -46,11 +46,11 @@ class Cell:
         for dragon in dragons:
             dragon.reset_speed()
             for zone in zones:
-                zone.effect.apply_effect(dragon)
+                amount = zone.effect.apply_effect(dragon)
                 if damage_heal_popup_manager:
                     if TypeEntitiesEnum.BAD_EFFECT_ZONE in zone.type_entity:
                         damage_heal_popup_manager.spawn_for_entity(dragon, -zone.effect.damage)
-                    elif TypeEntitiesEnum.GOOD_EFFECT_ZONE in zone.type_entity:
+                    elif TypeEntitiesEnum.GOOD_EFFECT_ZONE in zone.type_entity and amount != 0:
                         damage_heal_popup_manager.spawn_for_entity(dragon, zone.effect.heal)
 
     def get_pixel_position(self) -> Position:
