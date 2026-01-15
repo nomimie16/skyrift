@@ -13,7 +13,7 @@ Ce jeu développé en Python se déroule dans les cieux, où une zone de combat 
 ## Installation
 
 - Téléchargement de l'exécutable
-  - Rendez-vous sur le dépôt GitHub officiel : [Skyrift Github]((https://github.com/nomimie16/skyrift))
+  - Rendez vous sur le dépôt GitHub officiel : [Skyrift Github]((https://github.com/nomimie16/skyrift))
   - Dans la section "Releases", à droite, cliquez sur la dernière version téléchargeable.
   - Téléchargez l'exécutable correspondant à votre système.
 
@@ -22,43 +22,44 @@ Ce jeu développé en Python se déroule dans les cieux, où une zone de combat 
   * Accédez au fichier skyrift.exe et lancez le fichier. Le jeu va se lancer automatiquement.
 
 - Lancement depuis un **terminal** de commande :
-  * Dans un terminal ouvert sur le repertoire du jeu copiez cette commande :
+  * Dans un terminal ouvert sur le repertoire du jeu, entrez cette commande :
   ```bash
   python main.py
   ```
 
 ## Dépendances
 
-* [Pygame](https://www.pygame.org/news) :  affichage, sprites, événements et sons
+* [Pygame](https://www.pygame.org/news) :  affichage, sprites, événements et sons.
 
-* [Pygame GUI](https://pygame-gui.readthedocs.io/en/latest/) :  Framework d’interface graphique basé sur Pygame 
+* [Pygame GUI](https://pygame-gui.readthedocs.io/en/latest/) :  Framework d’interface graphique basé sur Pygame. 
 
-* [Numpy](https://numpy.org/) : mathématiques avancés, matrices et algorithmes IA
+* [Numpy](https://numpy.org/) : mathématiques avancés, matrices et algorithmes IA.
 
 * [Moviepy](https://zulko.github.io/moviepy/) :
 
-* [Pytest](https://docs.pytest.org/en/stable/) : Framework de tests automatisés
+* [Pytest](https://docs.pytest.org/en/stable/) : Framework de tests automatisés.
 
 ## Gameplay
-Une fois le jeu lancé vous aurez accès à l'écran du menu principal.
+Une fois le jeu lancé, vous aurez accès à l'écran du menu principal.
 Pour commencer une nouvelle partie, cliquez sur " START " et vous aurez accès au début du jeu.
 
 Ensuite le jeu se déroule tour par tour et quand arrive votre tour, plusieurs possibilités s'offrent à vous :
 
 - **Acheter** une unité (dragon, tour ou autre..) : en cliquant sur votre base, une boutique apparait à l'écran, vous permettant d'acheter ce dont vous avez besoin pour gagner
 
-- **Déplacer** un dragon : les deplacements possibles s'affichent en cliquant sur un dragon existant  
+- **Déplacer** un dragon : les déplacements possibles s'affichent en cliquant sur un dragon existant  
 
 - **Attaquer** un dragon adverse : les attaques deviennent possibles et visibles lorsque votre dragon se tient à une certaine distance de celui d'un ennemi
 
 Il vous faudra donc choisir une action à réaliser pour poursuivre le jeu.
 
-Au cours de la partie, il vous est également posssible d'accéder aux paramètres du jeu, en cliquant sur l'icone en haut a droite de l'écran. Ce menu concernant les paramètres permet :
+Au cours de la partie, il vous est également posssible d'accéder aux paramètres du jeu, en cliquant sur l'icone en haut à droite de l'écran. Ce menu concernant les paramètres permet :
 
 - De consulter à nouveau les règles du jeu
 - D’activer ou désactiver les effets sonores
 - D’activer ou désactiver la musique
 - De quitter la partie en cours
+- 
 
 Il ne vous reste plus qu'à défendre votre base et attaquer votre ennemi pour tenter de remporter le Skyrift !
 
