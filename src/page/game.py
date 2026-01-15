@@ -154,6 +154,7 @@ def run_game(screen, ui):
                         builder.tornado.handle_turn(grid_comp.grid)
 
                     player = turn.current_player()
+                    player.economy.start_turn()
                     # Affichage du popup de tour
                     turn_popup.show(player.name)
                     print("tour de ", turn.current_player().name, "commencé")
