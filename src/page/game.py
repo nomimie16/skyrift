@@ -133,6 +133,11 @@ def run_game(screen, ui):
 
                 # Clic sur le bouton tour suivant (temporaire)
                 if next_turn_button_rect.collidepoint(event.pos):
+                    # Verifier que toutes les animations sont terminses avant de passer au tour suivant
+                    if not turn.animations_ended(builder.tornado):
+                        print("Vous devez attendre la fin de toutes les actions avant de passer au tour suivant")
+                        continue
+                    
                     print("tour de ", turn.current_player().name, "terminé")
                     turn.next()
 
@@ -296,7 +301,18 @@ def run_game(screen, ui):
 
         # Dessiner le bouton tour suivant (temporaire)
         mouse_pos = pygame.mouse.get_pos()
-        button_color_to_use = button_hover_color if next_turn_button_rect.collidepoint(mouse_pos) else button_color
+        
+        # Verifier si toutes les actions sont terminees (dragons ET tornade)
+        actions_finished = turn.animations_ended(builder.tornado)
+        
+        # Determiner la couleur du bouton selon l'etat des actions
+        if not actions_finished:
+            # grisé
+            button_color_to_use = (150, 150, 150)
+        else:
+            # actif
+            button_color_to_use = button_hover_color if next_turn_button_rect.collidepoint(mouse_pos) else button_color
+        
         pygame.draw.rect(screen, button_color_to_use, next_turn_button_rect)
         pygame.draw.rect(screen, (0, 0, 0), next_turn_button_rect, 2)
         button_text = font.render("Tour suivant", True, button_text_color)

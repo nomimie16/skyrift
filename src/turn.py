@@ -31,3 +31,16 @@ class Turn:
     def use_attack(self):
         """Marque qu'une attaque a été effectuée ce tour"""
         self.attacks_used += 1
+
+    def animations_ended(self, tornado=None) -> bool:
+        """
+        Vérifie si tous les dragons du joueur actuel ainsi que la tornade ont terminé leurs animations
+        """
+        for dragon in self.turn.units:
+            if dragon._moving:
+                return False
+        
+        if tornado and tornado.active and tornado._moving:
+            return False
+        
+        return True
