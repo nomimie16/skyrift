@@ -19,8 +19,9 @@ class Dragon(Entity):
                  attack_range: int, sprite_path: str,
                  speed: int,
                  attack_damage: int,
-                 cost: int, player: Player):
-        super().__init__(x_cell, y_cell, name, type_entity, max_hp, attack_damage, attack_range, sprite_path)
+                 cost: int, player: Player, kill_reward: int = 0):
+        super().__init__(x_cell, y_cell, name, type_entity, max_hp, attack_damage, attack_range, sprite_path,
+                         kill_reward)
         self._speed_base: int = speed  # speed de base du dragon
         self._actual_speed: int = speed  # speed actuel du dragon
         self._speed_modifier: int = 0  # nombre de speed en plus ou en moins à celui de base
@@ -292,7 +293,7 @@ class Dragonnet(Dragon):
                          type_entity=[TypeEntitiesEnum.DRAGONNET, TypeEntitiesEnum.DRAGON, TypeEntitiesEnum.OBSTACLE],
                          max_hp=50, attack_range=1,
                          sprite_path="src/assets/sprites/dragonnet/dragonnet_bleu_droite.png",
-                         speed=6, attack_damage=10, cost=DRAGONNET_COST, player=player)
+                         speed=6, attack_damage=10, cost=DRAGONNET_COST, player=player, kill_reward=20)
 
     def draw(self, surface) -> None:
         """
@@ -322,7 +323,7 @@ class DragonMoyen(Dragon):
                                                            TypeEntitiesEnum.OBSTACLE],
                          max_hp=120, attack_range=2,
                          sprite_path="src/assets/sprites/dragon_moyen/dragon_moyen_bleu_droite.png",
-                         speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST, player=player)
+                         speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST, player=player, kill_reward=50)
 
     def draw(self, surface) -> None:
         """
@@ -353,7 +354,7 @@ class DragonGeant(Dragon):
                                       TypeEntitiesEnum.OBSTACLE], max_hp=250,
                          attack_range=3,
                          sprite_path="src/assets/sprites/dragon_geant/dragon_geant_bleu_droite.png",
-                         speed=2, attack_damage=40, cost=DRAGON_GEANT_COST, player=player)
+                         speed=2, attack_damage=40, cost=DRAGON_GEANT_COST, player=player, kill_reward=75)
 
 
 if __name__ == '__main__':
