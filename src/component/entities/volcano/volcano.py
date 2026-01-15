@@ -14,7 +14,7 @@ class Volcano(StaticEntity):
             x_cell=x,
             y_cell=y,
             name="Volcano",
-            sprite_path="src/assets/img/volcano.png",
+            sprite_path="src/assets/img/volcan_explosion.png",
             width=8,
             height=8,
             type_entity=[TypeEntitiesEnum.VOLCANO]
