@@ -11,20 +11,21 @@ nav:
   - Unités: entities.md
   - Structures: structures.md
   - Economie: economy.md
+  - Gameplay & Stratégie: gameplay_strategie.md
   - FAQ: faq.md
   - Crédits: credits.md
   - Documentation technique:
-    - Changelog: technique/changelog.md
-    - Dépendances: technique/dependencies.md
-    - Structure du projet: technique/structure.md
+      - Changelog: technique/changelog.md
+      - Dépendances: technique/dependencies.md
+      - Structure du projet: technique/structure.md
 
 
 extra_css:
   - overrides/theme.css
 
-theme: 
+theme:
   name: shadcn
-  logo : assets/img/bourse.png
+  logo: assets/img/bourse.png
 
 markdown_extensions:
   - pymdownx.blocks.tab
