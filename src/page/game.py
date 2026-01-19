@@ -133,7 +133,7 @@ def run_game(screen, ui):
                     if not turn.animations_ended(builder.tornado):
                         print("Vous devez attendre la fin de toutes les actions avant de passer au tour suivant")
                         continue
-                    
+
                     print("tour de ", turn.current_player().name, "terminé")
                     turn.next()
 
@@ -286,9 +286,11 @@ def run_game(screen, ui):
         if builder.base1.is_dead():
             print("Base 1 détruite !")
             event_information.show(TypeEventEnum.BASE_DETRUITE)
+            return ("endGame", p1.name)
         if builder.base2.is_dead():
             print("Base 2 détruite !")
             event_information.show(TypeEventEnum.BASE_DETRUITE)
+            return ("endGame", p2.name)
         # ======================================================================================
 
         # Dessiner les side panels et récupérer leurs rectangles (ils doivent être dessinés APRES les dragons)
@@ -297,10 +299,10 @@ def run_game(screen, ui):
 
         # Dessiner le bouton tour suivant (temporaire)
         mouse_pos = pygame.mouse.get_pos()
-        
+
         # Verifier si toutes les actions sont terminees (dragons ET tornade)
         actions_finished = turn.animations_ended(builder.tornado)
-        
+
         # Determiner la couleur du bouton selon l'etat des actions
         if not actions_finished:
             # grisé
@@ -308,7 +310,7 @@ def run_game(screen, ui):
         else:
             # actif
             button_color_to_use = button_hover_color if next_turn_button_rect.collidepoint(mouse_pos) else button_color
-        
+
         pygame.draw.rect(screen, button_color_to_use, next_turn_button_rect)
         pygame.draw.rect(screen, (0, 0, 0), next_turn_button_rect, 2)
         button_text = font.render("Tour suivant", True, button_text_color)

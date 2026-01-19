@@ -14,7 +14,7 @@ def run_rules(screen, from_game):
     SHADOW = (0, 0, 0)
 
     # Images
-    fond = pygame.image.load('assets/img/bgRules.png')
+    fond = pygame.image.load('src/assets/img/bgRules.png')
     fond = fond.convert()
 
     # Polices

@@ -85,6 +85,8 @@ def run_start(screen):
                         print(f"Action : {button.action}")
                         return button.action
 
+        screen.fill((0, 0, 0))
+
         screen.blit(fond, (0, 0))
         mouse_pos = pygame.mouse.get_pos()
 
