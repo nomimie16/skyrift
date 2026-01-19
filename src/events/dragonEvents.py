@@ -2,7 +2,6 @@ from typing import List
 
 import pygame
 
-from src.component.entities.tower import Tower
 from src.component.entities.dragon import Dragon
 from src.component.entities.entity import Entity
 from src.component.entities.static_entity import StaticEntity
@@ -133,7 +132,8 @@ class DragonEvents:
                             possible_cells.append(cell)
                         if (TypeEntitiesEnum.BASE in occupant.type_entity and occupant.player != dragon.player):
                             possible_cells.append(cell)
-                        if (TypeEntitiesEnum.TOWER in occupant.type_entity and occupant._active and occupant.player != dragon.player):
+                        if (
+                                TypeEntitiesEnum.TOWER in occupant.type_entity and occupant._active and occupant.player != dragon.player):
                             possible_cells.append(cell)
 
         return possible_cells
@@ -187,19 +187,20 @@ class DragonEvents:
                             TypeEntitiesEnum.DRAGON in occupant.type_entity
                             or TypeEntitiesEnum.BASE in occupant.type_entity
                             or TypeEntitiesEnum.TOWER in occupant.type_entity
-                    ) and occupant.player != player :
-                        
-                        if occupant.__class__ == Tower and occupant._active == True:
-                            damage = self.selected_dragon.attack_damage
-                            occupant.last_attacker = player
-                            occupant.take_damage(damage)
+                    ) and occupant.player != player:
 
-                            if self.damage_heal_popup_manager:
-                                self.damage_heal_popup_manager.spawn_for_entity(occupant, -damage)
+                        if TypeEntitiesEnum.TOWER in occupant.type_entity:
+                            if hasattr(occupant, '_active') and not occupant._active:
+                                continue
 
-                            attacked = True
-
+                        damage = self.selected_dragon.attack_damage
                         occupant.last_attacker = player
+                        occupant.take_damage(damage)
+
+                        if self.damage_heal_popup_manager:
+                            self.damage_heal_popup_manager.spawn_for_entity(occupant, -damage)
+
+                        attacked = True
 
                 if attacked:
                     self.selected_dragon.has_attacked = True
