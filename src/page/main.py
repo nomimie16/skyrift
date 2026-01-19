@@ -1,7 +1,7 @@
 import pygame
 
 from src.page.end_game import run_end_game
-from src.page.game import run_game  # Fenêtre principale du jeu
+from src.page.game import Game
 from src.page.launch import run_launch  # Introduction vidéo
 from src.page.pause import run_pause  # Page de pause
 from src.page.rules import run_rules  # Page des règles du jeu
@@ -25,6 +25,7 @@ running = True
 etat = 'startGame'
 background_game = None
 winner_name = ""
+current_game_instance = None
 
 while running:
     if etat == 'launch':
@@ -35,7 +36,11 @@ while running:
         etat = run_start(screen)
 
     elif etat == 'game':
-        result = run_game(screen, ui)
+        if current_game_instance is None:
+            current_game_instance = Game(screen, ui)
+
+        result = current_game_instance.run_game()
+
         background_game = screen.copy()
 
         if isinstance(result, tuple) and result[0] == 'endGame':
@@ -58,7 +63,7 @@ while running:
             background_game = None
         else:
             etat = 'quit'
-            
+
     elif etat == 'pause':
         if background_game is not None:
             background = background_game
