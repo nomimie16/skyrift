@@ -188,10 +188,12 @@ class Game:
                                     # TODO vérification dragon dans zone de construction
                                     if isinstance(button["dragon"], Tower):
                                         if self.turn.current_player() == self.p1:
-                                            self.builder.tower1.tower_activation(self.grid_comp.grid)
+                                            self.builder.tower1.tower_activation(self.grid_comp.grid, player,
+                                                                                 popup_manager=self.damage_heal_popup_manager)
                                             print("Tour 1 activée", self.builder.tower1.sprite_path)
                                         else:
-                                            self.builder.tower2.tower_activation(self.grid_comp.grid)
+                                            self.builder.tower2.tower_activation(self.grid_comp.grid, player,
+                                                                                 popup_manager=self.damage_heal_popup_manager)
                                         player.economy.spend_gold(button["cost"])
                                         self.event_information.show(TypeEventEnum.NOUVELLE_TOUR)
 

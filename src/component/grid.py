@@ -230,17 +230,25 @@ class Grid:
                     vacant_cells.append(cell)
         return vacant_cells
 
-    def get_adjacent_free_cells(self, cell: Cell) -> List[Cell]:
+    def get_adjacent_free_cells(self, cell: Cell, ignored_positions: List[tuple]) -> List[Cell]:
         """
         Retourne la liste des cellules adjacentes libres autour d'une position donnée
+        :param ignored_positions: Positions à ignorer (liste de tuples (x, y))
         :param cell: Cellule de référence
         :return: List[Cell]
         """
         adjacent_cells = []
         directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]  # Gauche, Droite, Haut, Bas
+
+        if ignored_positions is None:
+            ignored_positions = []
         for dx, dy in directions:
             new_x = cell.position.x + dx
             new_y = cell.position.y + dy
+
+            if (new_x, new_y) in ignored_positions:
+                continue
+
             if 0 <= new_x < sc.COLS and 0 <= new_y < sc.ROWS:
                 adjacent_cell = self.cells[new_y][new_x]
                 if len(adjacent_cell.occupants) == 0:
@@ -323,6 +331,31 @@ class Grid:
                 if 0 <= x < self.nb_columns and 0 <= y < self.nb_rows:
                     cell = self.cells[y][x]
                     cell.remove_occupant(occupant)
+
+    def push_entity(self, entity, from_cell: Cell, ignored_positions: List[tuple] | None = None) -> bool:
+        """
+        Repousse une entité vers une case libre adjacente
+        :param entity: entité à repousser
+        :param from_cell: cellule d'origine
+        :param ignored_positions: positions à ignorer (liste de tuples (x, y))
+        :return:
+        """
+        possible_cells = self.get_adjacent_free_cells(from_cell, ignored_positions)
+
+        if possible_cells:
+            target_cell = possible_cells[0]
+
+            if entity in from_cell.occupants:
+                from_cell.remove_occupant(entity)
+
+            self.add_occupant(entity, target_cell)
+
+            entity.cell = target_cell
+            entity.pixel_pos = target_cell.get_pixel_position()
+
+            return True
+
+        return False
 
     # ------- Getters et Setters -------
     @property
