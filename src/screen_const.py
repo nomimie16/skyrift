@@ -9,27 +9,27 @@ _root.withdraw()
 _taille_ecran = _root.winfo_screenheight()
 _root.destroy()
 screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+SCREEN_W, SCREEN_H = screen.get_size()
 
-TILE_SIZE = 40
+ROWS = 24
+COLS = 24
+
+PANEL_WIDTH = 220
+
 TOP_PCT = 0.10
 BOTTOM_PCT = 0.03
 LEFT_PCT = 0.10
 RIGHT_PCT = 0.10
-SCREEN_W, SCREEN_H = screen.get_size()
 
 MARGIN_TOP = int(SCREEN_H * TOP_PCT)
 MARGIN_BOTTOM = int(SCREEN_H * BOTTOM_PCT)
-MARGIN_LEFT = int(SCREEN_W * LEFT_PCT)
-MARGIN_RIGHT = int(SCREEN_W * RIGHT_PCT)
+MARGIN_LEFT = max(int(SCREEN_W * 0.05), PANEL_WIDTH)
+MARGIN_RIGHT = max(int(SCREEN_W * 0.05), PANEL_WIDTH)
 
 usable_w = SCREEN_W - (MARGIN_LEFT + MARGIN_RIGHT)
 usable_h = SCREEN_H - (MARGIN_TOP + MARGIN_BOTTOM)
 
-# ROWS = usable_h // TILE_SIZE
-# COLS = usable_w // TILE_SIZE
-#
-ROWS = 19
-COLS = 23
+TILE_SIZE = min(usable_w // COLS, usable_h // ROWS)
 
 GRID_W = COLS * TILE_SIZE
 GRID_H = ROWS * TILE_SIZE

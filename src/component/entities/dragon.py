@@ -175,14 +175,14 @@ class Dragon(Entity):
         Affichage du dragon
         @:param surface: Surface sur laquelle le dragon est placé
         """
+        current_sprite = self._imageSprite[self._index_img]
+        target_size = int(sc.TILE_SIZE)
+        scaled_sprite = pygame.transform.smoothscale(current_sprite, (target_size, target_size))
 
-        surface.blit(
-            self._imageSprite[self._index_img],
-            (
-                int(self._pixel_pos.x + (sc.TILE_SIZE - self._imageSprite[self._index_img].get_width()) / 2),
-                int(self._pixel_pos.y + (sc.TILE_SIZE - self._imageSprite[self._index_img].get_height()) / 2)
-            )
-        )
+        x = self._pixel_pos.x + (sc.TILE_SIZE - target_size) // 2
+        y = self._pixel_pos.y + (sc.TILE_SIZE - target_size) // 2
+
+        surface.blit(scaled_sprite, (x, y))
 
         self.draw_health_bar(surface)
 
@@ -326,13 +326,12 @@ class Dragonnet(Dragon):
         """
         sprite = self._imageSprite[self._index_img]
 
-        scaled_width = int(sprite.get_width() * 0.7)
-        scaled_height = int(sprite.get_height() * 0.7)
+        target_size = int(sc.TILE_SIZE * 1.1)
 
-        scaled_sprite = pygame.transform.scale(sprite, (scaled_width, scaled_height))
+        scaled_sprite = pygame.transform.smoothscale(sprite, (target_size, target_size))
 
-        x = self._pixel_pos.x + (sc.TILE_SIZE - scaled_width) // 2
-        y = self._pixel_pos.y + (sc.TILE_SIZE - scaled_height) // 2
+        x = self._pixel_pos.x + (sc.TILE_SIZE - target_size) // 2
+        y = self._pixel_pos.y + (sc.TILE_SIZE - target_size) // 2
 
         surface.blit(scaled_sprite, (x, y))
         self.draw_health_bar(surface)
@@ -356,13 +355,12 @@ class DragonMoyen(Dragon):
         """
         sprite = self._imageSprite[self._index_img]
 
-        scaled_width = int(sprite.get_width() * 0.9)
-        scaled_height = int(sprite.get_height() * 0.9)
+        target_size = int(sc.TILE_SIZE * 1.4)
 
-        scaled_sprite = pygame.transform.scale(sprite, (scaled_width, scaled_height))
+        scaled_sprite = pygame.transform.smoothscale(sprite, (target_size, target_size))
 
-        x = self._pixel_pos.x + (sc.TILE_SIZE - scaled_width) // 2
-        y = self._pixel_pos.y + (sc.TILE_SIZE - scaled_height) // 2
+        x = self._pixel_pos.x + (sc.TILE_SIZE - target_size) // 2
+        y = self._pixel_pos.y + (sc.TILE_SIZE - target_size) // 2
 
         surface.blit(scaled_sprite, (x, y))
         self.draw_health_bar(surface)
@@ -378,6 +376,24 @@ class DragonGeant(Dragon):
                          attack_range=3,
                          sprite_path="src/assets/sprites/dragon_geant/dragon_geant_bleu_droite.png",
                          speed=2, attack_damage=40, cost=DRAGON_GEANT_COST, player=player, kill_reward=75)
+
+    def draw(self, surface) -> None:
+        """
+        Affichage du dragon moyen
+        :param surface: Surface sur laquelle le dragon est placé
+        :return: None
+        """
+        sprite = self._imageSprite[self._index_img]
+
+        target_size = int(sc.TILE_SIZE * 1.6)
+
+        scaled_sprite = pygame.transform.smoothscale(sprite, (target_size, target_size))
+
+        x = self._pixel_pos.x + (sc.TILE_SIZE - target_size) // 2
+        y = self._pixel_pos.y + (sc.TILE_SIZE - target_size) // 2
+
+        surface.blit(scaled_sprite, (x, y))
+        self.draw_health_bar(surface)
 
 
 if __name__ == '__main__':
