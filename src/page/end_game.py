@@ -1,21 +1,19 @@
-import pygame
+###################
+# FENETRE DE FIN  #
+###################
 
+import pygame
+from src.const import *
+from src.page.ui_components import Button
 
 def run_end_game(screen, background, winner_name):
-    # === COULEURS ===
-    OVERLAY_COLOR = (0, 0, 0)
-    OVERLAY_ALPHA = 150
-    POPUP_COLOR = (240, 240, 240)
-    BUTTON_COLOR = (0, 80, 200)
-    BUTTON_TEXT_COLOR = (255, 255, 255)
-    TEXT_COLOR = (0, 0, 0)
 
-    # === POLICE ===
+    # Police
     title_font = pygame.font.Font(None, 60)
     text_font = pygame.font.Font(None, 40)
     button_font = pygame.font.Font(None, 48)
 
-    # === POP-UP CENTRALE ===
+    # Pop-up centrale
     popup_width, popup_height = 500, 400
     popup_rect = pygame.Rect(
         (screen.get_width() - popup_width) // 2,
@@ -24,35 +22,29 @@ def run_end_game(screen, background, winner_name):
         popup_height
     )
 
-    # === BOUTONS ===
+    # Boutons
     center_x = screen.get_width() // 2
     center_y = screen.get_height() // 2
-
-    replay_btn = pygame.Rect(0, 0, 250, 60)
-    replay_btn.center = (center_x, center_y + 0)
-
-    menu_btn = pygame.Rect(0, 0, 250, 60)
-    menu_btn.center = (center_x, center_y + 80)
-
-    # 3. Bouton "Quitter"
-    quit_btn = pygame.Rect(0, 0, 250, 60)
-    quit_btn.center = (center_x, center_y + 160)
+    
+    buttons = [
+        Button("Rejouer", center_x, center_y, "restart"),
+        Button("Menu Principal", center_x, center_y + 80, "startGame"),
+        Button("Quitter", center_x, center_y + 160, "quit")
+    ]
+    
 
     # === BOUCLE PRINCIPALE ===
     running = True
     while running:
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return 'quit'
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if replay_btn.collidepoint(event.pos):
-                    return 'restart'
-                if menu_btn.collidepoint(event.pos):
-                    return 'startGame'
-                if quit_btn.collidepoint(event.pos):
-                    return 'quit'
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                for button in buttons:
+                    if button.is_clicked(event.pos):
+                        return button.action
 
-        # === AFFICHAGE ===
         # Fond de la scène précédente
         screen.blit(background, (0, 0))
 
@@ -75,22 +67,10 @@ def run_end_game(screen, background, winner_name):
         winner_rect = winner_surf.get_rect(center=(screen.get_width() // 2, popup_rect.top + 120))
         screen.blit(winner_surf, winner_rect)
 
-        pygame.draw.rect(screen, BUTTON_COLOR, replay_btn, border_radius=12)
-        text = button_font.render("Rejouer", True, BUTTON_TEXT_COLOR)
-        text_rect = text.get_rect(center=replay_btn.center)
-        screen.blit(text, text_rect)
-
-        # Bouton Menu Principal
-        pygame.draw.rect(screen, BUTTON_COLOR, menu_btn, border_radius=12)
-        text = button_font.render("Menu Principal", True, BUTTON_TEXT_COLOR)
-        text_rect = text.get_rect(center=menu_btn.center)
-        screen.blit(text, text_rect)
-
-        # Bouton "Quitter le jeu"
-        pygame.draw.rect(screen, BUTTON_COLOR, quit_btn, border_radius=12)
-        text = button_font.render("Quitter", True, BUTTON_TEXT_COLOR)
-        text_rect = text.get_rect(center=quit_btn.center)
-        screen.blit(text, text_rect)
+        # Dessiner boutons
+        mouse_pos = pygame.mouse.get_pos()
+        for button in buttons:
+            button.draw(screen, mouse_pos, button_font)
 
         pygame.display.flip()
 

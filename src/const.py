@@ -1,3 +1,7 @@
+########################
+#   CONSTANTES DU JEU  #
+########################
+
 DRAGONNET_COST = 100
 DRAGON_MOYEN_COST = 300
 DRAGON_GEANT_COST = 600
@@ -10,5 +14,34 @@ SPAWN_POS_P2 = (18, 21)  # Spawn pour joueur p2
 MAX_MOVES_PER_TURN = 1
 MAX_ATTACKS_PER_TURN = 1
 
-# Pourccentage de spawn des bourses par tour
+# Pourcentage de spawn des bourses par tour
 PURSE_SPAWN_CHANCE_PER_TURN = 0.3
+
+# Couleurs
+WHITE = (255, 255, 255)
+TRANSLUCENT_BLUE = (0, 120, 200, 180)
+HOVER_BLUE = (0, 140, 255, 220)
+SHADOW = (0, 0, 0)
+OVERLAY_COLOR = (0, 0, 0)
+OVERLAY_ALPHA = 150
+POPUP_COLOR = (240, 240, 240)
+BUTTON_COLOR = (0, 80, 200)
+BUTTON_TEXT_COLOR = (255, 255, 255)
+TEXT_COLOR = (0, 0, 0)
+TRANSLUCENT_RED = (200, 0, 0, 180)
+HOVER_RED = (255, 0, 0, 220)
+DARK_BLUE = (0, 80, 200)
+
+# Polices
+FONT_TITLE_PATH = "src/assets/font/test1.ttf"
+FONT_BUTTON_PATH = "src/assets/font/BoldPixels.ttf"
+
+# Dimensions des boutons
+BUTTON_WIDTH_LARGE = 320
+BUTTON_HEIGHT_LARGE = 70
+BUTTON_WIDTH_MEDIUM = 250
+BUTTON_HEIGHT_MEDIUM = 60
+
+# Chemins des images
+IMG_BG_START = 'src/assets/img/bgStart.png'
+IMG_BG_RULES = 'src/assets/img/bgRules.png'
