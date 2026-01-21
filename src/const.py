@@ -4,7 +4,7 @@ DRAGON_GEANT_COST = 600
 
 # Position du point de spawn des nouveaux dragons
 SPAWN_POS_P1 = (5, 2)  # Spawn pour joueur p1
-SPAWN_POS_P2 = (22, 15)  # Spawn pour joueur p2
+SPAWN_POS_P2 = (18, 21)  # Spawn pour joueur p2
 
 # Limites d'actions par tour
 MAX_MOVES_PER_TURN = 1
