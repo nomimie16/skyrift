@@ -66,49 +66,76 @@ Il ne vous reste plus qu'à défendre votre base et attaquer votre ennemi pour t
 ## Structure du projet 
 
 ```
- README.md
-├── assets
-│   ├── font
-│   ├── img
-│   └── sprites
-├── component
-│   ├── __pycache__
-│   ├── entities
-│   ├── enum
-│   ├── grid.py
-│   ├── path_finding.py
-│   └── position.py
-├── const.py
+
+.
+├── README.md
 ├── docs
-│   ├── docs
-│   ├── mkdocs.yml
-│   └── site
-├── economy.py
-├── events
-│   └── dragonEvents.py
-├── maptest.py
-├── mkdoc
-├── page
+├── src
+│   ├── assets
+│   │   ├── font
+│   │   ├── img
+│   │   └── sprites
 │   ├── component
-│   ├── game.py
-│   ├── launch.py
-│   ├── main.py
-│   ├── menu.py
-│   ├── pause.py
-│   ├── rules.py
-│   ├── settings.py
-│   ├── sidepanels.py
-│   ├── sound.py
-│   ├── startGame.py
-│   └── ui.py
-├── player.py
-├── pytest.ini
-├── requirements.txt
-├── screen_const.py
-├── test
-│   ├── components
-│   ├── test_economy.py
-│   └── test_grid.py
+│   │   ├── entities
+│   │   │   ├── base.py
+│   │   │   ├── dragon.py
+│   │   │   ├── effect_zone.py
+│   │   │   ├── entity.py
+│   │   │   ├── island_of_life.py
+│   │   │   ├── island_of_life_effect.py
+│   │   │   ├── purse.py
+│   │   │   ├── purse_effect.py
+│   │   │   ├── static_entity.py
+│   │   │   ├── tornado.py
+│   │   │   ├── tornado_effect.py
+│   │   │   ├── tower.py
+│   │   │   ├── volcano
+│   │   │   │   ├── volcano.py
+│   │   │   │   ├── volcano_effect.py
+│   │   │   │   ├── volcano_effect_zone.py
+│   │   │   │   └── volcano_obstacle_zone.py
+│   │   │   └── zone_entity.py
+│   │   ├── grid.py
+│   │   ├── path_finding.py
+│   │   └── position.py
+│   ├── const.py
+│   ├── economy.py
+│   ├── enum
+│   │   ├── event_enum.py
+│   │   └── type_entities.py
+│   ├── events
+│   │   ├── dragonEvents.py
+│   │   └── towerEvents.py
+│   ├── page
+│   │   ├── component
+│   │   │   ├── banner_information.py
+│   │   │   ├── damage_heal_popup.py
+│   │   │   ├── gold_popup.py
+│   │   │   ├── grid_component.py
+│   │   │   ├── map_builder.py
+│   │   │   └── turn_popup.py
+│   │   ├── game.py
+│   │   ├── launch.py
+│   │   ├── main.py
+│   │   ├── menu.py
+│   │   ├── pause.py
+│   │   ├── rules.py
+│   │   ├── settings.py
+│   │   ├── sidepanels.py
+│   │   ├── sound.py
+│   │   ├── startGame.py
+│   │   └── ui.py
+│   ├── player.py
+│   ├── screen_const.py
+│   └── turn.py
+└── test
+    ├── components
+    │   ├── entities
+    │   │   ├── test_dragon.py
+    │   │   └── test_entity.py
+    │   └── test_position.py
+    ├── test_economy.py
+    └── test_grid.py
 ```
 
 ## Documentation
