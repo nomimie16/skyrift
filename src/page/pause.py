@@ -4,7 +4,11 @@
 
 import pygame
 
+from src.sound import Sound
+
+
 def run_pause(screen, background):
+    sound = Sound()
     # === COULEURS ===
     OVERLAY_COLOR = (0, 0, 0)
     OVERLAY_ALPHA = 150
@@ -56,14 +60,19 @@ def run_pause(screen, background):
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if quit_pause.collidepoint(event.pos):
+                    sound.play("temp.mp3")
                     return 'game'
                 if quit_game.collidepoint(event.pos):
+                    sound.play("temp.mp3")
                     return 'quit'
                 if settings.collidepoint(event.pos):
+                    sound.play("temp.mp3")
                     return 'settingsFromGame'
                 if rules_btn.collidepoint(event.pos):
+                    sound.play("temp.mp3")
                     return 'rulesFromGame'
                 if background.get_rect().collidepoint(event.pos) and not popup_rect.collidepoint(event.pos):
+                    sound.play("temp.mp3")
                     return 'game'
 
         # === AFFICHAGE ===

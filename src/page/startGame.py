@@ -4,8 +4,11 @@
 
 import pygame
 
+from src.sound import Sound
+
 
 def run_start(screen):
+    sound = Sound()
     # ===== RESSOURCES =====
 
     # Taille de l'écran
@@ -82,6 +85,7 @@ def run_start(screen):
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for button in buttons:
                     if button.rect.collidepoint(event.pos):
+                        sound.play("temp.mp3")
                         print(f"Action : {button.action}")
                         return button.action
 

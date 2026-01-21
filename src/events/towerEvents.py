@@ -7,6 +7,7 @@ from src.component.entities.tower import Tower
 from src.component.grid import Grid, Cell
 from src.component.position import Position
 from src.enum.type_entities import TypeEntitiesEnum
+from src.sound import Sound
 from src.screen_const import TILE_SIZE, OFFSET_X, OFFSET_Y
 
 
@@ -34,6 +35,7 @@ class TowerEvents:
         self.attack_button_rect: pygame.Rect | None = None
 
         self.damage_heal_popup_manager = damage_heal_popup_manager
+        self.sound = Sound()
 
     def _pixel_to_cell(self, pos: Position) -> Position | None:
         """
@@ -116,6 +118,7 @@ class TowerEvents:
 
             self.selected_tower = occupant
             self.attack_cells = self.compute_attack_dragons(occupant)
+            self.sound.play("temp.mp3")
             return
 
         self._reset_selection()
@@ -137,6 +140,9 @@ class TowerEvents:
                     dragon,
                     -self.selected_tower.attack_damage
                 )
+
+        if self.attack_cells:
+            self.sound.play("temp.mp3")
 
         self._reset_selection()
 

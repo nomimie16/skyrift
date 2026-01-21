@@ -4,8 +4,11 @@
 
 import pygame
 
+from src.sound import Sound
+
 
 def run_settings(screen, background, from_game):
+    sound = Sound()
     # === COULEURS ===
     OVERLAY_COLOR = (0, 0, 0)
     OVERLAY_ALPHA = 150
@@ -122,11 +125,13 @@ def run_settings(screen, background, from_game):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Si bouton retour au jeu est cliqué
                 if quit_settings.collidepoint(event.pos):
+                    sound.play("temp.mp3")
                     if from_game:
                         return 'pause'
                     else:
                         return 'startGame'
                 if background.get_rect().collidepoint(event.pos) and not popup_rect.collidepoint(event.pos):
+                    sound.play("temp.mp3")
                     if from_game:
                         return 'pause'
                     else:
@@ -134,10 +139,12 @@ def run_settings(screen, background, from_game):
 
                 # Toggle musique ON/OFF
                 if img_music_toggle_off_rect.collidepoint(event.pos):
+                    sound.play("temp.mp3")
                     music_on = not music_on
                     print("Musique :", "ON" if music_on else "OFF")
                 # Toggle son du jeu ON/OFF
                 if img_sound_toggle_off_rect.collidepoint(event.pos):
+                    sound.play("temp.mp3")
                     sound_on = not sound_on
                     print("Son du jeu :", "ON" if sound_on else "OFF")
 

@@ -4,8 +4,11 @@
 
 import pygame
 
+from src.sound import Sound
+
 
 def run_rules(screen, from_game):
+    sound = Sound()
     # ===== RESSOURCES =====
     # Couleurs
     WHITE = (255, 255, 255)
@@ -65,6 +68,7 @@ def run_rules(screen, from_game):
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if btn_retour.collidepoint(event.pos):
+                    sound.play("temp.mp3")
                     if from_game:
                         return 'game'
                     else:

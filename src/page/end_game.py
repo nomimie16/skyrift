@@ -1,7 +1,10 @@
 import pygame
 
+from src.sound import Sound
+
 
 def run_end_game(screen, background, winner_name):
+    sound = Sound()
     # === COULEURS ===
     OVERLAY_COLOR = (0, 0, 0)
     OVERLAY_ALPHA = 150
@@ -46,10 +49,13 @@ def run_end_game(screen, background, winner_name):
                 return 'quit'
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if replay_btn.collidepoint(event.pos):
+                    sound.play("temp.mp3")
                     return 'restart'
                 if menu_btn.collidepoint(event.pos):
+                    sound.play("temp.mp3")
                     return 'startGame'
                 if quit_btn.collidepoint(event.pos):
+                    sound.play("temp.mp3")
                     return 'quit'
 
         # === AFFICHAGE ===

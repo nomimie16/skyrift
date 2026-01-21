@@ -8,6 +8,7 @@ from src.component.entities.static_entity import StaticEntity
 from src.component.grid import Grid, Cell
 from src.component.position import Position
 from src.enum.type_entities import TypeEntitiesEnum
+from src.sound import Sound
 from src.player import Player
 
 
@@ -32,6 +33,7 @@ class DragonEvents:
         self.attack_cells: List = []
 
         self.damage_heal_popup_manager = damage_heal_popup_manager
+        self.sound = Sound()
 
     def _pixel_to_cell(self, pos: Position) -> Position | None:
         """
@@ -173,6 +175,7 @@ class DragonEvents:
                 self.selected_dragon.move_dragon(cell.position.x, cell.position.y, self.grid)
 
                 self.selected_dragon.has_moved = True
+                self.sound.play("temp.mp3")
                 print(f"Dragon déplacé - Déplacement utilisé pour ce dragon")
 
             # Attaque
@@ -204,6 +207,7 @@ class DragonEvents:
 
                 if attacked:
                     self.selected_dragon.has_attacked = True
+                    self.sound.play("temp.mp3")
                     print(f"Attaque effectuée - Attaque utilisée pour ce dragon")
 
             self.selected_dragon = None
@@ -223,6 +227,7 @@ class DragonEvents:
                     print("Ce dragon n'appartient pas à votre joueur !")
                     return
                 self.selected_dragon = occupant
+                self.sound.play("temp.mp3")
 
                 # One ne montre les cellules que si le joueur peut encore bouger
                 if not self.selected_dragon.has_moved:

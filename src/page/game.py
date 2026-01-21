@@ -15,6 +15,7 @@ from src.page.component.grid_component import GridComponent
 from src.page.component.map_builder import MapBuilder
 from src.page.component.turn_popup import TurnPopup
 from src.page.sidepanels import draw_sidepanels
+from src.sound import Sound
 from src.player import Player
 from src.turn import Turn
 
@@ -85,6 +86,8 @@ class Game:
         self.button_hover_color = (222, 192, 18)
         self.button_text_color = (255, 255, 255)
 
+        self.sound = Sound()
+
     def on_gold_change(self, delta):
         self.gold_popup_manager.spawn(*self.ui.coin_position, delta)
 
@@ -141,6 +144,7 @@ class Game:
                             print("Vous devez attendre la fin de toutes les actions avant de passer au tour suivant")
                             continue
 
+                        self.sound.play("temp.mp3")
                         print("tour de ", self.turn.current_player().name, "terminé")
                         self.turn.next()
 
@@ -193,6 +197,7 @@ class Game:
                                         else:
                                             self.builder.tower2.tower_activation(self.grid_comp.grid)
                                         player.economy.spend_gold(button["cost"])
+                                        self.sound.play("temp.mp3")
                                         self.event_information.show(TypeEventEnum.NOUVELLE_TOUR)
 
 
@@ -223,6 +228,7 @@ class Game:
                                             player.add_unit(new_dragon)
 
                                             player.economy.spend_gold(button["cost"])
+                                            self.sound.play("temp.mp3")
                                             self.event_information.show(TypeEventEnum.NOUVEAU_DRAGON)
 
                                             # logs
@@ -275,6 +281,7 @@ class Game:
                                 occupant.grant_rewards()
                                 occupant.update()
                                 cell.remove_occupant(occupant)
+                                self.sound.play("temp.mp3")
                                 if occupant.player == self.turn.current_player():
                                     self.event_information.show(TypeEventEnum.MORT_ALLIE)
                                 if occupant.player != self.turn.current_player():
@@ -287,13 +294,16 @@ class Game:
                                 print("Tour morte détectée :", occupant.name)
                                 occupant.grant_rewards()
                                 occupant.tower_disable(self.grid_comp.grid)
+                                self.sound.play("temp.mp3")
                                 self.event_information.show(TypeEventEnum.TOUR_DETRUITE)
 
             # Gestion base détruite
             if self.builder.base1.is_dead():
+                self.sound.play("temp.mp3")
                 self.event_information.show(TypeEventEnum.BASE_DETRUITE)
                 return ("endGame", self.p1.name)
             if self.builder.base2.is_dead():
+                self.sound.play("temp.mp3")
                 self.event_information.show(TypeEventEnum.BASE_DETRUITE)
                 return ("endGame", self.p2.name)
             # ======================================================================================

@@ -4,8 +4,11 @@
 
 import pygame
 
+from src.sound import Sound
+
 
 def run_menu(screen):
+    sound = Sound()
     # Définir les couleurs
     WHITE = (255, 255, 255)
     DARK_BLUE = (0, 80, 200)
@@ -32,6 +35,7 @@ def run_menu(screen):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Si bouton lanchement cliqué
                 if launch_btn.collidepoint(event.pos):
+                    sound.play("temp.mp3")
                     print("Lancement du jeu.\n")
                     return 'game'
 
