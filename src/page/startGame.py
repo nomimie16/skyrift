@@ -62,7 +62,6 @@ def run_start(screen):
         # Titre
         screen.blit(logo, logo_rect)
 
-
         for button in buttons:
             button.draw(screen, mouse_pos, FONT_BUTTON)
 

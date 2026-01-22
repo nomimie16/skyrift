@@ -47,6 +47,8 @@ BUTTON_HEIGHT_MEDIUM = 60
 
 # Chemins des images
 IMG_BG_START = 'src/assets/img/bgStart.png'
-IMG_BG_RULES = 'src/assets/img/bgRules.png'
+IMG_BG_RULES = 'src/assets/img/bgrules.jpg'
 IMG_BG_PAUSE = 'src/assets/img/bgPause.png'
 IMG_LOGO_TITRE = 'src/assets/img/skyrift.png'
+IMG_BGBUTTONRULES = 'src/assets/img/BgButPause.png'
+IMG_LIVRE = 'src/assets/img/bookRules.png'

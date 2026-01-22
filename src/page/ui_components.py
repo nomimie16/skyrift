@@ -43,9 +43,9 @@ class Toggle:
         
         # Charger les images
         try:
-            img_on = pygame.image.load("src/assets/img/on_song_toggle.png").convert_alpha()
+            img_on = pygame.image.load("src/assets/img/son_on.png").convert_alpha()
             self.img_on = pygame.transform.scale(img_on, size)
-            img_off = pygame.image.load("src/assets/img/off_song_toggle.png").convert_alpha()
+            img_off = pygame.image.load("src/assets/img/son_off.png").convert_alpha()
             self.img_off = pygame.transform.scale(img_off, size)
         except:
             self.img_on = None
