@@ -53,11 +53,13 @@ class Toggle:
         
         self.rect = pygame.Rect(0, 0, size[0], size[1])
         self.rect.center = (center_x, center_y)
-        self.font = pygame.font.Font(None, 48)
+        self.font = pygame.font.Font(FONT_BUTTON_PATH, 48)
+
     
     def draw(self, surface):
         # Label à gauche
-        label_surf = self.font.render(self.label, True, TEXT_COLOR)
+        color = (117, 69, 32, 0.8)
+        label_surf = self.font.render(self.label, True, color)
         label_rect = label_surf.get_rect(right=self.rect.left - 10, centery=self.rect.centery)
         surface.blit(label_surf, label_rect)
         

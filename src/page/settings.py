@@ -8,17 +8,10 @@ from src.page.ui_components import Button, Toggle
 
 def run_settings(screen, background, from_game):
 
-    # === POLICE ===
-    font = pygame.font.Font(None, 48)
-
-    # === POP-UP CENTRALE ===
-    popup_width, popup_height = 600, 400
-    popup_rect = pygame.Rect(
-        (screen.get_width() - popup_width) // 2,
-        (screen.get_height() - popup_height) // 2,
-        popup_width,
-        popup_height
-    )
+    # Fond des settings
+    bgSettings = pygame.image.load(IMG_BGSETTINGS).convert_alpha()
+    bgSettings = pygame.transform.scale(bgSettings, (440, 200))
+    bgSettings_rect = bgSettings.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
 
     # Bouton retour au menu pause
     center_x = screen.get_width() // 2
@@ -27,8 +20,8 @@ def run_settings(screen, background, from_game):
     
     # Toggles Musique et Son
     toggles = [
-        Toggle("Musique :", center_x + 50, center_y - 70),
-        Toggle("Son du jeu :", center_x + 50, center_y + 20)
+        Toggle("Musique :", center_x + 125, center_y - 50),
+        Toggle("Son du jeu :", center_x + 125, center_y + 40)
     ]
     
     # Etats des toggles
@@ -48,15 +41,9 @@ def run_settings(screen, background, from_game):
         overlay = pygame.Surface(screen.get_size())
         overlay.set_alpha(OVERLAY_ALPHA)
         overlay.fill(OVERLAY_COLOR)
-        screen.blit(overlay, (0, 0))
+        screen.blit(overlay, (0, 0))        
 
-        # Fenêtre pop-up
-        pygame.draw.rect(screen, POPUP_COLOR, popup_rect, border_radius=20)
-
-        # Titre du menu
-        title = font.render("Paramètres", True, (0, 0, 0))
-        title_rect = title.get_rect(center=(screen.get_width() // 2, popup_rect.top + 60))
-        screen.blit(title, title_rect)
+        screen.blit(bgSettings, bgSettings_rect)
 
         # Afficher le bon toggle selon l’état - SON et MUSIQUE
         for toggle in toggles:
@@ -78,7 +65,7 @@ def run_settings(screen, background, from_game):
                             toggle.toggle()
                     
                     # Clic dehors
-                    if not popup_rect.collidepoint(event.pos):
+                    if not bgSettings_rect.collidepoint(event.pos):
                         return 'pause' if from_game else 'startGame'
 
         pygame.display.flip()

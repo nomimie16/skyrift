@@ -11,7 +11,8 @@ def run_start(screen):
 
     # Images
     fond = pygame.image.load(IMG_BG_START)
-    fond = fond.convert()
+    fond = pygame.transform.scale(fond, (screen.get_width(), screen.get_height()))
+    
     
     # Logo Skyrift
     logo = pygame.image.load(IMG_LOGO_TITRE).convert_alpha()
