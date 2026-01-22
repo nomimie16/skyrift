@@ -16,8 +16,12 @@ nav:
   - Crédits: credits.md
   - Documentation technique:
       - Changelog: technique/changelog.md
-      - Dépendances: technique/dependencies.md
       - Structure du projet: technique/structure.md
+      - Dépendances: technique/dependencies.md
+      - Présentation du système: technique/systempresent.md
+      - Paramètres: technique/settings.md
+      - Maintenance et support: technique/support.md
+      - Annexe : technique/annex.md
 
 
 extra_css:

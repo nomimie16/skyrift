@@ -59,7 +59,6 @@ Au cours de la partie, il vous est également posssible d'accéder aux paramètr
 - D’activer ou désactiver les effets sonores
 - D’activer ou désactiver la musique
 - De quitter la partie en cours
-- 
 
 Il ne vous reste plus qu'à défendre votre base et attaquer votre ennemi pour tenter de remporter le Skyrift !
 

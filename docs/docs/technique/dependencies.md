@@ -7,6 +7,7 @@ summary : Bibliothèques et outils requis pour exécuter, développer et tester 
 
 ---
 
+## Dépendances principales
 
 ### Python
 * [Python 3.x](https://www.python.org/downloads/) 
@@ -37,3 +38,11 @@ summary : Bibliothèques et outils requis pour exécuter, développer et tester 
 * [Pytest](https://docs.pytest.org/en/stable/) 
 * Version souhaitée : ≥ 7.0
 * Framework de tests automatisés pour valider les classes du projet.
+
+## Installation des dépendances
+
+* Pour installer directement l'ensemble des dépedances requises, ouvrez le dossier contenant le projet dans un terminal et entrez cette commande :
+
+``` 
+pip install -r requirements.txt
+``` 
