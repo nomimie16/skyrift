@@ -13,7 +13,7 @@ def run_menu(screen):
     font = pygame.font.Font(FONT_BUTTON_PATH, 48)
 
     # Création bouton lancement du jeu
-    launch_btn = Button("Lancer le jeu", screen.get_width() // 2, screen.get_height() // 2, 'game')
+    launch_btn = Button("Lancer le jeu", screen.get_width() // 2, screen.get_height() // 2, 'game', TRANSLUCENT_BLUE, HOVER_BLUE, WHITE)
     
     running = True
 

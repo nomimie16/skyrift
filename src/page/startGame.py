@@ -12,6 +12,12 @@ def run_start(screen):
     # Images
     fond = pygame.image.load(IMG_BG_START)
     fond = fond.convert()
+    
+    # Logo Skyrift
+    logo = pygame.image.load(IMG_LOGO_TITRE).convert_alpha()
+    logo = pygame.transform.scale(logo, (576, 305))
+    logo_rect = logo.get_rect(center=(screen.get_width() // 2, 150))
+    
 
     # Polices
     try:
@@ -27,10 +33,10 @@ def run_start(screen):
 
     # Boutons
     buttons = [
-        Button("Lancer le jeu", center_x, 320, "game"),
-        Button("Options", center_x, 420, "settingsFromStart"),
-        Button("Règles", center_x, 520, "rulesFromStart"),
-        Button("Quitter", center_x, 620, "quit")
+        Button("Lancer le jeu", center_x, 320, "game", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE),
+        Button("Options", center_x, 420, "settingsFromStart", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE),
+        Button("Règles", center_x, 520, "rulesFromStart", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE),
+        Button("Quitter", center_x, 620, "quit", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE)
     ]
 
     # ===== BOUCLE PRINCIPALE =====
@@ -54,10 +60,8 @@ def run_start(screen):
         mouse_pos = pygame.mouse.get_pos()
 
         # Titre
-        title = FONT_TITLE.render("SkyRift", True, WHITE)
-        shadow = FONT_TITLE.render("SkyRift", True, SHADOW)
-        screen.blit(shadow, (WIDTH_SCREEN // 2 - title.get_width() // 2 + 3, 103))
-        screen.blit(title, (WIDTH_SCREEN // 2 - title.get_width() // 2, 100))
+        screen.blit(logo, logo_rect)
+
 
         for button in buttons:
             button.draw(screen, mouse_pos, FONT_BUTTON)

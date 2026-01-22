@@ -7,21 +7,24 @@ import pygame
 from src.const import *
 
 class Button:
-    def __init__(self, text, x, y, action):
+    def __init__(self, text, x, y, action, color, color_hover, text_color):
         self.text = text
         self.action = action
+        self.color = color
+        self.color_hover = color_hover
+        self.text_color = text_color
         self.width, self.height = BUTTON_WIDTH_LARGE, BUTTON_HEIGHT_LARGE
         self.rect = pygame.Rect(0, 0, self.width, self.height)
         self.rect.center = (x, y)
 
     def draw(self, win, mouse_pos, font):
         is_hover = self.rect.collidepoint(mouse_pos)
-        color = HOVER_BLUE if is_hover else TRANSLUCENT_BLUE
+        color = self.color_hover if is_hover else self.color
         button_surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
         pygame.draw.rect(button_surface, color, (0, 0, self.width, self.height), border_radius=16)
         win.blit(button_surface, self.rect)
-        
-        text_surf = font.render(self.text, True, WHITE)
+
+        text_surf = font.render(self.text, True, self.text_color)
         text_rect = text_surf.get_rect(center=self.rect.center)
         shadow = font.render(self.text, True, SHADOW)
         

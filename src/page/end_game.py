@@ -27,9 +27,9 @@ def run_end_game(screen, background, winner_name):
     center_y = screen.get_height() // 2
     
     buttons = [
-        Button("Rejouer", center_x, center_y, "restart"),
-        Button("Menu Principal", center_x, center_y + 80, "startGame"),
-        Button("Quitter", center_x, center_y + 160, "quit")
+        Button("Rejouer", center_x, center_y, "restart", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE),
+        Button("Menu Principal", center_x, center_y + 80, "startGame", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE),
+        Button("Quitter", center_x, center_y + 160, "quit", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE)
     ]
     
 

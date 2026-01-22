@@ -23,7 +23,7 @@ def run_settings(screen, background, from_game):
     # Bouton retour au menu pause
     center_x = screen.get_width() // 2
     center_y = screen.get_height() // 2
-    btn_retour = Button("Retour", center_x, center_y + 120, 'pause' if from_game else 'startGame')
+    btn_retour = Button("Retour", center_x, center_y + 120, 'pause' if from_game else 'startGame', TRANSLUCENT_BLUE, HOVER_BLUE, WHITE)
     
     # Toggles Musique et Son
     toggles = [

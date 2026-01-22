@@ -11,34 +11,36 @@ def run_pause(screen, background):
     # Police
     font = pygame.font.Font(FONT_BUTTON_PATH, 48)
 
-    # Pop-up
-    popup_width, popup_height = 400, 500
-    popup_rect = pygame.Rect(
-        (screen.get_width() - popup_width) // 2,
-        (screen.get_height() - popup_height) // 2,
-        popup_width,
-        popup_height
-    )
-
+    # Image de fond
+    bg_pause = pygame.image.load(IMG_BG_PAUSE).convert_alpha()
+    bg_pause = pygame.transform.scale(bg_pause, (450, 550))
+    bg_rect = bg_pause.get_rect(center=(screen.get_width() // 2, screen.get_height() // 2))
+    
     # Boutons
     center_x = screen.get_width() // 2
     center_y = screen.get_height() // 2
     buttons = [
-        Button("Retour au jeu", center_x, center_y - 150, "game"),
-        Button("Paramètres", center_x, center_y -50, "settingsFromGame"),
-        Button("Règles du jeu", center_x, center_y + 50, "rulesFromGame"),
-        Button("Quitter le jeu", center_x, center_y + 150, "quit")
+        Button("Retour au jeu", center_x, center_y - 150, "game", TRANSLUCENT_BROWN, HOVER_BROWN, BROWN_FONT),
+        Button("Paramètres", center_x, center_y -50, "settingsFromGame", TRANSLUCENT_BROWN, HOVER_BROWN, BROWN_FONT),
+        Button("Règles du jeu", center_x, center_y + 50, "rulesFromGame", TRANSLUCENT_BROWN, HOVER_BROWN, BROWN_FONT),
+        Button("Quitter le jeu", center_x, center_y + 150, "quit", TRANSLUCENT_BROWN, HOVER_BROWN, BROWN_FONT)
     ]
 
     # === BOUCLE PRINCIPALE ===
     running = True
     while running:
         for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                return 'quit'
+            
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                # Vérifier les clics sur les boutons
                 for button in buttons:
                     if button.is_clicked(event.pos):
                         return button.action
-                if not popup_rect.collidepoint(event.pos):
+                
+                # Clic en dehors de l'image de pause = retour au jeu
+                if not bg_rect.collidepoint(event.pos):
                     return 'game'
 
         # Fond de la scène précédente
@@ -49,9 +51,9 @@ def run_pause(screen, background):
         overlay.fill(OVERLAY_COLOR)
         screen.blit(overlay, (0, 0))
         
-        # Fenêtre pop-up
-        pygame.draw.rect(screen, POPUP_COLOR, popup_rect, border_radius=20)
-
+        # Fond du menu pause centré
+        screen.blit(bg_pause, bg_rect)
+        
         # Dessiner boutons
         mouse_pos = pygame.mouse.get_pos()
         for button in buttons:

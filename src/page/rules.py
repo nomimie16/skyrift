@@ -24,7 +24,7 @@ def run_rules(screen, from_game):
     center_x = screen.get_width() // 2
     center_y = screen.get_height() // 2
     action_retour = 'game' if from_game else 'startGame'
-    btn_retour = Button("Retour", center_x, center_y + 300, action_retour)
+    btn_retour = Button("Retour", center_x, center_y + 300, action_retour, TRANSLUCENT_RED, HOVER_RED, WHITE)
             
     # === BOUCLE PRINCIPALE ===
     running = True

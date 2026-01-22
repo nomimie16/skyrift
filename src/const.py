@@ -31,6 +31,9 @@ TEXT_COLOR = (0, 0, 0)
 TRANSLUCENT_RED = (200, 0, 0, 180)
 HOVER_RED = (255, 0, 0, 220)
 DARK_BLUE = (0, 80, 200)
+TRANSLUCENT_BROWN = (147, 85, 27, 204)
+HOVER_BROWN = (170, 85, 0, 220)
+BROWN_FONT = (229, 210, 188, 0.8)
 
 # Polices
 FONT_TITLE_PATH = "src/assets/font/test1.ttf"
@@ -45,3 +48,5 @@ BUTTON_HEIGHT_MEDIUM = 60
 # Chemins des images
 IMG_BG_START = 'src/assets/img/bgStart.png'
 IMG_BG_RULES = 'src/assets/img/bgRules.png'
+IMG_BG_PAUSE = 'src/assets/img/bgPause.png'
+IMG_LOGO_TITRE = 'src/assets/img/skyrift.png'
