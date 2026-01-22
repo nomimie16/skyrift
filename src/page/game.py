@@ -75,7 +75,7 @@ class Game:
         self.dragons = []
 
         # TODO Bouton tour suivant 'temporaire
-        self.font = pygame.font.Font(None, 28)
+        self.font = pygame.font.Font(FONT_BUTTON_PATH, 25)
         button_width = 150
         button_height = 50
         button_x = screen.get_width() - button_width - 5

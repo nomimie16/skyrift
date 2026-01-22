@@ -1,5 +1,5 @@
 import pygame
-
+from src.const import FONT_BUTTON_PATH
 
 class GoldPopup:
     """Classe pour afficher les popups de gain/perte d'or."""
@@ -12,7 +12,7 @@ class GoldPopup:
         self.amount = amount
         self.duration = duration
 
-        self.font = pygame.font.Font(None, 45)
+        self.font = pygame.font.Font(FONT_BUTTON_PATH, 45)
 
         if amount > 0:
             self.color = (50, 200, 50)  # Heal (vert)

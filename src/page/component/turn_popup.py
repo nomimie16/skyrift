@@ -1,4 +1,5 @@
 import pygame
+from src.const import FONT_BUTTON_PATH
 
 
 class TurnPopup:
@@ -13,7 +14,7 @@ class TurnPopup:
         self.start_time = 0
         self.player_name = ""
 
-        self.font = pygame.font.Font(None, self.font_size)
+        self.font = pygame.font.Font(FONT_BUTTON_PATH, self.font_size)
 
     def show(self, player_name) -> None:
         """

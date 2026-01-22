@@ -4,6 +4,7 @@
 
 import pygame
 
+from src.const import *
 from src.player import Player
 
 
@@ -22,19 +23,19 @@ class UIOverlay:
         self.coin_rect = self.coin_img.get_rect()
         self.coin_rect.topleft = (10, 10)
         self.coin_value = 0
-        self.coin_text = pygame.font.Font(None, 50).render(str(self.coin_value), True, (255, 215, 0))
+        self.coin_text = pygame.font.Font(FONT_TITLE_PATH, 50).render(str(self.coin_value), True, (255, 215, 0))
         self.coin_text_rect = self.coin_text.get_rect()
         self.coin_text_rect.topleft = (70, 20)
-        self.coin_font = pygame.font.Font(None, 50)
+        self.coin_font = pygame.font.Font(FONT_TITLE_PATH, 50)
         self.coin_position = (
             self.coin_text_rect.right + 10,
             self.coin_text_rect.centery
         )
 
         # Joueur en cours
-        self.current_player = pygame.font.Font(None, 36).render("Joueur 1", True, (0, 0, 0))
+        self.current_player = pygame.font.Font(FONT_BUTTON_PATH, 36).render("Joueur 1", True, (0, 0, 0))
         self.current_player_rect = self.current_player.get_rect(center=(screen.get_width() // 2, 35))
-        self.player_font = pygame.font.Font(None, 36)
+        self.player_font = pygame.font.Font(FONT_BUTTON_PATH, 36)
 
     def draw(self, screen, current_player: Player):
         '''Fonction dessine les images/icons'''

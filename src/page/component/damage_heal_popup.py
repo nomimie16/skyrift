@@ -1,5 +1,5 @@
 import pygame
-
+from src.const import FONT_BUTTON_PATH
 
 class DamageAndHealPopup:
     """Classe représentant un texte flottant pour les dégâts ou soins reçus par une entité"""
@@ -13,7 +13,7 @@ class DamageAndHealPopup:
         self.y = y
         self.start_y = y
 
-        self.font = pygame.font.Font(None, 24)
+        self.font = pygame.font.Font(FONT_BUTTON_PATH, 24)
 
         if amount > 0:
             self.color = (50, 200, 50)  # Heal (vert)
