@@ -3,7 +3,7 @@ import pygame
 from src import screen_const as sc
 from src.component.entities.purse import spawn_random_purse
 from src.component.entities.tower import Tower
-from src.const import SPAWN_POS_P1, SPAWN_POS_P2
+from src.const import *
 from src.enum.event_enum import TypeEventEnum
 from src.enum.type_entities import TypeEntitiesEnum
 from src.events.dragonEvents import DragonEvents
@@ -17,7 +17,6 @@ from src.page.component.turn_popup import TurnPopup
 from src.page.sidepanels import draw_sidepanels
 from src.player import Player
 from src.turn import Turn
-from src.const import *
 
 
 class Game:
@@ -116,6 +115,8 @@ class Game:
                 for cell in row:
                     for occupant in cell.occupants:
                         if TypeEntitiesEnum.PLAYER_EFFECT_ZONE in occupant.type_entity:
+                            if hasattr(occupant, 'update'):
+                                occupant.update()
                             occupant.draw(self.screen)
 
             # Events
@@ -185,7 +186,6 @@ class Game:
                                     remaining_gold = player.economy.get_gold()
 
                                     # Achat tour de défense
-                                    # TODO vérification dragon dans zone de construction
                                     if isinstance(button["dragon"], Tower):
                                         if self.turn.current_player() == self.p1:
                                             self.builder.tower1.tower_activation(self.grid_comp.grid, player,
