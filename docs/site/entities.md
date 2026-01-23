@@ -34,7 +34,7 @@ Dragonnets                              | Dragon moyen                          
 /// -->
 
 
-* ### Les dragonnets
+* ### Les dragonnets   
 Des dragons petits et rapides.
 
     * Forces : rapide, combat rapproché, 
@@ -91,19 +91,26 @@ Voici un tableau présentant les **caractéristiques** de chaque type de **drago
 
 ## Sélectionner une unité
 
-* comment on selectionne une unité
+* Pour séléctionner une unité, il vous suffit de **cliquer** sur une unité déjà déployée et les actions possibles apparaîtrons (déplacements, attaque).
 
-* une image sur le jeu
 ![background](assets/img/backgroundsquare.png)
-
 
 ## Utilisation des unités
 
-* comment utiliser un dragon
+### Utilisation des dragons 
+--- 
 
-* comment utiliser une tour
+* Plusieurs possibilité s'offrent à vous, une fois le dragon selectionné et en fonction de la **situation** :
+    * **L'attaque** : si un dragon ennemi est à une certaine distance de vous, vous aurez la possibilité de l'attaquer. Selectionner l'unité et **cliquez** sur la zone **rouge** vous proposant de passer à l'offensive
+    * **Les déplacements** : en selectionnant votre dragon, vous verrez apparaître les cases de **déplacements** accessibles en **bleu.** Cliquez sur la case où vous souhaitez aller pour menez vos troupes jusqu'à la base ennemie.
 
-* images sur le jeu
+![background](assets/img/backgroundsquare.png)
+
+
+### Utilisation des tours
+---
+* A l'aide votre tour vous allez pouvoir **protéger** efficacement votre base alliée.
+    * **L'attaque** : comme pour les dragons, si un dragon ennemi est à une certaine **distance** de votre tour de défense, vous aurez la possibilité de **l'attaquer**. Selectionner l'unité et cliquez sur la zone **rouge** vous proposant de passer à l'offensive
 
 ![background](assets/img/backgroundsquare.png)
 

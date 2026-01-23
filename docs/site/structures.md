@@ -13,22 +13,22 @@ Base alliée                              | Base ennemie
 
 
 * ### La base alliée
-    Votre base : fait apparaître les dragons et les tours de défense.
+    Votre base fait apparaître les dragons et les tours de défense.
 
     * Points de vie : 2000 pv
 
     * Rôle : Point de réapparition (spawn)
 
-    * Objectif : Protéger la base contre les attaques
+    * Objectif : Protéger votre base contre les attaques
 
 * ### La base ennemie
-    La base adversaire : fait apparaître les dragons ennemis et les tours d'attaque.
+    La base adversaire fait apparaître les dragons ennemis et les tours d'attaque.
 
     * Points de vie : 2000 pv
 
     * Rôle : Point de réapparition (spawn)
 
-    * Objectif : Détruire la base ennemie le plus vite possible
+    * Objectif : Détruire cette base ennemie le plus vite possible
 
 
 ## Eléments additionnels
@@ -44,19 +44,19 @@ Ile de vie                              | Volcan                             | T
 
     * Vie gagnée :  2 pv/tour
      
-    * Objectif : Approche toi de celle ci et ses pouvoirs de régénérations prendrons effet sur toi.
+    * Objectif : S'approcher de celle ci pour que ses pouvoirs de régénérations prennent effet sur toi.
 
 * ### Le volcan
     Un endroit bouillant qui serait préférable d'éviter...
 
-    * Rôle : Ralentir les dragons qui s'y aventure.
+    * Rôle : Ralentir les dragons qui s'y aventurent.
 
     * Ralentissement :  1 case/tour
      
-    * Objectif : Evite de passer aux abords si tu ne souhaites pas être ralenti.
+    * Objectif : Eviter de passer aux abords si tu ne souhaites pas être ralenti.
 
 * ### La tornade
-    Un souffle glaçant qui renverse tout sur son passage.
+    Un souffle glacial qui renverse tout sur son passage.
 
     * Rôle : Ralentir les dragons se trouvant sur son chemin.
 
@@ -64,28 +64,18 @@ Ile de vie                              | Volcan                             | T
 
     * Durée : 5 tours
      
-    * Objectif : Fais en sorte de ne pas croiser son chemin si tu veux avancer.
-
-
-## Caractéristiques
-
-|                         | Base      | Base ennemie    | Ile de vie   | Volcan      |
-|-------------------------|-----------|-----------------|--------------|-------------|
-| PV                      | 2000      | 2000            | -            | -           |
-| Vitesse                 | 6         | 4               | 2            | -           |
-| Puissance de tir/dégâts | 10        | 20              | 40           | -           |
-| Portée tir              | 1         | 2               | 3            | 3           |
-| Blindage / PV           | 50        | 120             | 250          | 300         |
-
+    * Objectif : Faire en sorte de ne pas croiser son chemin si tu veux avancer.
 
 ## Effet des structures
 
-* expliquer comment sont les effets sur le jeu
+![background](assets/img/backgroundsquare.png)
 
-* images sur le jeu
+* Si tu es aux alentours de **l'ile de vie** ton dragon bléssé pourra **regagner de la vie** à chaque tour. Plus ton dragon reste aux abords de celle-ci plus il **augmentera** son nombre total de pv.
 
 ![background](assets/img/backgroundsquare.png)
 
-![background](assets/img/backgroundsquare.png)
+* En arrivant autour de l'énorme **volcan**, les dragons subissent des **dégats** liés à la chaleur intense de la zone volcanique. Evite de rester trop longtemps aux alentours du magma, si tu souhaite garder un **maximum** d'unités en vie.
 
 ![background](assets/img/backgroundsquare.png)
+
+* La tornade fait son apparition tous les **3 tours** et **renverse tout** sur son passage. Pendant ces trois tours, elle inflige des **dégats** aux dragons se situant sur son **chemin**. Pense à planifier tes **déplacements** en fonction de la zone où elle apparait.
