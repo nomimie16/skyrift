@@ -25,6 +25,8 @@ class Game:
         self.screen = screen
         self.ui = ui
 
+        self.background = pygame.image.load("src/assets/img/game_background.png").convert()
+        self.background = pygame.transform.scale(self.background, (screen.get_width(), screen.get_height()))
         # Joueurs
         self.p1 = Player(name="Yanis", color="bleu")
         self.p2 = Player(name="Player 2", color="rouge")
@@ -93,7 +95,7 @@ class Game:
 
         while running:
             # Dessiner le jeu
-            self.screen.fill(WHITE)
+            self.screen.blit(self.background, (0, 0))
             self.ui.draw(self.screen, current_player=self.turn.current_player())
 
             # Grille et map

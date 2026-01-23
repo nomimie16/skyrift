@@ -196,6 +196,7 @@ class DragonEvents:
                         damage = self.selected_dragon.attack_damage
                         occupant.last_attacker = player
                         occupant.take_damage(damage)
+                        self.selected_dragon.attack_fireball(occupant)
 
                         if self.damage_heal_popup_manager:
                             self.damage_heal_popup_manager.spawn_for_entity(occupant, -damage)

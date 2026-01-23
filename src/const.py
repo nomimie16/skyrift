@@ -15,7 +15,7 @@ MAX_MOVES_PER_TURN = 1
 MAX_ATTACKS_PER_TURN = 1
 
 # Pourcentage de spawn des bourses par tour
-PURSE_SPAWN_CHANCE_PER_TURN = 0.3
+PURSE_SPAWN_CHANCE_PER_TURN = 0.2
 
 # Couleurs
 WHITE = (255, 255, 255)
