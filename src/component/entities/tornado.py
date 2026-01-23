@@ -17,7 +17,6 @@ class Tornado(ZoneEntity):
     Tornade qui se déplace aléatoirement sur la grille
     """
 
-    # TODO en attente du sprite
     def __init__(self, x_cell: int, y_cell: int, width: int = 2, height: int = 3):
         super().__init__(x_cell, y_cell, sprite_path="src/assets/sprites/tornade.png", width=width, height=height,
                          type_entity=[TypeEntitiesEnum.EFFECT_ZONE, TypeEntitiesEnum.BAD_EFFECT_ZONE,
