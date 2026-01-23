@@ -58,9 +58,11 @@ while running:
         if action == 'restart':
             etat = 'game'
             background_game = None
+            current_game_instance = None
         elif action == 'startGame':
             etat = 'startGame'
             background_game = None
+            current_game_instance = None
         else:
             etat = 'quit'
 
