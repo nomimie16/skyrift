@@ -1,5 +1,5 @@
 ---
-title: Documentation Skyrift
+title: Documentation
 summary: Documentation complète pour comprendre et utiliser Skyrift
 sidebar_title: Accueil
 show_datetime: true
@@ -12,6 +12,8 @@ external_links:
 <!-- ## Présentation du jeu
 
 Skyrift est un jeu d'action en python dans un univers peuplé de dragons -->
+
+![skyrift ](assets/img/doc_skyrift.png)
 
 ### Vue d’ensemble 
 * Nom du jeu : [Skyrift](https://github.com/nomimie16/skyrift)
