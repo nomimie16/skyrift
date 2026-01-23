@@ -17,6 +17,7 @@ from src.page.component.turn_popup import TurnPopup
 from src.page.sidepanels import draw_sidepanels
 from src.player import Player
 from src.turn import Turn
+from src.const import *
 
 
 class Game:
@@ -24,7 +25,6 @@ class Game:
     def __init__(self, screen, ui):
         self.screen = screen
         self.ui = ui
-        self.WHITE = (240, 240, 240)
 
         # Joueurs
         self.p1 = Player(name="Yanis", color="bleu")
@@ -75,7 +75,7 @@ class Game:
         self.dragons = []
 
         # TODO Bouton tour suivant 'temporaire
-        self.font = pygame.font.Font(None, 28)
+        self.font = pygame.font.Font(FONT_BUTTON_PATH, 25)
         button_width = 150
         button_height = 50
         button_x = screen.get_width() - button_width - 5
@@ -94,7 +94,7 @@ class Game:
 
         while running:
             # Dessiner le jeu
-            self.screen.fill(self.WHITE)
+            self.screen.fill(WHITE)
             self.ui.draw(self.screen, current_player=self.turn.current_player())
 
             # Grille et map

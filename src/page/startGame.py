@@ -3,71 +3,41 @@
 ########################
 
 import pygame
+from src.const import *
+from src.page.ui_components import Button
 
 
 def run_start(screen):
-    # ===== RESSOURCES =====
-
-    # Taille de l'écran
-    WIDTH = screen.get_width()
-
-    # Couleurs
-    WHITE = (255, 255, 255)
-    TRANSLUCENT_BLUE = (0, 120, 200, 180)
-    HOVER_BLUE = (0, 140, 255, 220)
-    SHADOW = (0, 0, 0)
 
     # Images
-    fond = pygame.image.load('src/assets/img/bgStart.png')
-    fond = fond.convert()
+    fond = pygame.image.load(IMG_BG_START)
+    fond = pygame.transform.scale(fond, (screen.get_width(), screen.get_height()))
+    
+    
+    # Logo Skyrift
+    logo = pygame.image.load(IMG_LOGO_TITRE).convert_alpha()
+    logo = pygame.transform.scale(logo, (576, 305))
+    logo_rect = logo.get_rect(center=(screen.get_width() // 2, 150))
+    
 
     # Polices
     try:
-        FONT_TITLE = pygame.font.Font("src/assets/font/test1.ttf", 100)
-        FONT_BUTTON = pygame.font.Font("src/assets/font/BoldPixels.ttf", 36)
+        FONT_TITLE = pygame.font.Font(FONT_TITLE_PATH, 100)
+        FONT_BUTTON = pygame.font.Font(FONT_BUTTON_PATH, 36)
     except:
         FONT_TITLE = pygame.font.SysFont(None, 100)
         FONT_BUTTON = pygame.font.SysFont(None, 36)
 
-    # Musique
-    # mixer.music.load('assets/sound/startMusic.mp3')
-    # mixer.music.play(-1)
+    # Récupérer la largeur de l'écran
+    WIDTH_SCREEN = screen.get_width()
+    center_x = WIDTH_SCREEN // 2
 
-    # ===== FIN RESSOURCES =====
-
-    # ==== CLASSE BOUTONS ======
-    class Button:
-        def __init__(self, text, center_y, action):
-            self.text = text
-            self.action = action
-            self.center_y = center_y
-            self.width, self.height = 320, 70
-            self.rect = pygame.Rect((0, 0, self.width, self.height))
-            self.rect.center = (WIDTH // 2, center_y)
-
-        def draw(self, win, mouse_pos):
-            is_hover = self.rect.collidepoint(mouse_pos)
-            color = HOVER_BLUE if is_hover else TRANSLUCENT_BLUE
-            button_surface = pygame.Surface((self.width, self.height), pygame.SRCALPHA)
-            pygame.draw.rect(button_surface, color, (0, 0, self.width, self.height), border_radius=16)
-            win.blit(button_surface, self.rect)
-
-            text_surf = FONT_BUTTON.render(self.text, True, WHITE)
-            text_rect = text_surf.get_rect(center=self.rect.center)
-
-            shadow = FONT_BUTTON.render(self.text, True, SHADOW)
-            win.blit(shadow, (text_rect.x + 2, text_rect.y + 2))
-            win.blit(text_surf, text_rect)
-
-        def is_clicked(self, mouse_pos, mouse_pressed):
-            return self.rect.collidepoint(mouse_pos) and mouse_pressed[0]
-
-    # ===== BOUTONS =====
+    # Boutons
     buttons = [
-        Button("Lancer le jeu", 320, "game"),
-        Button("Options", 420, "settingsFromStart"),
-        Button("Règles", 520, "rulesFromStart"),
-        Button("Quitter", 620, "quit")
+        Button("Lancer le jeu", center_x, 320, "game", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE),
+        Button("Options", center_x, 420, "settingsFromStart", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE),
+        Button("Règles", center_x, 520, "rulesFromStart", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE),
+        Button("Quitter", center_x, 620, "quit", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE)
     ]
 
     # ===== BOUCLE PRINCIPALE =====
@@ -91,13 +61,10 @@ def run_start(screen):
         mouse_pos = pygame.mouse.get_pos()
 
         # Titre
-        title = FONT_TITLE.render("SkyRift", True, WHITE)
-        shadow = FONT_TITLE.render("SkyRift", True, SHADOW)
-        screen.blit(shadow, (WIDTH // 2 - title.get_width() // 2 + 3, 103))
-        screen.blit(title, (WIDTH // 2 - title.get_width() // 2, 100))
+        screen.blit(logo, logo_rect)
 
         for button in buttons:
-            button.draw(screen, mouse_pos)
+            button.draw(screen, mouse_pos, FONT_BUTTON)
 
         pygame.display.flip()
 

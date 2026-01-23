@@ -123,6 +123,7 @@ Il ne vous reste plus qu'à défendre votre base et attaquer votre ennemi pour t
 │   │   ├── sidepanels.py
 │   │   ├── sound.py
 │   │   ├── startGame.py
+│   │   ├── ui_components.py
 │   │   └── ui.py
 │   ├── player.py
 │   ├── screen_const.py
