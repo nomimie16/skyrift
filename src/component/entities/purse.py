@@ -6,7 +6,6 @@ from src import screen_const as sc
 from src.component.entities.purse_effect import PurseEffect
 from src.component.entities.zone_entity import ZoneEntity
 from src.component.grid import Grid
-from src.component.position import Position
 from src.const import PURSE_SPAWN_CHANCE_PER_TURN
 from src.enum.type_entities import TypeEntitiesEnum
 
@@ -48,20 +47,42 @@ class Purse(ZoneEntity):
                          zone_effect=PurseEffect())
         self.name = "Bourse"
         self._amount: int = amount
-        self._target_pos = Position(y_cell, y_cell)
+
+        self.start_time = pygame.time.get_ticks()
+        self.duration = 1000
+
+        self._target_y = self.pixel_pos.y
+        self.start_y = self._target_y - 200
+
+        self._pixel_pos.y = self.start_y
+        self.is_falling = True
+
+        self._current_opacity = 0
 
         Purse.instances_count += 1
 
-        # self._speed = 5
-        # self._arrived = False
+    def update(self):
+        """Met à jour l'animation de la bourse en fonction du temps
+        https://easings.net/#easeOutCubic
+        """
+        if not self.is_falling:
+            return
 
-    # TODO animer la bourse qui tombe du ciel
-    # def update(self):
-    #     if not self._arrived:
-    #         self._position.y += (self._target_pos.y - self._position.y) * 0.1
-    #         if abs(self._position.y - self._target_pos.y) < 1:
-    #             self._position.y = self._target_pos.y
-    #             self._arrived = True
+        current_time = pygame.time.get_ticks()
+        elapsed = current_time - self.start_time
+
+        progress = min(elapsed / self.duration, 1.0)
+
+        ease = 1 - pow(1 - progress, 3)
+
+        self._pixel_pos.y = self.start_y + (self.target_y - self.start_y) * ease
+
+        self._current_opacity = int(255 * progress)
+
+        if progress >= 1.0:
+            self._pixel_pos.y = self.target_y
+            self._current_opacity = 255
+            self.is_falling = False
 
     def destroy(self) -> None:
         """
@@ -78,8 +99,12 @@ class Purse(ZoneEntity):
         """
         scaled_width = int(self.width * sc.TILE_SIZE * 2)
         scaled_height = int(self.height * sc.TILE_SIZE * 2)
-        scaled_sprite = pygame.transform.scale(self._sprite, (scaled_width, scaled_height))
-
+        if not self.is_falling:
+            scaled_sprite = pygame.transform.scale(self._sprite, (scaled_width, scaled_height))
+        else:
+            scaled_sprite = pygame.transform.scale(self._sprite, (scaled_width, scaled_height))
+            scaled_sprite.set_alpha(self._current_opacity
+                                    )
         x = self._pixel_pos.x - (scaled_width - sc.TILE_SIZE) // 2
         y = self._pixel_pos.y - (scaled_height - sc.TILE_SIZE)
 
@@ -94,3 +119,7 @@ class Purse(ZoneEntity):
     @amount.setter
     def amount(self, value: int) -> None:
         self._amount = value
+
+    @property
+    def target_y(self) -> int:
+        return self._target_y

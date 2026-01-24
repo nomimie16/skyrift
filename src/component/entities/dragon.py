@@ -5,6 +5,7 @@ import pygame
 
 from src import screen_const as sc
 from src.component.entities.entity import Entity
+from src.component.entities.fireball import Fireball
 from src.component.grid import Cell, Grid
 from src.component.path_finding import find_path
 from src.component.position import Position
@@ -34,6 +35,7 @@ class Dragon(Entity):
         self._player: Player = player
         self._has_moved: bool = False
         self._has_attacked: bool = False
+        self._fireball = None
 
         if self._player:
             self.sprite_path = sprite_path.replace("bleu", self._player._color)
@@ -82,6 +84,13 @@ class Dragon(Entity):
             return amount
         return None
 
+    def attack_fireball(self, target: Entity):
+        """
+        Lance une boule de feu vers une cellule cible.
+        :param target:
+        """
+        self._fireball = Fireball(self, target)
+
     def move_dragon(self, target_x: int, target_y: int, grid: Grid):
         self._target_cell = grid.cells[target_y][target_x]
         self._moving = True
@@ -99,6 +108,12 @@ class Dragon(Entity):
         Met à jour la position du dragon lors de son déplacement
         :return: Montant d'or collecté ou None
         """
+
+        if self._fireball:
+            is_active = self._fireball.update()
+            if not is_active:
+                self._fireball = None
+                
         if not self._moving or not self.path:
             return
 
@@ -120,14 +135,14 @@ class Dragon(Entity):
         if dx != 0:
             moved = True
             direction = 1 if dx > 0 else -1
-            current_px.x += min(self._actual_speed * 0.1, abs(dx)) * direction
+            current_px.x += min(self._actual_speed * 0.4, abs(dx)) * direction
             self.update_direction("droite" if direction > 0 else "gauche")
 
         # Mouvement vertical
         elif dy != 0:
             moved = True
             direction = 1 if dy > 0 else -1
-            current_px.y += min(self._actual_speed * 0.1, abs(dy)) * direction
+            current_px.y += min(self._actual_speed * 0.4, abs(dy)) * direction
 
         if not moved or (dx == 0 and dy == 0):
             self.cell = target_cell
@@ -185,6 +200,9 @@ class Dragon(Entity):
         surface.blit(scaled_sprite, (x, y))
 
         self.draw_health_bar(surface)
+
+        if self._fireball:
+            self._fireball.draw(surface)
 
     # ------- Getters et Setters -------
     @property
@@ -295,6 +313,10 @@ class Dragon(Entity):
     def has_attacked(self, value: bool) -> None:
         self._has_attacked = value
 
+    @property
+    def fireball(self):
+        return self._fireball
+
     def __str__(self):
         return (
             f"Dragon(name={self._name}, "
@@ -335,6 +357,8 @@ class Dragonnet(Dragon):
 
         surface.blit(scaled_sprite, (x, y))
         self.draw_health_bar(surface)
+        if self.fireball:
+            self.fireball.draw(surface)
 
 
 class DragonMoyen(Dragon):
@@ -364,6 +388,8 @@ class DragonMoyen(Dragon):
 
         surface.blit(scaled_sprite, (x, y))
         self.draw_health_bar(surface)
+        if self.fireball:
+            self.fireball.draw(surface)
 
 
 class DragonGeant(Dragon):
@@ -394,6 +420,8 @@ class DragonGeant(Dragon):
 
         surface.blit(scaled_sprite, (x, y))
         self.draw_health_bar(surface)
+        if self.fireball:
+            self.fireball.draw(surface)
 
 
 if __name__ == '__main__':
