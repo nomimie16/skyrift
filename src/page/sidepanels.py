@@ -6,6 +6,7 @@ import math
 import pygame
 
 import src.screen_const as sc
+from src.const import IMG_BGSIDEPANEL, IMG_SHOPBUTTON, IMG_SORCIER
 from src.component.entities.dragon import Dragonnet, DragonMoyen, DragonGeant
 from src.component.entities.tower import Tower
 from src.player import Player
@@ -261,8 +262,15 @@ def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right
     # onglet gauche avec boutique
     left_rect = pygame.Rect(current_left_x, 0, panel_width, screen_height)
     left_panel = pygame.Surface((panel_width, screen_height))
-    left_panel.fill((50, 50, 50))
 
+    bg_image = pygame.image.load(IMG_BGSIDEPANEL).convert()
+    bg_image = pygame.transform.scale(bg_image, (panel_width, screen_height))
+    left_panel.blit(bg_image, (0, 0))
+
+    bg_sorcier = pygame.image.load(IMG_SORCIER).convert_alpha()  # ← IMPORTANT: convert_alpha() pour la transparence
+    bg_sorcier = pygame.transform.scale(bg_sorcier, (200, 200))  # Ajuste la taille comme tu veux
+    left_panel.blit(bg_sorcier, (0, screen_height - 200))  # 25px du bord gauche, 175px du bas
+    
     # dessiner la boutique
     buy_buttons = []
     gold = economy.get_gold()
