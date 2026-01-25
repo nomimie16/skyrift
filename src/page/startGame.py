@@ -9,6 +9,14 @@ from src.page.ui_components import Button
 
 def run_start(screen):
 
+    try:
+        cursor_image = pygame.image.load("src/assets/img/cursor_orange.png")
+        cursor_surf = pygame.transform.smoothscale(cursor_image, (32, 32))
+        cursor = pygame.cursors.Cursor((0, 0), cursor_surf)
+        pygame.mouse.set_cursor(cursor)
+    except ValueError:
+        print("Le curseur n'a pas pu être modifié")
+
     # Images
     fond = pygame.image.load(IMG_BG_START)
     fond = pygame.transform.scale(fond, (screen.get_width(), screen.get_height()))

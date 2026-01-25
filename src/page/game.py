@@ -13,6 +13,7 @@ from src.page.component.damage_heal_popup import DamageAndHealPopupManager
 from src.page.component.gold_popup import GoldPopupManager
 from src.page.component.grid_component import GridComponent
 from src.page.component.map_builder import MapBuilder
+from src.page.component.panels_layout import PanelsLayout
 from src.page.component.turn_popup import TurnPopup
 from src.page.sidepanels import draw_sidepanels
 from src.player import Player
@@ -86,6 +87,8 @@ class Game:
         self.button_hover_color = (222, 192, 18)
         self.button_text_color = (255, 255, 255)
 
+        self.panels_layout = PanelsLayout()
+
     def on_gold_change(self, delta):
         self.gold_popup_manager.spawn(*self.ui.coin_position, delta)
 
@@ -149,6 +152,9 @@ class Game:
 
                         print("tour de ", self.turn.current_player().name, "terminé")
                         self.turn.next()
+
+                        # reinitialise la selection de dragon au changement de tour
+                        self.dragon_events._reset_selection()
 
                         # reinitialiser toutes les actions des dragons du joueur
                         for dragon in self.turn.current_player().units:
@@ -241,6 +247,12 @@ class Game:
                                     print("Impossible d'acheter : fonds insuffisants.")
                                 clicked_buy_button = True
 
+                    # Clic sur le panneau de dragons
+                    clicked_dragon_panel = self.panels_layout.handle_click(event.pos)
+                    if clicked_dragon_panel:
+                        self.dragon_events.select_dragon(clicked_dragon_panel, self.turn.current_player())
+                        continue
+
                     if not clicked_buy_button:
 
                         cell = self.grid_comp.handle_click(event.pos)
@@ -311,6 +323,16 @@ class Game:
                 self.screen, self.left_open, self.right_open, self.current_left_x, self.current_right_x, player.economy,
                 player)
 
+            self.panels_layout.draw(
+                self.screen,
+                self.turn,
+                self.p1,
+                self.p2,
+                self.builder,
+                self.turn.current_player(),
+                selected_dragon=self.dragon_events.selected_dragon
+            )
+
             # Dessiner le bouton tour suivant (temporaire)
             mouse_pos = pygame.mouse.get_pos()
 
@@ -331,12 +353,6 @@ class Game:
             button_text = self.font.render("Tour suivant", True, self.button_text_color)
             text_rect = button_text.get_rect(center=self.next_turn_button_rect.center)
             self.screen.blit(button_text, text_rect)
-
-            # Afficher le tour du joueur actuel (temporaire)
-            turn_text = self.font.render(f"tour de {player.name}", True, (0, 0, 0))
-            turn_text_rect = turn_text.get_rect(
-                center=(self.next_turn_button_rect.centerx, self.next_turn_button_rect.top - 30))
-            self.screen.blit(turn_text, turn_text_rect)
 
             # Dessiner le popup de tour
             self.turn_popup.draw(self.screen)

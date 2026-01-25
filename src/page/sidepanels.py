@@ -389,6 +389,22 @@ def get_cache(current_player: Player):
             print(f"Erreur chargement fleche gauche: {e}")
             cache['left_arrow_icon'] = None
 
+        # fond du panneau boutique
+        try:
+            bg_image = pygame.image.load(IMG_BGSIDEPANEL).convert()
+            cache['bg_sidepanel'] = bg_image
+        except Exception as e:
+            print(f"Erreur chargement fond boutique: {e}")
+            cache['bg_sidepanel'] = None
+
+        # image du sorcier
+        try:
+            bg_sorcier = pygame.image.load(IMG_SORCIER).convert_alpha()
+            cache['bg_sorcier'] = bg_sorcier
+        except Exception as e:
+            print(f"Erreur chargement sorcier: {e}")
+            cache['bg_sorcier'] = None
+
         # shop_entities (instances boutiques)
         cache['shop_entities'] = ([dragon_class(0, 0, current_player) for dragon_class in DRAGONS_DATA]
                                   + [Tower(0, 0, f"src/assets/sprites/tour_{current_player.color}.png",
@@ -612,9 +628,10 @@ def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right
     left_rect = pygame.Rect(current_left_x, 0, panel_width, screen_height)
     left_panel = pygame.Surface((panel_width, screen_height))
 
-    bg_image = pygame.image.load(IMG_BGSIDEPANEL).convert()
-    bg_image = pygame.transform.scale(bg_image, (panel_width, screen_height))
-    left_panel.blit(bg_image, (0, 0))
+    res = get_cache(current_player)
+    if res['bg_sidepanel']:
+        bg_image = pygame.transform.scale(res['bg_sidepanel'], (panel_width, screen_height))
+        left_panel.blit(bg_image, (0, 0))
 
     bg_sorcier = pygame.image.load(IMG_SORCIER).convert_alpha()  # ← IMPORTANT: convert_alpha() pour la transparence
     bg_sorcier = pygame.transform.scale(bg_sorcier, (200, 200))  # Ajuste la taille comme tu veux
