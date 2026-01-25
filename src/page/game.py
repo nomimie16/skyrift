@@ -329,8 +329,9 @@ class Game:
             text_rect = button_text.get_rect(center=self.next_turn_button_rect.center)
             self.screen.blit(button_text, text_rect)
 
-            # Afficher le tour du joueur actuel (temporaire)
-            turn_text = self.font.render(f"tour de {player.name}", True, (0, 0, 0))
+            # Afficher le tour du joueur actuel (temporaire), adapte la couleur en fonction du joueur
+            text_color = (0, 100, 255) if player.color == "bleu" else (255, 50, 50)
+            turn_text = self.font.render(f"tour de {player.name}", True, text_color)
             turn_text_rect = turn_text.get_rect(
                 center=(self.next_turn_button_rect.centerx, self.next_turn_button_rect.top - 30))
             self.screen.blit(turn_text, turn_text_rect)
