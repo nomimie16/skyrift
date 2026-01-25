@@ -140,7 +140,7 @@ class Tornado(ZoneEntity):
                 self._anim_counter = 0
 
         self._anim_counter += 1
-        if self._anim_counter >= 15:
+        if self._anim_counter >= 5:
             self._anim_counter = 0
             self._index_img = (self._index_img + 1) % len(self._imageSprite)
         return grid
@@ -152,14 +152,13 @@ class Tornado(ZoneEntity):
         :return: None
         """
         if self._active:
-            pixel_x = self.cell.position.x * sc.TILE_SIZE + sc.OFFSET_X
-            pixel_y = self.cell.position.y * sc.TILE_SIZE + sc.OFFSET_Y
-
             scaled = pygame.transform.scale(
                 self._imageSprite[self._index_img],
                 (self.width * sc.TILE_SIZE, self.height * sc.TILE_SIZE)
             )
-            surface.blit(scaled, (pixel_x, pixel_y))
+
+            # Utilisation de _pixel_pos.x et _pixel_pos.y
+            surface.blit(scaled, (self._pixel_pos.x, self._pixel_pos.y))
 
     # ------- Getters et Setters -------
     @property
