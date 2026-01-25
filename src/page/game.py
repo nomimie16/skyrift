@@ -150,6 +150,9 @@ class Game:
                         print("tour de ", self.turn.current_player().name, "terminé")
                         self.turn.next()
 
+                        # reinitialise la selection de dragon au changement de tour
+                        self.dragon_events._reset_selection()
+
                         # reinitialiser toutes les actions des dragons du joueur
                         for dragon in self.turn.current_player().units:
                             dragon.reset_actions()
