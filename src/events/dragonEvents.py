@@ -62,6 +62,26 @@ class DragonEvents:
         self.move_cells = []
         self.attack_cells = []
 
+    def select_dragon(self, dragon: Dragon, player: Player) -> None:
+        """
+        Sélectionne un dragon et calcule ses zones d'action
+        """
+        if dragon.player != player:
+            print("Ce dragon n'appartient pas à votre joueur !")
+            return
+
+        self.selected_dragon = dragon
+
+        if not self.selected_dragon.has_moved:
+            self.move_cells = self.compute_move_cells(self.selected_dragon)
+        else:
+            self.move_cells = []
+
+        if not self.selected_dragon.has_attacked:
+            self.attack_cells = self.compute_attack_cells(self.selected_dragon)
+        else:
+            self.attack_cells = []
+
     def compute_move_cells(self, dragon: Dragon) -> List[Cell]:
         """
         Calcule toutes les cases accessibles pour le dragon
