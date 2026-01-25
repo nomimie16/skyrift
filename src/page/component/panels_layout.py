@@ -12,57 +12,35 @@ class PanelsLayout:
     Gere le positionnement des 3 panneaux (StatPanel, SelectionPanel, DragonPanel)
     """
 
-    # Dimensions de base (seront ajustees si necessaire)
-    BASE_STATS_HEIGHT = 230
-    BASE_SELECTION_HEIGHT = 150
-    BASE_DRAGONS_HEIGHT = 350
+    # Proportions relatives des panneaux
+    STATS_RATIO = 0.32
+    SELECTION_RATIO = 0.20
+    DRAGONS_RATIO = 0.48
 
     SPACING = 8
-    MARGIN_TOP = 20
-    MARGIN_BOTTOM = 20
 
     def __init__(self):
+        # Marges dynamiques basees sur la taille de l'ecran
+        margin_top = max(70, int(sc.SCREEN_H * 0.08))
+        margin_bottom = max(100, int(sc.SCREEN_H * 0.12))
+
         # Calcul de la largeur disponible
         grid_end_x = sc.OFFSET_X + sc.GRID_W
         available_width = sc.SCREEN_W - grid_end_x - 10
 
         self.panel_width = min(280, available_width - 20)
-
         self.panel_x = grid_end_x + (available_width - self.panel_width) // 2
 
-        available_height = sc.SCREEN_H - self.MARGIN_TOP - self.MARGIN_BOTTOM
+        # Hauteur disponible pour les panneaux
+        available_height = sc.SCREEN_H - margin_top - margin_bottom - 2 * self.SPACING
 
-        total_base_height = (self.BASE_STATS_HEIGHT + self.BASE_SELECTION_HEIGHT +
-                             self.BASE_DRAGONS_HEIGHT + 2 * self.SPACING)
-
-        if total_base_height > available_height:
-            scale = available_height / total_base_height
-        else:
-            scale = 1.0
-
-        self.stats_height = int(self.BASE_STATS_HEIGHT * scale)
-        self.selection_height = int(self.BASE_SELECTION_HEIGHT * scale)
-        self.dragons_height = int(self.BASE_DRAGONS_HEIGHT * scale)
+        self.stats_height = int(available_height * self.STATS_RATIO)
+        self.selection_height = int(available_height * self.SELECTION_RATIO)
+        self.dragons_height = int(available_height * self.DRAGONS_RATIO)
 
         total_height = self.stats_height + self.selection_height + self.dragons_height + 2 * self.SPACING
 
-        # Position Y centree verticalement avec un leger decalage vers le haut
-        ideal_start_y = sc.OFFSET_Y + (sc.GRID_H - total_height) // 4
-
-        min_start_y = self.MARGIN_TOP
-        start_y = max(ideal_start_y, min_start_y)
-
-        max_end_y = sc.SCREEN_H - self.MARGIN_BOTTOM
-        if start_y + total_height > max_end_y:
-            start_y = max_end_y - total_height
-            if start_y < min_start_y:
-                start_y = min_start_y
-                # Recalculer les hauteurs pour tenir dans l'espace
-                available_for_panels = max_end_y - min_start_y - 2 * self.SPACING
-                scale = available_for_panels / (self.stats_height + self.selection_height + self.dragons_height)
-                self.stats_height = int(self.stats_height * scale)
-                self.selection_height = int(self.selection_height * scale)
-                self.dragons_height = int(self.dragons_height * scale)
+        start_y = margin_top + (sc.SCREEN_H - margin_top - margin_bottom - total_height) // 2
 
         stats_y = start_y
         selection_y = stats_y + self.stats_height + self.SPACING
