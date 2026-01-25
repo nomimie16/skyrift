@@ -260,7 +260,7 @@ def draw_toggle_button(surface, x, y, size, is_open, current_player: Player):
 def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right_x, economy, current_player: Player):
     panel_width = sc.PANEL_WIDTH
     screen_height = screen.get_height()
-    animation_speed = 8
+    animation_speed = 20
     button_size = 20
     button_y = screen_height // 2
 

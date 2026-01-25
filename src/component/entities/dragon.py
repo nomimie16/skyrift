@@ -113,7 +113,7 @@ class Dragon(Entity):
             is_active = self._fireball.update()
             if not is_active:
                 self._fireball = None
-                
+
         if not self._moving or not self.path:
             return
 
@@ -135,14 +135,14 @@ class Dragon(Entity):
         if dx != 0:
             moved = True
             direction = 1 if dx > 0 else -1
-            current_px.x += min(self._actual_speed * 0.4, abs(dx)) * direction
+            current_px.x += min(self._actual_speed * 0.9, abs(dx)) * direction
             self.update_direction("droite" if direction > 0 else "gauche")
 
         # Mouvement vertical
         elif dy != 0:
             moved = True
             direction = 1 if dy > 0 else -1
-            current_px.y += min(self._actual_speed * 0.4, abs(dy)) * direction
+            current_px.y += min(self._actual_speed * 0.9, abs(dy)) * direction
 
         if not moved or (dx == 0 and dy == 0):
             self.cell = target_cell
@@ -157,7 +157,7 @@ class Dragon(Entity):
                     return amount
 
         self._anim_counter += 1
-        if self._anim_counter >= 50:
+        if self._anim_counter >= 10:
             self._anim_counter = 0
             self._index_img = (self._index_img + 1) % len(self._imageSprite)
         return None

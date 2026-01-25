@@ -96,7 +96,10 @@ class Game:
         while running:
             # Dessiner le jeu
             self.screen.blit(self.background, (0, 0))
-            self.ui.draw(self.screen, current_player=self.turn.current_player())
+
+            ui_offset = self.current_left_x + sc.PANEL_WIDTH
+
+            self.ui.draw(self.screen, current_player=self.turn.current_player(), offset_x=ui_offset)
 
             # Grille et map
             self.grid_comp.draw(self.screen)
@@ -342,7 +345,6 @@ class Game:
 
             self.damage_heal_popup_manager.update_and_draw(self.screen)
             self.gold_popup_manager.update_and_draw(self.screen)
-
             pygame.display.flip()
 
         return None
