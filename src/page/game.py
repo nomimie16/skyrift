@@ -13,6 +13,7 @@ from src.page.component.damage_heal_popup import DamageAndHealPopupManager
 from src.page.component.gold_popup import GoldPopupManager
 from src.page.component.grid_component import GridComponent
 from src.page.component.map_builder import MapBuilder
+from src.page.component.stats_panel import StatsPanel
 from src.page.component.turn_popup import TurnPopup
 from src.page.sidepanels import draw_sidepanels
 from src.player import Player
@@ -85,6 +86,8 @@ class Game:
         self.button_color = (186, 162, 22)
         self.button_hover_color = (222, 192, 18)
         self.button_text_color = (255, 255, 255)
+
+        self.stats_panel = StatsPanel()
 
     def on_gold_change(self, delta):
         self.gold_popup_manager.spawn(*self.ui.coin_position, delta)
@@ -307,6 +310,15 @@ class Game:
             self.left_button_rect, self.right_button_rect, self.current_left_x, self.current_right_x, self.buy_buttons = draw_sidepanels(
                 self.screen, self.left_open, self.right_open, self.current_left_x, self.current_right_x, player.economy,
                 player)
+
+            self.stats_panel.draw(
+                self.screen,
+                self.turn,
+                self.p1,
+                self.p2,
+                self.builder,
+                selected_dragon=self.dragon_events.selected_dragon
+            )
 
             # Dessiner le bouton tour suivant (temporaire)
             mouse_pos = pygame.mouse.get_pos()
