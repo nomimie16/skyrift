@@ -12,12 +12,14 @@ class PanelsLayout:
     Gere le positionnement des 3 panneaux (StatPanel, SelectionPanel, DragonPanel)
     """
 
-    # Dimensions
-    STATS_HEIGHT = 230
-    SELECTION_HEIGHT = 150
-    DRAGONS_HEIGHT = 350
+    # Dimensions de base (seront ajustees si necessaire)
+    BASE_STATS_HEIGHT = 230
+    BASE_SELECTION_HEIGHT = 150
+    BASE_DRAGONS_HEIGHT = 350
 
     SPACING = 8
+    MARGIN_TOP = 20
+    MARGIN_BOTTOM = 20
 
     def __init__(self):
         # Calcul de la largeur disponible
@@ -28,43 +30,64 @@ class PanelsLayout:
 
         self.panel_x = grid_end_x + (available_width - self.panel_width) // 2
 
-        total_height = self.STATS_HEIGHT + self.SELECTION_HEIGHT + self.DRAGONS_HEIGHT + 2 * self.SPACING
+        available_height = sc.SCREEN_H - self.MARGIN_TOP - self.MARGIN_BOTTOM
 
-        available_height = sc.GRID_H
-        if total_height > available_height:
-            # Reduire proportionnellement les hauteurs
-            scale = available_height / total_height
-            self.STATS_HEIGHT = int(self.STATS_HEIGHT * scale)
-            self.SELECTION_HEIGHT = int(self.SELECTION_HEIGHT * scale)
-            self.DRAGONS_HEIGHT = int(self.DRAGONS_HEIGHT * scale)
-            total_height = self.STATS_HEIGHT + self.SELECTION_HEIGHT + self.DRAGONS_HEIGHT + 2 * self.SPACING
+        total_base_height = (self.BASE_STATS_HEIGHT + self.BASE_SELECTION_HEIGHT +
+                             self.BASE_DRAGONS_HEIGHT + 2 * self.SPACING)
 
-        start_y = sc.OFFSET_Y + (sc.GRID_H - total_height) // 4
+        if total_base_height > available_height:
+            scale = available_height / total_base_height
+        else:
+            scale = 1.0
+
+        self.stats_height = int(self.BASE_STATS_HEIGHT * scale)
+        self.selection_height = int(self.BASE_SELECTION_HEIGHT * scale)
+        self.dragons_height = int(self.BASE_DRAGONS_HEIGHT * scale)
+
+        total_height = self.stats_height + self.selection_height + self.dragons_height + 2 * self.SPACING
+
+        # Position Y centree verticalement avec un leger decalage vers le haut
+        ideal_start_y = sc.OFFSET_Y + (sc.GRID_H - total_height) // 4
+
+        min_start_y = self.MARGIN_TOP
+        start_y = max(ideal_start_y, min_start_y)
+
+        max_end_y = sc.SCREEN_H - self.MARGIN_BOTTOM
+        if start_y + total_height > max_end_y:
+            start_y = max_end_y - total_height
+            if start_y < min_start_y:
+                start_y = min_start_y
+                # Recalculer les hauteurs pour tenir dans l'espace
+                available_for_panels = max_end_y - min_start_y - 2 * self.SPACING
+                scale = available_for_panels / (self.stats_height + self.selection_height + self.dragons_height)
+                self.stats_height = int(self.stats_height * scale)
+                self.selection_height = int(self.selection_height * scale)
+                self.dragons_height = int(self.dragons_height * scale)
 
         stats_y = start_y
-        selection_y = stats_y + self.STATS_HEIGHT + self.SPACING
-        dragons_y = selection_y + self.SELECTION_HEIGHT + self.SPACING
+        selection_y = stats_y + self.stats_height + self.SPACING
+        dragons_y = selection_y + self.selection_height + self.SPACING
 
         # Creation des panneaux
         self.stats_panel = StatsPanel(
             width=self.panel_width,
             x=self.panel_x,
             y=stats_y,
-            height=self.STATS_HEIGHT
+            height=self.stats_height
         )
 
         self.selection_panel = SelectionPanel(
             width=self.panel_width,
             x=self.panel_x,
             y=selection_y,
-            height=self.SELECTION_HEIGHT
+            height=self.selection_height
         )
 
         self.dragons_panel = DragonsPanel(
             width=self.panel_width,
             x=self.panel_x,
             y=dragons_y,
-            height=self.DRAGONS_HEIGHT
+            height=self.dragons_height
         )
 
     def draw(self, surface, turn, p1, p2, builder, current_player, selected_dragon=None):
