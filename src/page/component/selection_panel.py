@@ -13,10 +13,6 @@ class SelectionPanel(BasePanel):
     def __init__(self, width, x, y, height):
         super().__init__(width, x, y, height)
 
-        self.font_title = self._create_font(20)
-        self.font_normal = self._create_font(16)
-        self.font_small = self._create_font(14)
-
     def draw(self, surface, selected_dragon=None):
         """Dessine le panneau de selection"""
         self._draw_wood_frame(surface)

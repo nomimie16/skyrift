@@ -19,9 +19,6 @@ class DragonsPanel(BasePanel):
     def __init__(self, width, x, y, height):
         super().__init__(width, x, y, height)
 
-        self.font_title = self._create_font(22)
-        self.font_name = self._create_font(12)
-
         # Zones cliquables des dragons
         self.dragon_rects: list[tuple[pygame.Rect, Dragon]] = []
 
@@ -45,7 +42,7 @@ class DragonsPanel(BasePanel):
         pygame.draw.rect(surface, self.WOOD_MEDIUM, cell_rect, 1)
 
         # Nom du dragon
-        name_text = self.font_name.render(dragon.name, True, self.TEXT_DARK)
+        name_text = self.font_tiny.render(dragon.name, True, self.TEXT_DARK)
         name_rect = name_text.get_rect(centerx=cell_rect.centerx, top=cell_rect.top + 3)
         surface.blit(name_text, name_rect)
 
@@ -91,7 +88,7 @@ class DragonsPanel(BasePanel):
         dragons = current_player.units
 
         if not dragons:
-            no_dragons = self.font_name.render("Aucun dragon", True, self.TEXT_ACCENT)
+            no_dragons = self.font_small.render("Aucun dragon", True, self.TEXT_ACCENT)
             no_rect = no_dragons.get_rect(centerx=self.x + self.width // 2, top=y + 30)
             surface.blit(no_dragons, no_rect)
             return
@@ -121,7 +118,7 @@ class DragonsPanel(BasePanel):
             separator_y = self.y + self.height - 28
             self._draw_separator(surface, separator_y)
 
-            more_text = self.font_name.render(f"+ {remaining} autre(s)", True, self.TEXT_ACCENT)
+            more_text = self.font_tiny.render(f"+ {remaining} autre(s)", True, self.TEXT_ACCENT)
             more_rect = more_text.get_rect(centerx=self.x + self.width // 2, top=separator_y + 6)
             surface.blit(more_text, more_rect)
 

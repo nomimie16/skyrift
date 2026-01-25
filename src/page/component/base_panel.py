@@ -31,6 +31,11 @@ class BasePanel:
 
     FONT_PATH = "src/assets/font/BoldPixels.ttf"
 
+    FONT_SIZE_TITLE = 22
+    FONT_SIZE_NORMAL = 18
+    FONT_SIZE_SMALL = 15
+    FONT_SIZE_TINY = 13
+
     def __init__(self, width: int, x: int, y: int, height: int):
         """
         Initialise le panneau de base.
@@ -39,6 +44,11 @@ class BasePanel:
         self.height = height
         self.x = x
         self.y = y
+
+        self.font_title = self._create_font(self.FONT_SIZE_TITLE)
+        self.font_normal = self._create_font(self.FONT_SIZE_NORMAL)
+        self.font_small = self._create_font(self.FONT_SIZE_SMALL)
+        self.font_tiny = self._create_font(self.FONT_SIZE_TINY)
 
     def set_position(self, x: int, y: int):
         """Met a jour la position du panneau"""

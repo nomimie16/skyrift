@@ -12,10 +12,6 @@ class StatsPanel(BasePanel):
     def __init__(self, width, x, y, height):
         super().__init__(width, x, y, height)
 
-        self.font_title = self._create_font(24)
-        self.font_normal = self._create_font(18)
-        self.font_small = self._create_font(15)
-
         # Cache icones
         self._icons_loaded = False
         self._hp_icon = None
