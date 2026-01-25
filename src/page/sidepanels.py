@@ -65,6 +65,22 @@ def get_cache(current_player: Player):
             print(f"Erreur chargement fleche gauche: {e}")
             cache['left_arrow_icon'] = None
 
+        # fond du panneau boutique
+        try:
+            bg_image = pygame.image.load(IMG_BGSIDEPANEL).convert()
+            cache['bg_sidepanel'] = bg_image
+        except Exception as e:
+            print(f"Erreur chargement fond boutique: {e}")
+            cache['bg_sidepanel'] = None
+
+        # image du sorcier
+        try:
+            bg_sorcier = pygame.image.load(IMG_SORCIER).convert_alpha()
+            cache['bg_sorcier'] = bg_sorcier
+        except Exception as e:
+            print(f"Erreur chargement sorcier: {e}")
+            cache['bg_sorcier'] = None
+
         # shop_entities (instances boutiques)
         cache['shop_entities'] = ([dragon_class(0, 0, current_player) for dragon_class in DRAGONS_DATA]
                                   + [Tower(0, 0, f"src/assets/sprites/tour_{current_player.color}.png",
@@ -90,7 +106,7 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player):
     gold_icon = res['gold_icon']
     entities = res['shop_entities']
 
-    panel_width = 200
+    panel_width = 210
     y = y_start
 
     # titre
@@ -120,7 +136,7 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player):
     for entity in entities:
 
         # fond pour chaque dragon
-        dragon_bg = pygame.Rect(x_offset + 5, y, 190, 140)
+        dragon_bg = pygame.Rect(x_offset + 5, y, 200, 140)
         pygame.draw.rect(surface, (70, 70, 70), dragon_bg)
         pygame.draw.rect(surface, (100, 100, 100), dragon_bg, 2)
 
@@ -138,7 +154,7 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player):
 
         # nom du dragon
         name_text = font_small.render(entity.name, True, (255, 255, 255))
-        name_rect = name_text.get_rect(center=(x_offset + 95, y + 5 + name_text.get_height() // 2))
+        name_rect = name_text.get_rect(center=(x_offset + 105, y + 5 + name_text.get_height() // 2))
         surface.blit(name_text, name_rect)
 
         # stats
@@ -157,14 +173,14 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player):
                 ("SPD:", entity.speed_base),
             ]
 
-        value_x = x_offset + 175  # position fixe pour aligner les nombres a droite
+        value_x = x_offset + 185  # position fixe pour aligner les nombres a droite
         for label, value in stats:
             # afficher l'icone avant chaque stat
             if stat_icon:
-                surface.blit(stat_icon, (x_offset + 90, stats_y + 2))
+                surface.blit(stat_icon, (x_offset + 95, stats_y + 2))
             # afficher le label
             label_text = font_tiny.render(label, True, (200, 200, 200))
-            surface.blit(label_text, (x_offset + 105, stats_y))
+            surface.blit(label_text, (x_offset + 110, stats_y))
             # afficher la valeur alignee a droite
             value_text = font_tiny.render(str(value), True, (200, 200, 200))
             value_rect = value_text.get_rect(right=value_x, top=stats_y)
@@ -173,7 +189,7 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player):
 
         # bouton d'achat
         button_y = y + 105
-        button_rect = pygame.Rect(x_offset + 15, button_y, 170, 25)
+        button_rect = pygame.Rect(x_offset + 15, button_y, 180, 25)
 
         # couleur du bouton selon si on peut acheter
         can_afford = gold >= entity.cost
@@ -263,13 +279,14 @@ def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right
     left_rect = pygame.Rect(current_left_x, 0, panel_width, screen_height)
     left_panel = pygame.Surface((panel_width, screen_height))
 
-    bg_image = pygame.image.load(IMG_BGSIDEPANEL).convert()
-    bg_image = pygame.transform.scale(bg_image, (panel_width, screen_height))
-    left_panel.blit(bg_image, (0, 0))
+    res = get_cache(current_player)
+    if res['bg_sidepanel']:
+        bg_image = pygame.transform.scale(res['bg_sidepanel'], (panel_width, screen_height))
+        left_panel.blit(bg_image, (0, 0))
 
-    bg_sorcier = pygame.image.load(IMG_SORCIER).convert_alpha()  # ← IMPORTANT: convert_alpha() pour la transparence
-    bg_sorcier = pygame.transform.scale(bg_sorcier, (200, 200))  # Ajuste la taille comme tu veux
-    left_panel.blit(bg_sorcier, (0, screen_height - 200))  # 25px du bord gauche, 175px du bas
+    if res['bg_sorcier']:
+        bg_sorcier = pygame.transform.scale(res['bg_sorcier'], (200, 200))
+        left_panel.blit(bg_sorcier, (0, screen_height - 200))
     
     # dessiner la boutique
     buy_buttons = []
