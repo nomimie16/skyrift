@@ -4,82 +4,18 @@ Panneau affichant les statistiques du dragon selectionne
 import pygame
 
 from src.component.entities.dragon import Dragon
+from src.page.component.base_panel import BasePanel
 
 
-class SelectionPanel:
-    # Couleurs style bois
-    WOOD_DARK = (101, 67, 33)
-    WOOD_MEDIUM = (139, 90, 43)
-    WOOD_LIGHT = (160, 120, 80)
-    WOOD_INNER = (180, 140, 100)
-    BEIGE_BG = (245, 235, 210)
-    TEXT_DARK = (60, 40, 20)
-    TEXT_ACCENT = (120, 80, 40)
+class SelectionPanel(BasePanel):
+    """Panneau affichant les stats du dragon selectionne"""
 
     def __init__(self, width, x, y, height):
-        """
-        Initialise le panneau de selection.
-        """
-        self.width = width
-        self.height = height
-        self.x = x
-        self.y = y
+        super().__init__(width, x, y, height)
 
-        self.font_title = pygame.font.Font("src/assets/font/BoldPixels.ttf", 20)
-        self.font_normal = pygame.font.Font("src/assets/font/BoldPixels.ttf", 16)
-        self.font_small = pygame.font.Font("src/assets/font/BoldPixels.ttf", 14)
-
-    def set_position(self, x, y):
-        """Met a jour la position du panneau"""
-        self.x = x
-        self.y = y
-
-    def _draw_wood_frame(self, surface):
-        """Dessine le cadre style bois"""
-        border_size = 6
-
-        outer_rect = pygame.Rect(self.x, self.y, self.width, self.height)
-        pygame.draw.rect(surface, self.WOOD_DARK, outer_rect)
-
-        inner_rect1 = pygame.Rect(self.x + 2, self.y + 2, self.width - 4, self.height - 4)
-        pygame.draw.rect(surface, self.WOOD_MEDIUM, inner_rect1)
-
-        inner_rect2 = pygame.Rect(self.x + 4, self.y + 4, self.width - 8, self.height - 8)
-        pygame.draw.rect(surface, self.WOOD_LIGHT, inner_rect2)
-
-        bg_rect = pygame.Rect(self.x + border_size, self.y + border_size,
-                              self.width - border_size * 2, self.height - border_size * 2)
-        pygame.draw.rect(surface, self.BEIGE_BG, bg_rect)
-
-        # Coins decoratifs
-        corner_size = 8
-        corner_color = self.WOOD_DARK
-
-        pygame.draw.rect(surface, corner_color, (self.x, self.y, corner_size, corner_size))
-        pygame.draw.rect(surface, self.WOOD_LIGHT, (self.x + 2, self.y + 2, corner_size - 4, corner_size - 4))
-
-        pygame.draw.rect(surface, corner_color, (self.x + self.width - corner_size, self.y, corner_size, corner_size))
-        pygame.draw.rect(surface, self.WOOD_LIGHT,
-                         (self.x + self.width - corner_size + 2, self.y + 2, corner_size - 4, corner_size - 4))
-
-        pygame.draw.rect(surface, corner_color, (self.x, self.y + self.height - corner_size, corner_size, corner_size))
-        pygame.draw.rect(surface, self.WOOD_LIGHT,
-                         (self.x + 2, self.y + self.height - corner_size + 2, corner_size - 4, corner_size - 4))
-
-        pygame.draw.rect(surface, corner_color,
-                         (self.x + self.width - corner_size, self.y + self.height - corner_size, corner_size, corner_size))
-        pygame.draw.rect(surface, self.WOOD_LIGHT,
-                         (self.x + self.width - corner_size + 2, self.y + self.height - corner_size + 2,
-                          corner_size - 4, corner_size - 4))
-
-    def _draw_separator(self, surface, y):
-        margin = 12
-        pygame.draw.line(surface, self.WOOD_MEDIUM,
-                        (self.x + margin, y),
-                        (self.x + self.width - margin, y), 2)
-        pygame.draw.line(surface, self.WOOD_LIGHT,
-                        (self.x + margin, y + 1),
-                        (self.x + self.width - margin, y + 1), 1)
+        self.font_title = self._create_font(20)
+        self.font_normal = self._create_font(16)
+        self.font_small = self._create_font(14)
 
     def draw(self, surface, selected_dragon=None):
         """Dessine le panneau de selection"""
@@ -140,19 +76,8 @@ class SelectionPanel:
         bar_x = stats_x + 25
         bar_width = width - 95
         bar_height = 8
-        hp_ratio = max(0, min(1, dragon.hp / dragon.max_hp)) if dragon.max_hp > 0 else 0
 
-        pygame.draw.rect(surface, (100, 80, 60), (bar_x, y + 2, bar_width, bar_height))
-
-        if hp_ratio > 0.6:
-            bar_color = (80, 160, 80)
-        elif hp_ratio > 0.3:
-            bar_color = (200, 160, 60)
-        else:
-            bar_color = (180, 60, 60)
-
-        pygame.draw.rect(surface, bar_color, (bar_x, y + 2, int(bar_width * hp_ratio), bar_height))
-        pygame.draw.rect(surface, self.WOOD_DARK, (bar_x, y + 2, bar_width, bar_height), 1)
+        self._draw_hp_bar(surface, bar_x, y + 2, bar_width, bar_height, dragon.hp, dragon.max_hp)
 
         hp_value = self.font_small.render(f"{dragon.hp}/{dragon.max_hp}", True, self.TEXT_DARK)
         surface.blit(hp_value, (bar_x + bar_width + 4, y))
@@ -167,9 +92,9 @@ class SelectionPanel:
         y += 18
 
         # Status d'action
-        moved_color = (150, 100, 100) if dragon.has_moved else (80, 140, 80)
+        moved_color = self.STATUS_NEGATIVE if dragon.has_moved else self.STATUS_POSITIVE
         moved_symbol = "X" if dragon.has_moved else "O"
-        attacked_color = (150, 100, 100) if dragon.has_attacked else (80, 140, 80)
+        attacked_color = self.STATUS_NEGATIVE if dragon.has_attacked else self.STATUS_POSITIVE
         attacked_symbol = "X" if dragon.has_attacked else "O"
 
         move_text = self.font_small.render(f"Mvt: {moved_symbol}", True, moved_color)
