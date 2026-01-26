@@ -1,6 +1,7 @@
 from src.component.entities.dragon import Dragon
 from src.component.grid import Cell, Grid
 from src.const import DRAGON_GEANT_COST
+from src.enum.type_entities import TypeEntitiesEnum
 from src.events.dragonEvents import DragonEvents
 from src.player import Player
 
@@ -19,34 +20,79 @@ def deplacement_score(dragon: Dragon, target_cell: Cell, grid: Grid, player, ene
 
     score = 0
 
-    if enemy.base and enemy.base.cell:
-        dist_to_enemy_base = grid.distance(target_cell, enemy.base.cell)
-        score += (100 - dist_to_enemy_base * 2)
+    if target_cell == dragon.cell:
+        score -= 5
 
-    for enemy_dragon in enemy.units:
-        if enemy_dragon.cell:
-            dist = grid.distance(target_cell, enemy_dragon.cell)
-            if dist <= enemy_dragon.attack_range and dragon.hp <= enemy_dragon.attack_damage:
-                score -= 50
-            elif enemy_dragon.hp <= dragon.attack_damage:
-                score += 20
+    if enemy.base and enemy.base.cell:  # objectif principal
+        dist_base_enemy = grid.distance(target_cell, enemy.base.cell)
+        score += (100 - dist_base_enemy) * 5
 
+    dist_base_ally = 0
     if player.base and player.base.cell:
-        enemy_near_base = False
-        for enemy_dragon in enemy.units:
-            if enemy_dragon.cell:
-                dist_enemy_base = grid.distance(enemy_dragon.cell, player.base.cell)
-                if dist_enemy_base <= 4:
-                    enemy_near_base = True
-                    break
-        if enemy_near_base:
-            dist_to_ally_base = grid.distance(target_cell, player.base.cell)
-            score += max(0, 20 - dist_to_ally_base * 4)
+        dist_base_ally = grid.distance(target_cell, player.base.cell)
 
-    for ally_dragon in player.units:
-        if ally_dragon != dragon and ally_dragon.cell:
-            if target_cell == ally_dragon.cell:
-                score -= 1000
+    dist_base_enemy = float('inf')
+    if enemy.base and enemy.base.cell:
+        dist_base_enemy = grid.distance(target_cell, enemy.base.cell)
+
+    for occupant in target_cell.occupants:
+
+        # L'ia va vouloir éviter les mauvais effets de zones-
+        if TypeEntitiesEnum.VOLCANO in occupant.type_entity or TypeEntitiesEnum.TORNADO in occupant.type_entity or TypeEntitiesEnum.BAD_EFFECT_ZONE in occupant.type_entity:
+            score -= 500
+
+        if TypeEntitiesEnum.PLAYER_EFFECT_ZONE in occupant.type_entity:
+            score += 40
+            if player.economy.get_gold() < 300:  # bonus si peu d'argent
+                score += 30
+
+        if TypeEntitiesEnum.ISLAND_OF_LIFE in occupant.type_entity:
+            if dragon.hp < dragon.max_hp:
+                # Plus on est blessé, plus on veut y aller
+                missing_hp_ratio = 1 - (dragon.hp / dragon.max_hp)
+                score += 200 * missing_hp_ratio
+
+    closest_enemy_dist = float('inf')
+
+    for enemy in enemy.units:
+        if not enemy.cell:
+            continue
+
+        dist = grid.distance(target_cell, enemy.cell)
+        closest_enemy_dist = min(closest_enemy_dist, dist)
+
+        if dist <= dragon.attack_range:
+            enemy_range = getattr(enemy, 'attack_range', 0)
+            if dist > enemy_range:
+                score += 150
+            else:
+                score += 50
+                if dragon.hp > enemy.hp:
+                    score += 30
+
+        elif dist <= getattr(enemy, 'attack_range', 0):
+            score -= 100  # Zone de danger
+
+    if closest_enemy_dist < 15:  # Si un ennemi est dans un rayon de 15 cases
+        # On veut réduire la distance avec l'ennemi le plus proche
+        if closest_enemy_dist > dragon.attack_range:
+            score += (15 - closest_enemy_dist) * 5
+    else:
+        # Sinon, mouvement standard vers la base ennemie
+        score += (100 - dist_base_enemy) * 2.5
+
+    if dist_base_ally < 2:  # ne pas rester coller au spawn
+        score -= 50
+
+    # for ally in player.units:
+    #     if ally != dragon and ally.cell:
+    #         dist_ally = grid.distance(target_cell, ally.cell)
+    #
+    #         if dist_ally == 0:
+    #             score -= 1000
+    #         elif dist_ally == 1:
+    #             if closest_enemy_dist > dragon.attack_range:
+    #                 score -= 2
 
     return score
 
@@ -117,60 +163,69 @@ def attaque_score(dragon: Dragon, target: Dragon, grid: Grid, player, enemy) -> 
     if target.cell == enemy.base.cell:
         score += 150  # attaquer la base ennemie
 
-    if target.cell == enemy.base.cell:
+    if target.cell == enemy.tower.cell:
         score += 200  # attaquer la tour  ennemie
 
     return score
 
 
-def score_purchase_option(player, ennemy, option, current_gold):
+def score_purchase_option(player, ennemy, option, current_gold, danger_score):
+    """
+    Score d'achat prenant en compte l'économie et le danger.
+    :param player: Joueur actuel (IA)
+    :param ennemy: Joueur Ennemie
+    :param option: Options d'achats possibles
+    :param current_gold: Monnaie actuelle
+    :param danger_score: Score de danger
+    :return:
+    """
     score = 0
-
-    base_health_ratio = player.base.hp / player.base.max_hp
-    nb_enemies = len(ennemy.units)
     nb_allies = len(player.units)
 
-    # 1. SCORING POUR LA TOUR
+    # Score pour la tour
     if option["name"] == "buy_tower":
-        score += 50  # Base value car c'est important
+        score += 100
 
-        # Plus la base est blessée, plus on veut la tour (Urgence)
-        score += (1.0 - base_health_ratio) * 200
+        score += danger_score * 800  # plus la base est en danger, plus la tour est utile
 
-        score += nb_enemies * 15
+        score += len(ennemy.units) * 20  # si beaucoup d'ennemie c'est intérressant aussi
 
     # SCORING POUR LES DRAGONS
     elif "buy" in option["name"]:
         if option["name"] == "buy_giant":
-            score += 80
+            score += 100
         elif option["name"] == "buy_medium":
-            score += 50
+            score += 60
         elif option["name"] == "buy_small":
             score += 20
 
-        gold_left = current_gold - option["cost"]
-        if gold_left < 10:
-            score -= 15
+        if danger_score > 0.6:
+            # On sort n'importe quelle unités pour défendre
+            if option["name"] == "buy_small":
+                score += 80
+            elif option["name"] == "buy_medium":
+                score += 50
+        else:
+            # on pénalise petite unités pour économiser pour des plus importantes
+            if option["name"] == "buy_small":
+                score -= 50
+            elif option["name"] == "buy_medium":
+                score += 10
 
-        if nb_allies == 0:
-            score += 30
+        if nb_allies == 0:  # si aucune unité on en achère une
+            score += 200
 
-        # Stratégie de contre (Optionnel) : Si l'ennemi a un Géant, il me faut du lourd
-        # if any(isinstance(u, DragonGeant) for u in self.ennemy.units):
-        #     if option["name"] == "buy_giant": score += 20
+        elif option["name"] == "wait":  # attendre au lieu d'acheter
+            score += 10
 
-    # 3. SCORING POUR "ATTENDRE" (WAIT)
-    elif option["name"] == "wait":
-        score += 10  # Base
+            if danger_score > 0.7:  # si danger critique alors pas d'attente
+                score -= 500
 
-        if current_gold < DRAGON_GEANT_COST:
-            score += 20
+            if current_gold > 1000:  # si beaucoup de gold  alors on achète
+                score -= 100
 
-        if base_health_ratio < 0.3:
-            score -= 100
-
-        if nb_allies == 0:
-            score -= 50
+            if danger_score < 0.3 and current_gold < DRAGON_GEANT_COST:  # si danger faible on économise
+                score += 150
 
     return score
 
@@ -219,7 +274,7 @@ def get_best_attack(dragon: Dragon, grid: Grid, player: Player, enemy: Player):
     if enemy.base and not enemy.base.is_dead():
         potential_targets.append(enemy.base)
 
-    if enemy.tower and not enemy.tower.is_dead():
+    if enemy.tower.active:
         potential_targets.append(enemy.tower)
 
     for e in potential_targets:
