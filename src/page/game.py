@@ -294,6 +294,8 @@ class Game:
                                 occupant.grant_rewards()
                                 occupant.update()
                                 cell.remove_occupant(occupant)
+                                if occupant in occupant.player.units:
+                                    occupant.player.units.remove(occupant)
                                 if occupant.player == self.turn.current_player():
                                     self.event_information.show(TypeEventEnum.MORT_ALLIE)
                                 if occupant.player != self.turn.current_player():
