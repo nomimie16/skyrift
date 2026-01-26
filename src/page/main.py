@@ -14,8 +14,8 @@ from src.page.choosePlayer import run_choose_player # Choix du mode de jeu et du
 pygame.init()
 
 # Créer la fenêtre
-screen = pygame.display.set_mode((1500, 800))
-# screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+# screen = pygame.display.set_mode((1500, 800))
+screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 
 pygame.display.set_caption("SkyRift")
 # Création de l'interface commune (icons)

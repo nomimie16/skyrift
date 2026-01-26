@@ -67,28 +67,58 @@ def attaque_score(dragon: Dragon, target: Dragon, grid: Grid, player, enemy) -> 
     if not target.cell:
         return score
 
+    # Possibilité d'attaquer donc augmentation score
     score += min(dragon.attack_damage, target.hp) * 10
 
-    # cibles faibles
+    # cibles faibles, attaque seul
     if target.hp <= dragon.attack_damage:
-        score += 100
+        score += 500  # mort détecté donc augmentation importante du score
+
+
+    else:
+        # attaque à plusieurs possible
+        potential_damage_allies = 0
+        for ally in player.units:
+            if ally != dragon and ally.cell and not ally.has_attacked:
+                dist = grid.distance(ally.cell, target.cell)
+                if dist <= ally.attack_range:
+                    potential_damage_allies += ally.attack_damage
+
+        if target.hp <= (dragon.attack_damage + potential_damage_allies):
+            score += 200  # bonus important pour inciter
+            # Plus la cible est grosse (Géant, Tour), plus on veut faire un kill collectif
+            score += target.max_hp * 0.5
 
     # la cible peut riposter
-    dist = grid.distance(dragon.cell, target.cell)
-    if dist <= target.attack_range:
-        score -= 20
+    if target.hp > dragon.attack_damage:
+        dist = grid.distance(dragon.cell, target.cell)
+        if hasattr(target, 'attack_range'):
+            target_range = target.attack_range
+        else:
+            target_range = 0
+
+        if dist <= target_range:
+            if hasattr(target, 'attack_damage'):
+                target_dmg = target.attack_damage
+            else:
+                target_dmg = 0
+            if dragon.hp <= target_dmg:
+                # si reposte tue alors on retire du score
+                score -= 100
+            else:
+                # Si juste un échange de coup alors on baisse moins
+                score -= 30
+
+    if target.hp < target.max_hp:
+        # Plus le % de vie est bas, plus le score monte
+        percent_missing = 1.0 - (target.hp / target.max_hp)
+        score += percent_missing * 50
 
     if target.cell == enemy.base.cell:
-        score += 40  # attaquer la base ennemie
+        score += 150  # attaquer la base ennemie
 
-    if target.cell == player.base.cell:
-        score -= 30
-
-    for other_enemy in enemy.units:
-        if other_enemy != target and other_enemy.cell:
-            dist_ennemi = grid.distance(target.cell, other_enemy.cell)
-            if dist_ennemi <= 1:
-                score += 10
+    if target.cell == enemy.base.cell:
+        score += 200  # attaquer la tour  ennemie
 
     return score
 
