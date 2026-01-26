@@ -13,6 +13,8 @@ from src.const import DRAGONNET_COST, DRAGON_MOYEN_COST, DRAGON_GEANT_COST
 from src.enum.type_entities import TypeEntitiesEnum
 from src.player import Player
 
+SPRITE_OPACITY = 150
+
 
 class Dragon(Entity):
 
@@ -191,6 +193,13 @@ class Dragon(Entity):
         @:param surface: Surface sur laquelle le dragon est placé
         """
         current_sprite = self._imageSprite[self._index_img]
+
+        if self._has_moved and self._has_attacked:
+            grayscale_sprite = pygame.transform.grayscale(current_sprite)
+            grayscale_sprite.set_alpha(SPRITE_OPACITY)
+            current_sprite = current_sprite.copy()
+            current_sprite.blit(grayscale_sprite, (0, 0))
+
         target_size = int(sc.TILE_SIZE)
         scaled_sprite = pygame.transform.smoothscale(current_sprite, (target_size, target_size))
 
@@ -348,6 +357,12 @@ class Dragonnet(Dragon):
         """
         sprite = self._imageSprite[self._index_img]
 
+        if self._has_moved and self._has_attacked:
+            grayscale_sprite = pygame.transform.grayscale(sprite)
+            grayscale_sprite.set_alpha(SPRITE_OPACITY)
+            sprite = sprite.copy()
+            sprite.blit(grayscale_sprite, (0, 0))
+
         target_size = int(sc.TILE_SIZE * 1.1)
 
         scaled_sprite = pygame.transform.smoothscale(sprite, (target_size, target_size))
@@ -379,6 +394,12 @@ class DragonMoyen(Dragon):
         """
         sprite = self._imageSprite[self._index_img]
 
+        if self._has_moved and self._has_attacked:
+            grayscale_sprite = pygame.transform.grayscale(sprite)
+            grayscale_sprite.set_alpha(SPRITE_OPACITY)
+            sprite = sprite.copy()
+            sprite.blit(grayscale_sprite, (0, 0))
+
         target_size = int(sc.TILE_SIZE * 1.4)
 
         scaled_sprite = pygame.transform.smoothscale(sprite, (target_size, target_size))
@@ -405,11 +426,17 @@ class DragonGeant(Dragon):
 
     def draw(self, surface) -> None:
         """
-        Affichage du dragon moyen
+        Affichage du dragon géant
         :param surface: Surface sur laquelle le dragon est placé
         :return: None
         """
         sprite = self._imageSprite[self._index_img]
+
+        if self._has_moved and self._has_attacked:
+            grayscale_sprite = pygame.transform.grayscale(sprite)
+            grayscale_sprite.set_alpha(SPRITE_OPACITY)
+            sprite = sprite.copy()
+            sprite.blit(grayscale_sprite, (0, 0))
 
         target_size = int(sc.TILE_SIZE * 1.6)
 
