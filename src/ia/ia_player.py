@@ -24,6 +24,27 @@ class IAPlayer:
         spawn_x, spawn_y = SPAWN_POS_P2
         spawn_cell = self.grid.cells[spawn_y][spawn_x]
 
+        danger_score = 0.0
+
+        if self.player.base:
+            # on regarde la vie de la base, si <50% alors le danger augmente
+            base_hp_ratio = self.player.base.hp / self.player.base.max_hp
+            if base_hp_ratio < 0.5:
+                danger_score += (0.5 - base_hp_ratio) * 2
+
+        min_dist = float('inf')
+        if self.player.base and self.player.base.cell:
+            for unit in self.ennemy.units:
+                if unit.cell:
+                    distance = self.grid.distance(unit.cell, self.player.base.cell)
+                    if distance < min_dist:
+                        min_dist = distance
+            # si dragons ennemies prés de la base alors la danger augmente
+            if min_dist < 8:
+                danger_score += (8 - min_dist) / 8.0
+
+        danger_score = min(danger_score, 1.0)
+
         spawn_is_free = True
         for occupant in spawn_cell.occupants:
             if TypeEntitiesEnum.PLAYER_EFFECT_ZONE in occupant.type_entity:
@@ -52,13 +73,12 @@ class IAPlayer:
         best_option = None
         best_score = float('-inf')
 
-        print(f"--- Réflexion IA (Or: {current_gold}) ---")
         for option in options:
             # Si on ne peut pas payer, score impossible
             if option["cost"] > current_gold:
                 continue
 
-            score = score_purchase_option(self.player, self.ennemy, option, current_gold)
+            score = score_purchase_option(self.player, self.ennemy, option, current_gold, danger_score)
             print(f"Option {option['name']} : score {score:.1f}")
 
             if score > best_score:
