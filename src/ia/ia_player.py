@@ -3,8 +3,7 @@ from src.component.grid import Grid
 from src.const import SPAWN_POS_P2, DRAGON_GEANT_COST, DRAGON_MOYEN_COST, DRAGONNET_COST, TOWER_COST
 from src.enum.type_entities import TypeEntitiesEnum
 from src.events.dragonEvents import DragonEvents
-from src.ia.scoring import deplacement_score, score_purchase_option, get_best_attack, get_best_move
-from src.ia.utils import compute_move_cells
+from src.ia.scoring import score_purchase_option, get_best_attack, get_best_move
 from src.player import Player
 
 
@@ -14,54 +13,8 @@ class IAPlayer:
         self.ennemy: Player = ennemy
         self.grid: Grid = grid
         self.dragon_events = dragon_events
-<<<<<<< HEAD
-
-=======
         self.dragon_states = {}
->>>>>>> 66dac051e00021570398f6a2beb5c41e47d616de
 
-    def decide_move(self, dragon):
-        best_score = float('-inf')
-        best_cell = dragon.cell
-
-        accessible_cells = compute_move_cells(dragon, self.grid)
-
-        for cell in accessible_cells:
-            score = deplacement_score(dragon, cell, self.grid, self.player, self.ennemy)
-            if score > best_score:
-                best_score = score
-                best_cell = cell
-
-        return best_cell
-
-<<<<<<< HEAD
-    def play_turn(self, turn):
-        for dragon in self.player.units:
-            if isinstance(dragon, Dragon):
-                
-                # if dragon.moving:
-                #     return
-                
-                # if dragon.has_moved:
-                #     continue
-                action = choose_best_action(dragon, self.grid, self.player, self.ennemy, self.dragon_events)
-                print(f"IA chose action {action} for dragon {dragon.name} at ({dragon.cell.position.x},{dragon.cell.position.y})")
-                if action[0] == "move":
-                    dragon.move_dragon(action[1].position.x, action[1].position.y, self.grid)
-                elif action[0] == "attack":
-                    dragon.attack_fireball(action[1])
-                dragon.has_moved = True
-        
-        #         best_cell = self.decide_move(dragon)
-        #         if best_cell != dragon.cell:
-        #             dragon.move_dragon(best_cell.position.x, best_cell.position.y, self.grid)
-        #             dragon.has_moved = True
-
-        #             break
-        
-        
-
-=======
     def manage_economy(self):
         """
         Système d'achat basé sur le SCORING.
@@ -169,7 +122,6 @@ class IAPlayer:
         self.grid.add_occupant(dragon, target_cell)
         dragon.cell = target_cell
         dragon.move_dragon(target_cell.position.x, target_cell.position.y, self.grid)
->>>>>>> 66dac051e00021570398f6a2beb5c41e47d616de
 
 
 if __name__ == "__main__":
