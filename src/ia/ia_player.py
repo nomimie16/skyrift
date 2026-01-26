@@ -1,11 +1,10 @@
 from src.component.entities.dragon import Dragon
 from src.component.grid import Grid
+from src.events.dragonEvents import DragonEvents
 from src.ia.scoring import deplacement_score
 from src.ia.scoring import deplacement_score, choose_best_action
 from src.ia.utils import compute_move_cells
 from src.player import Player
-from src.events.dragonEvents import DragonEvents
-
 
 
 class IAPlayer:
@@ -14,7 +13,6 @@ class IAPlayer:
         self.ennemy: Player = ennemy
         self.grid: Grid = grid
         self.dragon_events = dragon_events
-
 
     def decide_move(self, dragon):
         best_score = float('-inf')
@@ -35,13 +33,14 @@ class IAPlayer:
         for dragon in self.player.units:
             if isinstance(dragon, Dragon):
 
-                # if dragon.moving:
-                #     return
+                if dragon.moving:
+                    return
 
-                # if dragon.has_moved:
-                #     continue
+                if dragon.has_moved:
+                    continue
                 action = choose_best_action(dragon, self.grid, self.player, self.ennemy, self.dragon_events)
-                print(f"IA chose action {action} for dragon {dragon.name} at ({dragon.cell.position.x},{dragon.cell.position.y})")
+                print(
+                    f"IA chose action {action} for dragon {dragon.name} at ({dragon.cell.position.x},{dragon.cell.position.y})")
                 if action[0] == "move":
                     dragon.move_dragon(action[1].position.x, action[1].position.y, self.grid)
                 elif action[0] == "attack":
@@ -58,7 +57,6 @@ class IAPlayer:
                     break
 
         #             break
-
 
 
 
