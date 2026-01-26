@@ -1,6 +1,6 @@
-from src.component.entities.dragon import Dragon
+from src.component.entities.dragon import Dragon, Dragonnet, DragonGeant, DragonMoyen
 from src.component.grid import Cell, Grid
-from src.const import DRAGON_GEANT_COST
+from src.const import DRAGON_GEANT_COST, DRAGON_MOYEN_COST
 from src.enum.type_entities import TypeEntitiesEnum
 from src.events.dragonEvents import DragonEvents
 from src.player import Player
@@ -84,6 +84,22 @@ def deplacement_score(dragon: Dragon, target_cell: Cell, grid: Grid, player, ene
     if dist_base_ally < 2:  # ne pas rester coller au spawn
         score -= 50
 
+    if isinstance(dragon, Dragonnet):
+        best_giant_dist = float('inf')
+
+        for ally in player.units:
+            # On cherche un Géant allié vivant
+            if isinstance(ally, DragonGeant) and ally.cell and ally != dragon:
+                dist_giant = grid.distance(target_cell, ally.cell)
+
+                if dist_giant < 15:
+                    # Attraction vers le géant
+                    score += (10 - dist_giant) * 3
+
+                    # Pour ne pas le bloquer,
+                    if dist_giant <= 2:
+                        score += 30
+
     # for ally in player.units:
     #     if ally != dragon and ally.cell:
     #         dist_ally = grid.distance(target_cell, ally.cell)
@@ -115,6 +131,11 @@ def attaque_score(dragon: Dragon, target: Dragon, grid: Grid, player, enemy) -> 
 
     # Possibilité d'attaquer donc augmentation score
     score += min(dragon.attack_damage, target.hp) * 10
+
+    if isinstance(dragon, Dragonnet):  # Dragonnet va attaquer les dragons géants en priorités
+        if isinstance(target, DragonGeant):
+            score += 200
+            score += 100
 
     # cibles faibles, attaque seul
     if target.hp <= dragon.attack_damage:
@@ -181,51 +202,71 @@ def score_purchase_option(player, ennemy, option, current_gold, danger_score):
     """
     score = 0
     nb_allies = len(player.units)
+    nb_giants = sum(1 for u in player.units if isinstance(u, DragonGeant))
+    nb_medium = sum(1 for u in player.units if isinstance(u, DragonMoyen))  #
+    nb_small = sum(1 for u in player.units if isinstance(u, Dragonnet))
 
     # Score pour la tour
     if option["name"] == "buy_tower":
-        score += 100
+        score += 60
+        score += danger_score * 600  # plus la base est en danger, plus la tour est utile
+        score += len(ennemy.units) * 30  # si beaucoup d'ennemie c'est intérressant aussi
 
-        score += danger_score * 800  # plus la base est en danger, plus la tour est utile
-
-        score += len(ennemy.units) * 20  # si beaucoup d'ennemie c'est intérressant aussi
-
-    # SCORING POUR LES DRAGONS
+    # score pour les dragons
     elif "buy" in option["name"]:
         if option["name"] == "buy_giant":
-            score += 100
+            score += 150
         elif option["name"] == "buy_medium":
-            score += 60
+            score += 100
         elif option["name"] == "buy_small":
-            score += 20
+            score += 10
 
-        if danger_score > 0.6:
+        if danger_score > 0.7:
             # On sort n'importe quelle unités pour défendre
             if option["name"] == "buy_small":
-                score += 80
+                score += 100
             elif option["name"] == "buy_medium":
-                score += 50
+                score += 80
         else:
             # on pénalise petite unités pour économiser pour des plus importantes
             if option["name"] == "buy_small":
-                score -= 50
-            elif option["name"] == "buy_medium":
-                score += 10
-
-        if nb_allies == 0:  # si aucune unité on en achère une
-            score += 200
-
-        elif option["name"] == "wait":  # attendre au lieu d'acheter
-            score += 10
-
-            if danger_score > 0.7:  # si danger critique alors pas d'attente
-                score -= 500
-
-            if current_gold > 1000:  # si beaucoup de gold  alors on achète
                 score -= 100
+            elif option["name"] == "buy_medium":
+                score += 20
 
-            if danger_score < 0.3 and current_gold < DRAGON_GEANT_COST:  # si danger faible on économise
+        if nb_allies == 0:
+            if option["name"] == "buy_medium":
+                score += 300
+            elif option["name"] == "buy_small":
+                if danger_score > 0.4:
+                    score += 150
+                else:
+                    score -= 50
+
+        if option["name"] == "buy_small" and nb_giants > 0:
+            if nb_small < nb_giants * 3:
+                score += 100
+            else:
+                score -= 50
+
+    elif option["name"] == "wait":  # attendre au lieu d'acheter
+        score += 10
+
+        if danger_score > 0.7:  # si danger critique alors pas d'attente
+            score -= 500
+
+        if current_gold > 1000:  # si beaucoup de gold  alors on achète
+            score -= 100
+
+        if danger_score < 0.3:
+            if current_gold < DRAGON_MOYEN_COST:
                 score += 150
+
+            elif current_gold < DRAGON_GEANT_COST:
+                if nb_medium == 0:
+                    score -= 50
+                else:
+                    score += 120
 
     return score
 
