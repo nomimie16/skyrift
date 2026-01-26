@@ -5,6 +5,7 @@
 DRAGONNET_COST = 100
 DRAGON_MOYEN_COST = 300
 DRAGON_GEANT_COST = 600
+TOWER_COST = 600
 
 # Position du point de spawn des nouveaux dragons
 SPAWN_POS_P1 = (5, 2)  # Spawn pour joueur p1
@@ -55,3 +56,6 @@ IMG_LIVRE = 'src/assets/img/bookRules.png'
 IMG_BGSETTINGS = 'src/assets/img/bgSettings.png'
 IMG_LEFTARROW = 'src/assets/img/left-arrow.png'
 IMG_RIGHTARROW = 'src/assets/img/right-arrow.png'
+IMG_BGSIDEPANEL = 'src/assets/img/bgSidePanel.png'
+IMG_SORCIER = 'src/assets/img/sorcier.png'
+IMG_SHOPBUTTON = 'src/assets/img/shopButton.png'

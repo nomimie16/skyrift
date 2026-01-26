@@ -53,6 +53,7 @@ class Entity:
         BAR_WIDTH = sc.TILE_SIZE * width
         BAR_HEIGHT = 6
         OFFSET_Y = -10
+        OUTLINE_WIDTH = 2
 
         x = self._pixel_pos.x
         y = self._pixel_pos.y + OFFSET_Y - gap * TILE_SIZE
@@ -67,9 +68,16 @@ class Entity:
         else:
             color = (200, 0, 0)  # Rouge
 
+        # outline
         pygame.draw.rect(
             surface,
             (0, 0, 0),
+            (x - OUTLINE_WIDTH, y - OUTLINE_WIDTH, BAR_WIDTH + OUTLINE_WIDTH * 2, BAR_HEIGHT + OUTLINE_WIDTH * 2)
+        )
+
+        pygame.draw.rect(
+            surface,
+            (100, 100, 100),
             (x, y, BAR_WIDTH, BAR_HEIGHT)
         )
 
