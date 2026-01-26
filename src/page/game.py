@@ -215,7 +215,7 @@ class Game:
                         continue
 
                     # Clic sur le bouton tour suivant (temporaire)
-                    if self.next_turn_button_rect.collidepoint(event.pos):
+                    if self.next_turn_button.is_clicked(event.pos):
                         self.pass_turn()
                         continue
 
