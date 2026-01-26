@@ -17,9 +17,8 @@ class Tornado(ZoneEntity):
     Tornade qui se déplace aléatoirement sur la grille
     """
 
-    # TODO en attente du sprite
-    def __init__(self, x_cell: int, y_cell: int, width: int = 2, height: int = 3):
-        super().__init__(x_cell, y_cell, sprite_path="src/assets/sprites/dragonnet.png", width=width, height=height,
+    def __init__(self, x_cell: int, y_cell: int, width: int = 3, height: int = 4):
+        super().__init__(x_cell, y_cell, sprite_path="src/assets/sprites/tornade.png", width=width, height=height,
                          type_entity=[TypeEntitiesEnum.EFFECT_ZONE, TypeEntitiesEnum.BAD_EFFECT_ZONE,
                                       TypeEntitiesEnum.TORNADO],
                          zone_effect=TornadoEffect())
@@ -123,11 +122,11 @@ class Tornado(ZoneEntity):
 
         if dx != 0:
             moved = True
-            self._pixel_pos.x += min(4, abs(dx)) * (1 if dx > 0 else -1)
+            self._pixel_pos.x += min(1, abs(dx)) * (1 if dx > 0 else -1)
 
         if dy != 0:
             moved = True
-            self._pixel_pos.y += min(4, abs(dy)) * (1 if dy > 0 else -1)
+            self._pixel_pos.y += min(1, abs(dy)) * (1 if dy > 0 else -1)
 
         if not moved or (abs(dx) <= 4 and abs(dy) <= 4):
             self._pixel_pos.x = target_px.x
@@ -141,7 +140,7 @@ class Tornado(ZoneEntity):
                 self._anim_counter = 0
 
         self._anim_counter += 1
-        if self._anim_counter >= 50:
+        if self._anim_counter >= 5:
             self._anim_counter = 0
             self._index_img = (self._index_img + 1) % len(self._imageSprite)
         return grid
@@ -153,14 +152,13 @@ class Tornado(ZoneEntity):
         :return: None
         """
         if self._active:
-            pixel_x = self.cell.position.x * sc.TILE_SIZE + sc.OFFSET_X
-            pixel_y = self.cell.position.y * sc.TILE_SIZE + sc.OFFSET_Y
-
             scaled = pygame.transform.scale(
                 self._imageSprite[self._index_img],
                 (self.width * sc.TILE_SIZE, self.height * sc.TILE_SIZE)
             )
-            surface.blit(scaled, (pixel_x, pixel_y))
+
+            # Utilisation de _pixel_pos.x et _pixel_pos.y
+            surface.blit(scaled, (self._pixel_pos.x, self._pixel_pos.y))
 
     # ------- Getters et Setters -------
     @property

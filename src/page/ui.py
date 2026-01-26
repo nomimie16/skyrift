@@ -4,6 +4,7 @@
 
 import pygame
 
+from src.const import *
 from src.player import Player
 
 
@@ -20,24 +21,33 @@ class UIOverlay:
         self.coin_img = pygame.image.load("src/assets/img/coin.png").convert_alpha()
         self.coin_img = pygame.transform.scale(self.coin_img, (50, 50))
         self.coin_rect = self.coin_img.get_rect()
-        self.coin_rect.topleft = (10, 10)
+
+        self.base_coin_x = 10
+        self.base_text_x = 70
+
+        self.coin_rect.topleft = (self.base_coin_x, 10)
+
         self.coin_value = 0
-        self.coin_text = pygame.font.Font(None, 50).render(str(self.coin_value), True, (255, 215, 0))
+        self.coin_text = pygame.font.Font(FONT_TITLE_PATH, 50).render(str(self.coin_value), True, (255, 215, 0))
         self.coin_text_rect = self.coin_text.get_rect()
-        self.coin_text_rect.topleft = (70, 20)
-        self.coin_font = pygame.font.Font(None, 50)
+        self.coin_text_rect.topleft = (self.base_text_x, 20)
+        self.coin_font = pygame.font.Font(FONT_TITLE_PATH, 50)
         self.coin_position = (
             self.coin_text_rect.right + 10,
             self.coin_text_rect.centery
         )
 
         # Joueur en cours
-        self.current_player = pygame.font.Font(None, 36).render("Joueur 1", True, (0, 0, 0))
+        self.current_player = pygame.font.Font(FONT_BUTTON_PATH, 36).render("Joueur 1", True, (0, 0, 0))
         self.current_player_rect = self.current_player.get_rect(center=(screen.get_width() // 2, 35))
-        self.player_font = pygame.font.Font(None, 36)
+        self.player_font = pygame.font.Font(FONT_BUTTON_PATH, 36)
 
-    def draw(self, screen, current_player: Player):
+    def draw(self, screen, current_player: Player, offset_x=0):
         '''Fonction dessine les images/icons'''
+
+        # Ajuster la position de la pièce en fonction de l'offset
+        self.coin_rect.x = self.base_coin_x + offset_x
+
         screen.blit(self.pause_btn, self.pause_rect)
         screen.blit(self.coin_img, self.coin_rect)
 
@@ -48,7 +58,7 @@ class UIOverlay:
             self.coin_value = current_player.economy.get_gold()
             self.coin_text = self.coin_font.render(str(self.coin_value), True, (255, 215, 0))
             self.coin_text_rect = self.coin_text.get_rect()
-            self.coin_text_rect.topleft = (70, 20)
+            self.coin_text_rect.topleft = (self.base_text_x + offset_x, 20)
 
             self.coin_position = (
                 self.coin_text_rect.right + 10,

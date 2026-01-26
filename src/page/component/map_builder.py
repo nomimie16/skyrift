@@ -31,6 +31,34 @@ class MapBuilder:
         self.life_island = None
         self.tornado = None
 
+    def is_map_complete(self) -> bool:
+        """
+        Vérifie si la map est complète (toutes les entités placées)
+        :return:
+        """
+        return (
+                self.base1 is not None and
+                self.base2 is not None and
+                self.tower1 is not None and
+                self.tower2 is not None and
+                self.volcano is not None and
+                self.life_island is not None and
+                self.tornado is not None
+        )
+
+    def reset(self):
+        """
+        Réinitialise la grille et les entités placées
+        """
+        self.grid.clear()
+        self.base1 = None
+        self.base2 = None
+        self.tower1 = None
+        self.tower2 = None
+        self.volcano = None
+        self.life_island = None
+        self.tornado = None
+
     def build_bases(self):
         """
         Place les bases fixes :
@@ -45,7 +73,7 @@ class MapBuilder:
         tower1_x = self.base1.cell.position.x - 1
         tower1_y = self.base1.cell.position.y + 4
 
-        self.tower1 = Tower(tower1_x, tower1_y, sprite_path="src/assets/sprites/tour_bleu.png", player=self.player1)
+        self.tower1 = Tower(tower1_x, tower1_y, sprite_path="src/assets/sprites/ile_vide.png", player=self.player1)
         self.grid.add_static_occupants(self.tower1, self.tower1.cell, self.tower1.width, self.tower1.height)
         self.player1.base = self.base1
         self.player1.tower = self.tower1
@@ -57,13 +85,10 @@ class MapBuilder:
         self.base2 = Base(base2_x, base2_y, sprite_path="src/assets/img/base_ennemie.png", player=self.player2)
         self.grid.add_static_occupants(self.base2, base2_cell, self.base2.width, self.base2.height)
 
-        # tower_x = self.base2.width + 1
-        # tower_y = self.base2.height - 4
-        # tower2_cell = Cell(tower_x, tower_y)
         tower2_x = self.base2.cell.position.x - self.base2.width
         tower2_y = self.base2.cell.position.y - self.base2.height - 1
 
-        self.tower2 = Tower(tower2_x, tower2_y, sprite_path="src/assets/sprites/tour_rouge.png", player=self.player2)
+        self.tower2 = Tower(tower2_x, tower2_y, sprite_path="src/assets/sprites/ile_vide.png", player=self.player2)
 
         self.grid.add_static_occupants(self.tower2, self.tower2.cell, self.tower2.width, self.tower2.height)
 
@@ -117,7 +142,7 @@ class MapBuilder:
             for cell in row:
                 if len(cell.occupants) == 0:
                     pos = cell.position
-                    if self.can_place_cell(pos, temp.width, temp.height, 7):
+                    if self.can_place_cell(pos, temp.width, temp.height, 3):
                         possible_cells.append(cell)
         if not possible_cells:
             self.life_island = None
@@ -159,17 +184,23 @@ class MapBuilder:
             self.tornado.height
         )
 
-    def build_map(self):
+    def build_map(self, max_tests: int = 50):
         """
         Construit la carte complète :
         - bases fixes
         - volcan aléatoire
         - ile de vie aléatoire
         """
-        self.build_bases()
-        self.spawn_random_volcano()
-        self.spawn_random_island_of_life()
-        self.sapwn_random_tornado()
+        for test in range(max_tests):
+            self.reset()
+
+            self.build_bases()
+            self.spawn_random_volcano()
+            self.spawn_random_island_of_life()
+            self.sapwn_random_tornado()
+
+            if self.is_map_complete():
+                return self.grid
         return self.grid
 
     def can_place_cell(self, position: Position, width: int, height: int, min_gap: int = 3):

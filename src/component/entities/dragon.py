@@ -5,12 +5,15 @@ import pygame
 
 from src import screen_const as sc
 from src.component.entities.entity import Entity
+from src.component.entities.fireball import Fireball
 from src.component.grid import Cell, Grid
 from src.component.path_finding import find_path
 from src.component.position import Position
 from src.const import DRAGONNET_COST, DRAGON_MOYEN_COST, DRAGON_GEANT_COST
 from src.enum.type_entities import TypeEntitiesEnum
 from src.player import Player
+
+SPRITE_OPACITY = 150
 
 
 class Dragon(Entity):
@@ -19,8 +22,9 @@ class Dragon(Entity):
                  attack_range: int, sprite_path: str,
                  speed: int,
                  attack_damage: int,
-                 cost: int, player: Player):
-        super().__init__(x_cell, y_cell, name, type_entity, max_hp, attack_damage, attack_range, sprite_path)
+                 cost: int, player: Player, kill_reward: int = 0):
+        super().__init__(x_cell, y_cell, name, type_entity, max_hp, attack_damage, attack_range, sprite_path,
+                         kill_reward)
         self._speed_base: int = speed  # speed de base du dragon
         self._actual_speed: int = speed  # speed actuel du dragon
         self._speed_modifier: int = 0  # nombre de speed en plus ou en moins à celui de base
@@ -31,6 +35,9 @@ class Dragon(Entity):
         self._anim_counter = 0
         self._type: List[TypeEntitiesEnum] = [TypeEntitiesEnum.DRAGON]
         self._player: Player = player
+        self._has_moved: bool = False
+        self._has_attacked: bool = False
+        self._fireball = None
 
         if self._player:
             self.sprite_path = sprite_path.replace("bleu", self._player._color)
@@ -44,6 +51,11 @@ class Dragon(Entity):
         """Réinitialise la vitesse à sa valeur de base."""
         self._actual_speed = self._speed_base
         self._speed_modifier = 0
+
+    def reset_actions(self):
+        """Réinitialise les drapeaux d'action du dragon pour le nouveau tour."""
+        self._has_moved = False
+        self._has_attacked = False
 
     def _check_purse_collection(self) -> int | None:
         """
@@ -74,6 +86,13 @@ class Dragon(Entity):
             return amount
         return None
 
+    def attack_fireball(self, target: Entity):
+        """
+        Lance une boule de feu vers une cellule cible.
+        :param target:
+        """
+        self._fireball = Fireball(self, target)
+
     def move_dragon(self, target_x: int, target_y: int, grid: Grid):
         self._target_cell = grid.cells[target_y][target_x]
         self._moving = True
@@ -91,6 +110,12 @@ class Dragon(Entity):
         Met à jour la position du dragon lors de son déplacement
         :return: Montant d'or collecté ou None
         """
+
+        if self._fireball:
+            is_active = self._fireball.update()
+            if not is_active:
+                self._fireball = None
+
         if not self._moving or not self.path:
             return
 
@@ -112,14 +137,14 @@ class Dragon(Entity):
         if dx != 0:
             moved = True
             direction = 1 if dx > 0 else -1
-            current_px.x += min(self._actual_speed * 0.1, abs(dx)) * direction
+            current_px.x += min(self._actual_speed * 0.9, abs(dx)) * direction
             self.update_direction("droite" if direction > 0 else "gauche")
 
         # Mouvement vertical
         elif dy != 0:
             moved = True
             direction = 1 if dy > 0 else -1
-            current_px.y += min(self._actual_speed * 0.1, abs(dy)) * direction
+            current_px.y += min(self._actual_speed * 0.9, abs(dy)) * direction
 
         if not moved or (dx == 0 and dy == 0):
             self.cell = target_cell
@@ -134,7 +159,7 @@ class Dragon(Entity):
                     return amount
 
         self._anim_counter += 1
-        if self._anim_counter >= 50:
+        if self._anim_counter >= 10:
             self._anim_counter = 0
             self._index_img = (self._index_img + 1) % len(self._imageSprite)
         return None
@@ -167,16 +192,26 @@ class Dragon(Entity):
         Affichage du dragon
         @:param surface: Surface sur laquelle le dragon est placé
         """
+        current_sprite = self._imageSprite[self._index_img]
 
-        surface.blit(
-            self._imageSprite[self._index_img],
-            (
-                int(self._pixel_pos.x + (sc.TILE_SIZE - self._imageSprite[self._index_img].get_width()) / 2),
-                int(self._pixel_pos.y + (sc.TILE_SIZE - self._imageSprite[self._index_img].get_height()) / 2)
-            )
-        )
+        if self._has_moved and self._has_attacked:
+            grayscale_sprite = pygame.transform.grayscale(current_sprite)
+            grayscale_sprite.set_alpha(SPRITE_OPACITY)
+            current_sprite = current_sprite.copy()
+            current_sprite.blit(grayscale_sprite, (0, 0))
+
+        target_size = int(sc.TILE_SIZE)
+        scaled_sprite = pygame.transform.smoothscale(current_sprite, (target_size, target_size))
+
+        x = self._pixel_pos.x + (sc.TILE_SIZE - target_size) // 2
+        y = self._pixel_pos.y + (sc.TILE_SIZE - target_size) // 2
+
+        surface.blit(scaled_sprite, (x, y))
 
         self.draw_health_bar(surface)
+
+        if self._fireball:
+            self._fireball.draw(surface)
 
     # ------- Getters et Setters -------
     @property
@@ -271,6 +306,26 @@ class Dragon(Entity):
     def player(self) -> Player:
         return self._player
 
+    @property
+    def has_moved(self) -> bool:
+        return self._has_moved
+
+    @has_moved.setter
+    def has_moved(self, value: bool) -> None:
+        self._has_moved = value
+
+    @property
+    def has_attacked(self) -> bool:
+        return self._has_attacked
+
+    @has_attacked.setter
+    def has_attacked(self, value: bool) -> None:
+        self._has_attacked = value
+
+    @property
+    def fireball(self):
+        return self._fireball
+
     def __str__(self):
         return (
             f"Dragon(name={self._name}, "
@@ -292,7 +347,7 @@ class Dragonnet(Dragon):
                          type_entity=[TypeEntitiesEnum.DRAGONNET, TypeEntitiesEnum.DRAGON, TypeEntitiesEnum.OBSTACLE],
                          max_hp=50, attack_range=1,
                          sprite_path="src/assets/sprites/dragonnet/dragonnet_bleu_droite.png",
-                         speed=6, attack_damage=10, cost=DRAGONNET_COST, player=player)
+                         speed=6, attack_damage=10, cost=DRAGONNET_COST, player=player, kill_reward=20)
 
     def draw(self, surface) -> None:
         """
@@ -302,16 +357,23 @@ class Dragonnet(Dragon):
         """
         sprite = self._imageSprite[self._index_img]
 
-        scaled_width = int(sprite.get_width() * 0.7)
-        scaled_height = int(sprite.get_height() * 0.7)
+        if self._has_moved and self._has_attacked:
+            grayscale_sprite = pygame.transform.grayscale(sprite)
+            grayscale_sprite.set_alpha(SPRITE_OPACITY)
+            sprite = sprite.copy()
+            sprite.blit(grayscale_sprite, (0, 0))
 
-        scaled_sprite = pygame.transform.scale(sprite, (scaled_width, scaled_height))
+        target_size = int(sc.TILE_SIZE * 1.1)
 
-        x = self._pixel_pos.x + (sc.TILE_SIZE - scaled_width) // 2
-        y = self._pixel_pos.y + (sc.TILE_SIZE - scaled_height) // 2
+        scaled_sprite = pygame.transform.smoothscale(sprite, (target_size, target_size))
+
+        x = self._pixel_pos.x + (sc.TILE_SIZE - target_size) // 2
+        y = self._pixel_pos.y + (sc.TILE_SIZE - target_size) // 2
 
         surface.blit(scaled_sprite, (x, y))
         self.draw_health_bar(surface)
+        if self.fireball:
+            self.fireball.draw(surface)
 
 
 class DragonMoyen(Dragon):
@@ -322,7 +384,7 @@ class DragonMoyen(Dragon):
                                                            TypeEntitiesEnum.OBSTACLE],
                          max_hp=120, attack_range=2,
                          sprite_path="src/assets/sprites/dragon_moyen/dragon_moyen_bleu_droite.png",
-                         speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST, player=player)
+                         speed=4, attack_damage=20, cost=DRAGON_MOYEN_COST, player=player, kill_reward=50)
 
     def draw(self, surface) -> None:
         """
@@ -332,16 +394,23 @@ class DragonMoyen(Dragon):
         """
         sprite = self._imageSprite[self._index_img]
 
-        scaled_width = int(sprite.get_width() * 0.9)
-        scaled_height = int(sprite.get_height() * 0.9)
+        if self._has_moved and self._has_attacked:
+            grayscale_sprite = pygame.transform.grayscale(sprite)
+            grayscale_sprite.set_alpha(SPRITE_OPACITY)
+            sprite = sprite.copy()
+            sprite.blit(grayscale_sprite, (0, 0))
 
-        scaled_sprite = pygame.transform.scale(sprite, (scaled_width, scaled_height))
+        target_size = int(sc.TILE_SIZE * 1.4)
 
-        x = self._pixel_pos.x + (sc.TILE_SIZE - scaled_width) // 2
-        y = self._pixel_pos.y + (sc.TILE_SIZE - scaled_height) // 2
+        scaled_sprite = pygame.transform.smoothscale(sprite, (target_size, target_size))
+
+        x = self._pixel_pos.x + (sc.TILE_SIZE - target_size) // 2
+        y = self._pixel_pos.y + (sc.TILE_SIZE - target_size) // 2
 
         surface.blit(scaled_sprite, (x, y))
         self.draw_health_bar(surface)
+        if self.fireball:
+            self.fireball.draw(surface)
 
 
 class DragonGeant(Dragon):
@@ -353,7 +422,33 @@ class DragonGeant(Dragon):
                                       TypeEntitiesEnum.OBSTACLE], max_hp=250,
                          attack_range=3,
                          sprite_path="src/assets/sprites/dragon_geant/dragon_geant_bleu_droite.png",
-                         speed=2, attack_damage=40, cost=DRAGON_GEANT_COST, player=player)
+                         speed=2, attack_damage=40, cost=DRAGON_GEANT_COST, player=player, kill_reward=75)
+
+    def draw(self, surface) -> None:
+        """
+        Affichage du dragon géant
+        :param surface: Surface sur laquelle le dragon est placé
+        :return: None
+        """
+        sprite = self._imageSprite[self._index_img]
+
+        if self._has_moved and self._has_attacked:
+            grayscale_sprite = pygame.transform.grayscale(sprite)
+            grayscale_sprite.set_alpha(SPRITE_OPACITY)
+            sprite = sprite.copy()
+            sprite.blit(grayscale_sprite, (0, 0))
+
+        target_size = int(sc.TILE_SIZE * 1.6)
+
+        scaled_sprite = pygame.transform.smoothscale(sprite, (target_size, target_size))
+
+        x = self._pixel_pos.x + (sc.TILE_SIZE - target_size) // 2
+        y = self._pixel_pos.y + (sc.TILE_SIZE - target_size) // 2
+
+        surface.blit(scaled_sprite, (x, y))
+        self.draw_health_bar(surface)
+        if self.fireball:
+            self.fireball.draw(surface)
 
 
 if __name__ == '__main__':

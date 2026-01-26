@@ -1,5 +1,5 @@
 import pygame
-
+from src.const import FONT_BUTTON_PATH
 from src.enum.event_enum import TypeEventEnum
 
 
@@ -42,7 +42,7 @@ class BannerInformation:
             banner_surface.fill((50, 50, 50))
             screen.blit(banner_surface, (self.x, self.y))
 
-            font = pygame.font.Font(None, 36)
+            font = pygame.font.Font(FONT_BUTTON_PATH, 36)
             text = font.render(f"{self.event_description.value}", True, (255, 255, 255))
             text_rect = text.get_rect(center=(self.x + self.width // 2, self.y + self.height // 2))
             screen.blit(text, text_rect)

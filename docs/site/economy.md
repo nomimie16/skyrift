@@ -8,16 +8,17 @@ summary : Explication des sources de revenus et des achats possibles
 
 Dans ce jeu d'aventure, il vous faudra obtenir des Skygold pour acheter votre armée et défendre votre base.
 
-![skygold](assets/img/skygold.png) 
-
 ## Les sources de revenus
+Un skygold                    | 
+----------------------------------------|
+![skygold](assets/img/skygold.png)      |
 
-Pour débuter la partie, chaque joueur dispose de 100 Skygold.
+Pour débuter la partie, chaque joueur dispose de **100 Skygold**.
 Ces Skygold vous seront utiles pour éloborer vos stratégies.
 
-### Le temps
+### Les tours de jeu
 
-Le temps est la source de revenus principale. A chaque tour les joueurs sont récompensés par une somme de 75 skygold.
+Le tours de jeu sont la source de revenus principale. A chaque tour les joueurs sont récompensés par une somme de 75 skygold.
 
 * Revenus :  75 Skygold
 * Réccurence : 1 fois par tour
@@ -60,19 +61,19 @@ Récompense : 90 Skygold
 
 
 ## La boutique
-* La boutique est le lieu ou chaque joueur peut acheter de nouveaux dragons, ainsi que des tours de défense supplémentaires pour sa base.
+* La boutique est le lieu ou chaque joueur peut **acheter** de nouveaux dragons, ainsi que des tours de défense supplémentaires pour sa base.
 
 ![background](assets/img/backgroundsquare.png)
 
 
 
 ### Accéder à la boutique
-* La boutique est accessible en cliquant à gauche de l'écran, sur le bouton dédié. Un panneau latéral se déploie alors : c'est ici que l'on trouve la boutique.
+* La boutique est accessible en cliquant à **gauche** de l'écran, sur le bouton dédié. Un panneau latéral se déploie alors : c'est ici que l'on trouve la **boutique**.
 
 
 ### Utiliser la boutique
 
-* Les dragons y sont rangés par coût (le plus abordable en haut, le plus onéreux en bas). En dessous des dragons se trouve la tour de défense.
+* Les dragons y sont rangés par **coût** (le plus abordable en haut, le plus onéreux en bas). En dessous des dragons se trouve la tour de défense.
 
 ![background](assets/img/backgroundsquare.png)
 
@@ -83,11 +84,9 @@ Récompense : 90 Skygold
     * **RNG** - La portée d'attaque. Plus elle est élevée, plus l'unité pourra attaquer d'un nombre de cases important.
     * **SPD** - La vitesse. Plus elle est élevée, plus l'unité pourra se déplacer d'un nombre de case important en un tour.
 
-* Pour acheter une unité, il suffit de cliquer sur le bouton d'achat, ou est indiqué le coût de l'unité. Le bouton est de couleur verte si le joueur possède suffisamment de SkyGold. Si tel n'est pas le cas, le bouton est alors grisé. 
+* Pour acheter une **unité**, il suffit de cliquer sur le bouton d'achat, ou est indiqué le coût de l'unité. Le bouton est de couleur **verte** si le joueur possède suffisamment de **SkyGold**. Si tel n'est pas le cas, le bouton est alors **grisé**. 
 
-* Lorsqu'une unité est achetée, elle apparaîtra tout en bas du panneau latéral, ou se trouve un récapitulatif de toutes les unités actuellement possédées par le joueur.
-
-![background](assets/img/backgroundsquare.png)
+* Lorsqu'une unité est achetée, elle apparaîtra **tout en bas** du panneau latéral, ou se trouve un récapitulatif de toutes les unités actuellement possédées par le joueur.
 
 
 ## Conseils d'achats

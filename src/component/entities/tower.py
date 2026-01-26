@@ -25,9 +25,69 @@ class Tower(Entity):
         self._attack_damage = 30
         self._attack_range = 5
 
-    def tower_activation(self, grid: Grid) -> None:
+    def future_position(self, x_start: int, y_base: int, target_height: int) -> list[tuple]:
+        """
+        Retourne les positions que la tour occupera une fois activée
+        :param x_start: position x de la cellule la plus à gauche
+        :param y_base: position y de la cellule la plus basse
+        :param target_height: hauteur cible de la tour
+        :return: liste de tuples (x, y)
+        """
+        future_occupied_positions = []
+        for h in range(target_height):
+            for w in range(self.width):
+                pos_x = x_start + w
+                pos_y = y_base - h
+                future_occupied_positions.append((pos_x, pos_y))
+        return future_occupied_positions
+
+    def _clear_expansion_area(self, grid: Grid, player: Player, popup_manager):
+        """
+        Nettoie la zone d'expansion de la tour en infligeant des dégâts aux dragons
+        :param popup_manager:
+        :param player:
+        :param grid: Grille sur laquelle est la tour
+        :return: None
+        """
+
+        x_start = self.cell.position.x - (self.width - 1)
+        y_base = self.cell.position.y
+        target_height = 3
+
+        future_occupied_positions = self.future_position(x_start, y_base, target_height)
+        for y in range(y_base - 1, y_base - target_height, -1):
+            for x in range(x_start, x_start + self.width):
+
+                if not (0 <= x < grid.nb_columns and 0 <= y < grid.nb_rows):
+                    continue
+
+                cell_to_check = grid.cells[y][x]
+                occupants = list(cell_to_check.occupants)
+
+                for occ in occupants:
+                    if occ == self:
+                        continue
+
+                    if TypeEntitiesEnum.PLAYER_EFFECT_ZONE in occ.type_entity:
+                        amount = occ.amount
+                        player.economy.earn_gold(amount)
+                        cell_to_check.remove_occupant(occ)
+                        occ.destroy()
+
+                    elif TypeEntitiesEnum.DRAGON in occ.type_entity:
+
+                        damage = 30
+                        occ.take_damage(damage)
+                        if popup_manager:
+                            popup_manager.spawn_for_entity(occ, -damage)
+
+                        grid.push_entity(occ, cell_to_check, ignored_positions=future_occupied_positions)
+
+    def tower_activation(self, grid: Grid, player: Player, popup_manager=None) -> None:
         """
         Activation de la tour, elle peut attaquer
+        :param popup_manager:
+        :param player:
         :param grid: Grille sur laquelle est la tour
         :return: None
         """
@@ -36,9 +96,10 @@ class Tower(Entity):
 
         self._active = True
         self._height = 3
-        # TODO changer sprite
-        self._sprite_path = f"src/assets/img/tour_{self.player.color}.png"
+        self.set_sprite(f"src/assets/sprites/tour_{self.player.color}.png")
+        print(self.sprite_path)
 
+        self._clear_expansion_area(grid, player, popup_manager)
         grid.update_occupant_size(self)
 
     def tower_disable(self, grid: Grid) -> None:
@@ -52,8 +113,8 @@ class Tower(Entity):
 
         self._height = 1
         self._hp = self._max_hp
-        # TODO changer sprites
-        self._sprite_path = f"src/assets/img/tour_{self.player.color}.png"
+        self.set_sprite(f"src/assets/sprites/ile_vide.png")
+        print(self.sprite_path)
 
         grid.update_occupant_size(self)
 

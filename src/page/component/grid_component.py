@@ -20,7 +20,7 @@ class GridComponent:
                     self.tile,
                     self.tile
                 )
-                pygame.draw.rect(screen, (120, 120, 120), rect, 1)
+                pygame.draw.rect(screen, (220, 220, 220), rect, 1)
 
     def handle_click(self, pos):
         """renvoie la case cliquée"""

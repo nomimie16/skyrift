@@ -3,24 +3,18 @@
 #####################
 
 import pygame
+from src.const import *
+from src.page.ui_components import Button
 
 
 def run_menu(screen):
-    # Définir les couleurs
-    WHITE = (255, 255, 255)
-    DARK_BLUE = (0, 80, 200)
     
     # Police pour le texte
-    font = pygame.font.Font(None, 48)
+    font = pygame.font.Font(FONT_BUTTON_PATH, 48)
 
     # Création bouton lancement du jeu
-    launch_btn = pygame.Rect(
-        screen.get_width() // 2 - 150,
-        screen.get_height() // 2 - 40,
-        300,
-        80
-    )
-
+    launch_btn = Button("Lancer le jeu", screen.get_width() // 2, screen.get_height() // 2, 'game', TRANSLUCENT_BLUE, HOVER_BLUE, WHITE)
+    
     running = True
 
     while running:
@@ -32,17 +26,14 @@ def run_menu(screen):
             if event.type == pygame.MOUSEBUTTONDOWN:
                 # Si bouton lanchement cliqué
                 if launch_btn.collidepoint(event.pos):
-                    print("Lancement du jeu.\n")
-                    return 'game'
+                    return launch_btn.action
 
         # Dessiner l'écran
         screen.fill(WHITE)
         
         # Dessiner le bouton
-        pygame.draw.rect(screen, DARK_BLUE, launch_btn, border_radius=12)
-        text = font.render("Lancer le jeu", True, WHITE)
-        text_rect = text.get_rect(center= launch_btn.center)
-        screen.blit(text, text_rect)
+        pos = pygame.mouse.get_pos()
+        launch_btn.draw(screen, pos, font)
 
         pygame.display.flip()
 

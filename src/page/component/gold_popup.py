@@ -1,5 +1,7 @@
 import pygame
 
+from src.const import FONT_BUTTON_PATH
+
 
 class GoldPopup:
     """Classe pour afficher les popups de gain/perte d'or."""
@@ -12,7 +14,7 @@ class GoldPopup:
         self.amount = amount
         self.duration = duration
 
-        self.font = pygame.font.Font(None, 45)
+        self.font = pygame.font.Font(FONT_BUTTON_PATH, 45)
 
         if amount > 0:
             self.color = (50, 200, 50)  # Heal (vert)
@@ -31,14 +33,15 @@ class GoldPopup:
         if elapsed > self.duration:
             self.alive = False
 
-    def draw(self, screen) -> None:
+    def draw(self, screen, offset_x=0) -> None:
         """
         Dessine le texte flottant à l'écran
+        :param offset_x: décéntage en x
         :param screen:
         :return:
         """
         text_surf = self.font.render(self.text, True, self.color)
-        rect = text_surf.get_rect(center=(self.x, self.y))
+        rect = text_surf.get_rect(center=(self.x + offset_x, self.y))
         screen.blit(text_surf, rect)
 
 
@@ -58,14 +61,15 @@ class GoldPopupManager:
         """
         self.popups.append(GoldPopup(x, y, amount))
 
-    def update_and_draw(self, screen):
+    def update_and_draw(self, screen, offset_x=0):
         """
         Met à jour et dessine tous les textes flottants
+        :param offset_x: décéntage en x
         :param screen:
         :return:
         """
         for text in self.popups[:]:
             text.update()
-            text.draw(screen)
+            text.draw(screen, offset_x)
             if not text.alive:
                 self.popups.remove(text)
