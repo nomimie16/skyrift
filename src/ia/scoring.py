@@ -184,9 +184,23 @@ def get_best_attack(dragon: Dragon, grid: Grid, player: Player, enemy: Player):
     best_target = None
     best_score = -float('inf')
 
-    for e in enemy.units:
+    potential_targets = list(enemy.units)
+
+    if enemy.base and not enemy.base.is_dead():
+        potential_targets.append(enemy.base)
+
+    if enemy.tower and not enemy.tower.is_dead():
+        potential_targets.append(enemy.tower)
+
+    for e in potential_targets:
         if e.cell and dragon.cell and grid.distance(dragon.cell, e.cell) <= dragon.attack_range:
             score = attaque_score(dragon, e, grid, player, enemy)
+
+            if e == enemy.base:
+                score += 10
+            if e == enemy.tower:
+                score += 5
+
             if score > best_score:
                 best_score = score
                 best_target = e

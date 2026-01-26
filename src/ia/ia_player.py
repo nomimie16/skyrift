@@ -123,6 +123,7 @@ class IAPlayer:
 
                     target_after, score_after = get_best_attack(dragon, self.grid, self.player, self.ennemy)
                     if target_after and score_after > 0:
+                        dragon.attack(target_after)
                         dragon.attack_fireball(target_after)
 
                 dragon.has_moved = True
