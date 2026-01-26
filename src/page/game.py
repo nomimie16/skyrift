@@ -13,6 +13,7 @@ from src.page.component.damage_heal_popup import DamageAndHealPopupManager
 from src.page.component.gold_popup import GoldPopupManager
 from src.page.component.grid_component import GridComponent
 from src.page.component.map_builder import MapBuilder
+from src.page.component.next_button import NextTurnButton
 from src.page.component.panels_layout import PanelsLayout
 from src.page.component.turn_popup import TurnPopup
 from src.page.sidepanels import draw_sidepanels
@@ -77,15 +78,13 @@ class Game:
         self.dragons = []
 
         # TODO Bouton tour suivant 'temporaire
-        self.font = pygame.font.Font(FONT_BUTTON_PATH, 25)
-        button_width = 150
+
+        button_width = 180
         button_height = 50
-        button_x = screen.get_width() - button_width - 5
-        button_y = screen.get_height() - button_height - 40
-        self.next_turn_button_rect = pygame.Rect(button_x, button_y, button_width, button_height)
-        self.button_color = (186, 162, 22)
-        self.button_hover_color = (222, 192, 18)
-        self.button_text_color = (255, 255, 255)
+        button_x = screen.get_width() - button_width - 10
+        button_y = screen.get_height() - button_height - 20
+
+        self.next_turn_button = NextTurnButton(button_x, button_y, button_width, button_height)
 
         self.panels_layout = PanelsLayout()
 
@@ -145,9 +144,9 @@ class Game:
                         continue
 
                     # Clic sur le bouton tour suivant (temporaire)
-                    if self.next_turn_button_rect.collidepoint(event.pos):
+                    if self.next_turn_button.is_clicked(event.pos):
                         if not self.turn.animations_ended(self.builder.tornado):
-                            print("Vous devez attendre la fin de toutes les actions avant de passer au tour suivant")
+                            print("Vous devez attendre la fin de toutes les actions...")
                             continue
 
                         print("tour de ", self.turn.current_player().name, "terminé")
@@ -341,20 +340,9 @@ class Game:
             # Verifier si toutes les actions sont terminees (dragons ET tornade)
             actions_finished = self.turn.animations_ended(self.builder.tornado)
 
-            # Determiner la couleur du bouton selon l'etat des actions
-            if not actions_finished:
-                # grisé
-                button_color_to_use = (150, 150, 150)
-            else:
-                # actif
-                button_color_to_use = self.button_hover_color if self.next_turn_button_rect.collidepoint(
-                    mouse_pos) else self.button_color
+            is_hovered = self.next_turn_button.is_clicked(mouse_pos)
 
-            pygame.draw.rect(self.screen, button_color_to_use, self.next_turn_button_rect)
-            pygame.draw.rect(self.screen, (0, 0, 0), self.next_turn_button_rect, 2)
-            button_text = self.font.render("Tour suivant", True, self.button_text_color)
-            text_rect = button_text.get_rect(center=self.next_turn_button_rect.center)
-            self.screen.blit(button_text, text_rect)
+            self.next_turn_button.draw(self.screen, enabled=actions_finished, hovered=is_hovered)
 
             # Dessiner le popup de tour
             self.turn_popup.draw(self.screen)
