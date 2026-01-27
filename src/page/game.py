@@ -16,6 +16,7 @@ from src.page.component.map_builder import MapBuilder
 from src.page.component.next_button import NextTurnButton
 from src.page.component.panels_layout import PanelsLayout
 from src.page.component.turn_popup import TurnPopup
+from src.enum.game_mode import GameMode
 from src.page.sidepanels import draw_sidepanels
 from src.player import Player
 from src.turn import Turn
@@ -23,15 +24,30 @@ from src.turn import Turn
 
 class Game:
 
-    def __init__(self, screen, ui):
+    def __init__(self, screen, ui, game_config=None):
         self.screen = screen
         self.ui = ui
+        
+        # Configuration du jeu (mode et pseudos)
+        self.game_config = game_config or {
+            'mode': GameMode.PLAYER_VS_PLAYER.value,
+            'p1': 'Joueur 1',
+            'p2': 'Joueur 2'
+        }
 
         self.background = pygame.image.load("src/assets/img/game_background.png").convert()
         self.background = pygame.transform.scale(self.background, (screen.get_width(), screen.get_height()))
+        
         # Joueurs
-        self.p1 = Player(name="Yanis", color="bleu")
-        self.p2 = Player(name="Player 2", color="rouge")
+        self.p1 = Player(
+            name=self.game_config['p1'], 
+            color="bleu",
+            is_ai=(self.game_config['mode'] == GameMode.AI_VS_AI.value)
+        )
+        self.p2 = Player(
+            name=self.game_config['p2'], 
+            color="rouge",
+        )
 
         self.turn = Turn(self.p1, self.p2)
         player = self.turn.current_player()

@@ -42,7 +42,7 @@ def run_start(screen):
 
     # Boutons
     buttons = [
-        Button("Lancer le jeu", center_x, 320, "game", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE),
+        Button("Lancer le jeu", center_x, 320, "choosePlayer", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE),
         Button("Options", center_x, 420, "settingsFromStart", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE),
         Button("Règles", center_x, 520, "rulesFromStart", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE),
         Button("Quitter", center_x, 620, "quit", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE)

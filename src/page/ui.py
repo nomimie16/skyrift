@@ -33,7 +33,7 @@ class UIOverlay:
         self.coin_text_rect.topleft = (self.base_text_x, 20)
         self.coin_font = pygame.font.Font(FONT_TITLE_PATH, 50)
         self.coin_position = (
-            self.coin_text_rect.right + 10,
+            self.coin_text_rect.right + 1000,
             self.coin_text_rect.centery
         )
 
