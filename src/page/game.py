@@ -36,7 +36,7 @@ class Game:
             'p2': 'Joueur 2'
         }
 
-        have_ia = True  # TODO: à modifier selon le mode de jeu choisi
+        have_ia = False  # TODO: à modifier selon le mode de jeu choisi
         self.background = pygame.image.load("src/assets/img/game_background.png").convert()
         self.background = pygame.transform.scale(self.background, (screen.get_width(), screen.get_height()))
 
@@ -65,8 +65,12 @@ class Game:
         )
         self.p2 = Player(name="Joueur 2", color="rouge")
 
+        self.ia_player_1 = None
+        self.ia_player_2 = None
+
         if have_ia:
-            self.ia_player = IAPlayer(self.p2, self.p1, self.grid_comp.grid, self.dragon_events)
+            self.ia_player_1 = IAPlayer(self.p1, self.p2, self.grid_comp.grid, self.dragon_events)
+            self.ia_player_2 = IAPlayer(self.p2, self.p1, self.grid_comp.grid, self.dragon_events)
         else:
             self.p2 = Player(
             name=self.game_config['p2'],
@@ -190,16 +194,26 @@ class Game:
             self.dragon_events.draw(self.screen)
             self.tower_events.draw(self.screen)
 
-            current_player = self.turn.current_player()
-            if current_player == self.p2:  # Si c'est le tour de l'IA (p2)
+            if self.ia_player_1 is not None and self.ia_player_2 is not None:
+                current_player = self.turn.current_player()
+                if current_player == self.p2:  # Si c'est le tour de l'IA (p2)
 
-                self.ia_player.play_turn(self.turn)
+                    self.ia_player_2.play_turn(self.turn)
 
-                all_dragons_moved = all(d.has_moved for d in self.p2.units)  # ou une logique similaire
+                    all_dragons_moved = all(d.has_moved for d in self.p2.units)  # ou une logique similaire
 
-                if all_dragons_moved and self.turn.animations_ended(self.builder.tornado):
-                    # TODO add timer
-                    self.pass_turn()
+                    if all_dragons_moved and self.turn.animations_ended(self.builder.tornado):
+                        # TODO add timer
+                        self.pass_turn()
+                elif current_player == self.p1:  # Si c'est le tour de l'IA (p2)
+
+                    self.ia_player_1.play_turn(self.turn)
+
+                    all_dragons_moved = all(d.has_moved for d in self.p1.units)  # ou une logique similaire
+
+                    if all_dragons_moved and self.turn.animations_ended(self.builder.tornado):
+                        # TODO add timer
+                        self.pass_turn()
 
             for event in pygame.event.get():
                 action = self.ui.handle_event(event)

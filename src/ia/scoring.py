@@ -23,6 +23,8 @@ def deplacement_score(dragon: Dragon, target_cell: Cell, grid: Grid, player, ene
     if target_cell == dragon.cell:
         score -= 5
 
+    dist_base_enemy = float('inf')
+
     if enemy.base and enemy.base.cell:  # objectif principal
         dist_base_enemy = grid.distance(target_cell, enemy.base.cell)
         score += (100 - dist_base_enemy) * 5
@@ -30,10 +32,6 @@ def deplacement_score(dragon: Dragon, target_cell: Cell, grid: Grid, player, ene
     dist_base_ally = 0
     if player.base and player.base.cell:
         dist_base_ally = grid.distance(target_cell, player.base.cell)
-
-    dist_base_enemy = float('inf')
-    if enemy.base and enemy.base.cell:
-        dist_base_enemy = grid.distance(target_cell, enemy.base.cell)
 
     for occupant in target_cell.occupants:
 
@@ -186,9 +184,31 @@ def score_purchase_option(player, ennemy, option, current_gold, danger_score):
     if option["name"] == "buy_tower":
         score += 100
 
-        score += danger_score * 800  # plus la base est en danger, plus la tour est utile
+        if player.base:  # si base à perdu 30% de pv alors achat de tout important
+            ratio_hp = player.base.hp / player.base.max_hp
+            if ratio_hp < 0.7:
+                missing = 0.7 - ratio_hp
+                score += missing * 2000
 
-        score += len(ennemy.units) * 20  # si beaucoup d'ennemie c'est intérressant aussi
+        if player.tower and not player.tower.active:
+            x_start = player.tower.cell.position.x - (player.tower.width - 1)
+            y_base = player.tower.cell.position.y
+            target_height = 3
+
+            future_positions = player.tower.future_position(x_start, y_base, target_height)
+
+            enemies_in_zone = 0
+            for unit in ennemy.units:
+                if unit.cell:
+                    unit_pos = (unit.cell.position.x, unit.cell.position.y)
+                    if unit_pos in future_positions:
+                        enemies_in_zone += 1
+
+            if enemies_in_zone > 1:
+                score += enemies_in_zone * 300
+                print(f"IA: Opportunité Tour détectée sur {enemies_in_zone} ennemis !")
+
+        score += len(ennemy.units) * 30
 
     # SCORING POUR LES DRAGONS
     elif "buy" in option["name"]:
@@ -230,7 +250,7 @@ def score_purchase_option(player, ennemy, option, current_gold, danger_score):
     return score
 
 
-def get_best_move(dragon: Dragon, grid: Grid, player: Player, enemy: Player, events):
+def get_best_move(dragon: Dragon, grid: Grid, player: Player, enemy: Player, events, turn):
     """
     Trouve la meilleure case su laquelle se déplacer
     :param dragon:
@@ -249,7 +269,18 @@ def get_best_move(dragon: Dragon, grid: Grid, player: Player, enemy: Player, eve
         move_cells.append(dragon.cell)
 
     for cell in move_cells:
+        if cell != dragon.cell:
+            is_blocked = False
+            for occupant in cell.occupants:
+                if TypeEntitiesEnum.OBSTACLE in occupant.type_entity:
+                    is_blocked = True
+                    break
+
+            if is_blocked:
+                continue
+
         score = deplacement_score(dragon, cell, grid, player, enemy)
+
         if score > best_score:
             best_score = score
             best_cell = cell

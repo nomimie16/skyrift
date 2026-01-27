@@ -59,7 +59,9 @@ def find_path(grid: Grid, start_cell: Cell, end_cell: Cell) -> Optional[List[Cel
 
                 if neighbor != end_cell:
                     blocked = False
+
                     for occ in neighbor.occupants:
+
                         if TypeEntitiesEnum.OBSTACLE in occ.type_entity:
                             blocked = True
                             break

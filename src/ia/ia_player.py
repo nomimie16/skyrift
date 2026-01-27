@@ -1,6 +1,6 @@
 from src.component.entities.dragon import Dragon, DragonGeant, DragonMoyen, Dragonnet
 from src.component.grid import Grid
-from src.const import SPAWN_POS_P2, DRAGON_GEANT_COST, DRAGON_MOYEN_COST, DRAGONNET_COST, TOWER_COST
+from src.const import SPAWN_POS_P2, DRAGON_GEANT_COST, DRAGON_MOYEN_COST, DRAGONNET_COST, TOWER_COST, SPAWN_POS_P1
 from src.enum.type_entities import TypeEntitiesEnum
 from src.events.dragonEvents import DragonEvents
 from src.ia.scoring import score_purchase_option, get_best_attack, get_best_move
@@ -13,7 +13,9 @@ class IAPlayer:
         self.ennemy: Player = ennemy
         self.grid: Grid = grid
         self.dragon_events = dragon_events
-        self.dragon_states = {}
+
+    def random_start(self):
+        pass
 
 
     def manage_economy(self):
@@ -22,7 +24,11 @@ class IAPlayer:
         L'IA évalue chaque option d'achat et choisit celle avec le meilleur score.
         """
         current_gold = self.player.economy.get_gold()
-        spawn_x, spawn_y = SPAWN_POS_P2
+        spawn_x, spawn_y = (0, 0)
+        if self.player.color == "bleu":
+            spawn_x, spawn_y = SPAWN_POS_P1
+        elif self.player.color == "rouge":
+            spawn_x, spawn_y = SPAWN_POS_P2
         spawn_cell = self.grid.cells[spawn_y][spawn_x]
 
         danger_score = 0.0
@@ -57,7 +63,7 @@ class IAPlayer:
 
         options = []
 
-        if self.player.tower and self.player.tower.is_dead():
+        if self.player.tower and not self.player.tower.active:
             options.append({
                 "name": "buy_tower",
                 "cost": TOWER_COST,
@@ -126,6 +132,7 @@ class IAPlayer:
 
                     if move_cell and move_cell != dragon.cell:
                         self.execute_move(dragon, move_cell)
+                    # TODO turn.animations_ended()
 
                     target_after, score_after = get_best_attack(dragon, self.grid, self.player, self.ennemy)
                     if target_after and score_after > 0:
