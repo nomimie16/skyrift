@@ -2,14 +2,14 @@
 # ONGLET SIDEPANELS #
 #####################
 import math
-
 import pygame
 
 import src.screen_const as sc
 from src.component.entities.dragon import Dragonnet, DragonMoyen, DragonGeant
 from src.component.entities.tower import Tower
-from src.const import IMG_SORCIER, IMG_BGSIDEPANEL
+from src.const import IMG_BGSIDEPANEL, IMG_SORCIER, IMG_BANDEAU
 from src.player import Player
+from src.page.component.base_panel import BasePanel
 
 # Données des dragons
 DRAGONS_DATA = [
@@ -31,7 +31,7 @@ def get_cache(current_player: Player):
     if not cache:
         # polices
         cache['font_title'] = pygame.font.Font("src/assets/font/BoldPixels.ttf", 24)
-        cache['font_small'] = pygame.font.Font("src/assets/font/BoldPixels.ttf", 18)
+        cache['font_small'] = pygame.font.Font("src/assets/font/BoldPixels.ttf", 22)
         cache['font_tiny'] = pygame.font.Font("src/assets/font/BoldPixels.ttf", 16)
 
         # icones
@@ -79,6 +79,13 @@ def get_cache(current_player: Player):
         except Exception as e:
             print(f"Erreur chargement image sorcier: {e}")
             cache['bg_sorcier'] = None
+            
+        try:
+            img_bandeau = pygame.image.load(IMG_BANDEAU).convert_alpha()
+            cache['img_bandeau'] = pygame.transform.scale(img_bandeau, (35, sc.SCREEN_H))
+        except Exception as e:
+            print(f"Erreur chargement image bandeau shop: {e}")
+            cache['img_bandeau'] = None
 
         # shop_entities (instances boutiques)
         cache['shop_entities'] = ([dragon_class(0, 0, current_player) for dragon_class in DRAGONS_DATA]
@@ -128,11 +135,11 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player, panel_wi
     """Dessine la boutique de dragons dans le panneau gauche"""
     # recupere les ressources depuis le cache
     res = get_cache(current_player)
-    font_title = res['font_title']
+    # font_title = res['font_title']
     font_small = res['font_small']
     font_tiny = res['font_tiny']
     stat_icon = res['stat_icon']
-    gold_icon = res['gold_icon']
+    # gold_icon = res['gold_icon']
     entities = res['shop_entities']
 
     card_margin = int(panel_width * 0.05)
@@ -144,26 +151,26 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player, panel_wi
     y = y_start
     center_x = x_offset + panel_width // 2
 
-    # titre
-    title = font_title.render("Boutique", True, (255, 255, 255))
-    title_rect = title.get_rect(center=(center_x, y + title.get_height() // 2))
-    surface.blit(title, title_rect)
-    y += int(panel_width * 0.18)
+    # # titre
+    # title = font_title.render("Boutique", True, (255, 255, 255))
+    # title_rect = title.get_rect(center=(center_x, y + title.get_height() // 2))
+    # surface.blit(title, title_rect)
+    # y += int(panel_width * 0.18)
 
-    # afficher l'or disponible
-    gold_text = font_small.render(f"{gold}", True, (255, 215, 0))
-    # texte + icone
-    space: int = int(panel_width * 0.02)
-    total_width = gold_text.get_width() + (gold_icon.get_width() + space if gold_icon else 0)
+    # # afficher l'or disponible
+    # gold_text = font_small.render(f"{gold}", True, (255, 215, 0))
+    # # texte + icone
+    # space: int = int(panel_width * 0.02)
+    # total_width = gold_text.get_width() + (gold_icon.get_width() + space if gold_icon else 0)
 
-    gold_text_x = x_offset + (panel_width - total_width) // 2
-    gold_rect = gold_text.get_rect(left=gold_text_x, top=y)
-    surface.blit(gold_text, gold_rect)
+    # gold_text_x = x_offset + (panel_width - total_width) // 2
+    # gold_rect = gold_text.get_rect(left=gold_text_x, top=y)
+    # surface.blit(gold_text, gold_rect)
     # icone
-    if gold_icon:
-        surface.blit(gold_icon, (gold_text_x + gold_text.get_width() + space, y))
+    # if gold_icon:
+    #     surface.blit(gold_icon, (gold_text_x + gold_text.get_width() + space, y))
 
-    y += int(panel_width * 0.15)
+    # y += int(panel_width * 0.15)
 
     buy_buttons = []
 
@@ -171,10 +178,23 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player, panel_wi
     for entity in entities:
         card_x = x_offset + card_margin
 
-        # fond pour chaque dragon
-        dragon_bg = pygame.Rect(card_x, y, card_width, card_height)
-        pygame.draw.rect(surface, (70, 70, 70), dragon_bg)
-        pygame.draw.rect(surface, (100, 100, 100), dragon_bg, 2)
+        # Cadre style bois
+        card_panel = BasePanel(card_width, card_x, y, card_height)
+        card_panel._draw_wood_frame(surface)
+        corner_size = 8
+        line_y = y + 3
+        for _ in range(3):
+            pygame.draw.line(surface, BasePanel.WOOD_DARK, 
+                            (card_x + corner_size, line_y),
+                            (card_x + card_width - corner_size, line_y), 1)
+            line_y += 1
+
+        line_y = y + card_height - 6
+        for _ in range(3):
+            pygame.draw.line(surface, BasePanel.WOOD_DARK,
+                            (card_x + corner_size, line_y),
+                            (card_x + card_width - corner_size, line_y), 1)
+            line_y += 1
 
         # image de l'entité (taille boutique)
         cached_sprites = res.get('shop_entity_sprites', {})
@@ -185,11 +205,11 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player, panel_wi
             surface.blit(img_shop, (img_x, img_y))
 
         # nom du dragon
-        name_text = font_small.render(entity.name, True, (255, 255, 255))
+        name_text = font_small.render(entity.name, True, BasePanel.WOOD_DARK)
         right_area_x = card_x + int(card_width * 0.45)
         right_area_w = int(card_width * 0.55)
 
-        name_rect = name_text.get_rect(center=(card_x + card_width // 2, y + 15))
+        name_rect = name_text.get_rect(center=(card_x + card_width // 2, y + 25))
         surface.blit(name_text, name_rect)
 
         # stats
@@ -210,8 +230,8 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player, panel_wi
                 ("SPD:", entity.speed_base),
             ]
 
-        stat_x_label = right_area_x + int(right_area_w * 0.1)
-        stat_x_val = card_x + card_width - int(card_width * 0.05)
+        stat_x_label = right_area_x + int(right_area_w * 0.2)
+        stat_x_val = card_x + card_width - int(card_width * 0.1)
 
         current_stat_y = stats_y
 
@@ -220,10 +240,10 @@ def draw_shop(surface, x_offset, y_start, gold, current_player: Player, panel_wi
             if stat_icon:
                 surface.blit(stat_icon, (stat_x_label - stat_icon.get_width() - 2, current_stat_y + 2))
             # afficher le label
-            label_text = font_tiny.render(label, True, (200, 200, 200))
+            label_text = font_tiny.render(label, True, BasePanel.WOOD_MEDIUM)
             surface.blit(label_text, (stat_x_label, current_stat_y))
             # afficher la valeur alignee a droite
-            value_text = font_tiny.render(str(value), True, (200, 200, 200))
+            value_text = font_tiny.render(str(value), True, BasePanel.WOOD_LIGHT)
             value_rect = value_text.get_rect(right=stat_x_val, top=current_stat_y)
             surface.blit(value_text, value_rect)
             current_stat_y += line_height
@@ -299,6 +319,7 @@ def draw_toggle_button(surface, x, y, size, is_open, current_player: Player):
 
 
 def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right_x, economy, current_player: Player):
+    
     panel_width = sc.PANEL_WIDTH
     screen_height = screen.get_height()
     animation_speed = 20
@@ -328,13 +349,14 @@ def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right
     res = get_cache(current_player)
     if res['bg_image']:
         left_panel.blit(res['bg_image'], (0, 0))
-    if res['bg_sorcier']:
-        left_panel.blit(res['bg_sorcier'], (0, screen_height - 200))
 
     # dessiner la boutique
     buy_buttons = []
     gold = economy.get_gold()
     buy_buttons = draw_shop(left_panel, 0, 20, gold, current_player, panel_width)
+
+    if res['bg_sorcier']:
+        left_panel.blit(res['bg_sorcier'], (0, screen_height - 200))
 
     # ajuster les positions des boutons pour l'écran absolu
     for button in buy_buttons:
@@ -342,7 +364,12 @@ def draw_sidepanels(screen, left_open, right_open, current_left_x, current_right
 
     screen.blit(left_panel, (current_left_x, 0))
 
-    left_button_x = current_left_x + panel_width
+    # bandeau "magasin"
+    if res['img_bandeau']:
+        bandeau_x = current_left_x + panel_width
+        screen.blit(res['img_bandeau'], (bandeau_x, 0))
+
+    left_button_x = current_left_x + panel_width + 35
     left_button_rect = pygame.Rect(left_button_x - button_size, button_y - button_size, button_size * 2,
                                    button_size * 2)
     draw_toggle_button(screen, left_button_x, button_y, button_size, left_open, current_player)

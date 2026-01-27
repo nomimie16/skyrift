@@ -8,6 +8,7 @@ from src.page.rules import run_rules  # Page des règles du jeu
 from src.page.settings import run_settings  # Page de paramètres
 from src.page.startGame import run_start  # Première fenêtre du jeu
 from src.page.ui import UIOverlay  # Import de l'interface commune du jeu
+from src.page.choosePlayer import run_choose_player # Choix du mode de jeu et du nom de player
 
 # Initialiser Pygame
 pygame.init()
@@ -26,6 +27,7 @@ etat = 'startGame'
 background_game = None
 winner_name = ""
 current_game_instance = None
+game_config = None
 
 while running:
     if etat == 'launch':
@@ -34,10 +36,18 @@ while running:
     if etat == 'startGame':
         background_game = None
         etat = run_start(screen)
+        
+    elif etat == 'choosePlayer':
+        result = run_choose_player(screen)
+        if result[0] == 'game':
+            game_config = result[1]
+            etat = 'game'
+        else:
+            etat = result[0]
 
     elif etat == 'game':
         if current_game_instance is None:
-            current_game_instance = Game(screen, ui)
+            current_game_instance = Game(screen, ui, game_config)
 
         result = current_game_instance.run_game()
 
@@ -48,6 +58,7 @@ while running:
             winner_name = result[1]
         else:
             etat = result
+            
     elif etat == 'endGame':
         if background_game is not None:
             background = background_game
