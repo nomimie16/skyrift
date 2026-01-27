@@ -109,6 +109,11 @@ class Game:
         self.gold_popup_manager.spawn(*self.ui.coin_position, delta)
 
     def run_game(self):
+        
+        music_on, sound_on = get_settings_states()
+        if music_on:  
+            sound.play("music_menu.wav", loop=True)
+            
         global buy_buttons
         running = True
 

@@ -63,6 +63,15 @@ def run_settings(screen, background, from_game):
                     for toggle in toggles:
                         if toggle.is_clicked(event.pos):
                             toggle.toggle()
+                            if toggle.label == "Musique :":
+                                music_on = toggle.is_on
+                                if music_on:
+                                    sound.play("music_menu.wav", loop=True)  # ne relance pas si déjà jouée
+                                else:
+                                    sound.stop_music()
+                            elif toggle.label == "Son du jeu :":
+                                if sound_on == False:
+                                    sound.stop_all()
                     
                     # Clic dehors
                     if not bgSettings_rect.collidepoint(event.pos):
