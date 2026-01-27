@@ -5,6 +5,7 @@ from src.component.entities.purse import spawn_random_purse
 from src.component.entities.tower import Tower
 from src.const import *
 from src.enum.event_enum import TypeEventEnum
+from src.enum.game_mode import GameMode
 from src.enum.type_entities import TypeEntitiesEnum
 from src.events.dragonEvents import DragonEvents
 from src.events.towerEvents import TowerEvents
@@ -17,7 +18,6 @@ from src.page.component.map_builder import MapBuilder
 from src.page.component.next_button import NextTurnButton
 from src.page.component.panels_layout import PanelsLayout
 from src.page.component.turn_popup import TurnPopup
-from src.enum.game_mode import GameMode
 from src.page.sidepanels import draw_sidepanels
 from src.player import Player
 from src.turn import Turn
@@ -57,25 +57,53 @@ class Game:
                                           tile_size=sc.TILE_SIZE,
                                           damage_heal_popup_manager=self.damage_heal_popup_manager)
         self.tower_events = TowerEvents(self.grid_comp.grid, damage_heal_popup_manager=self.damage_heal_popup_manager)
-        # Joueurs
-        self.p1 = Player(
-            name=self.game_config['p1'],
-            color="bleu",
-            is_ai=(self.game_config['mode'] == GameMode.AI_VS_AI.value)
-        )
-        self.p2 = Player(name="Joueur 2", color="rouge")
 
         self.ia_player_1 = None
         self.ia_player_2 = None
-
-        if have_ia:
-            self.ia_player_1 = IAPlayer(self.p1, self.p2, self.grid_comp.grid, self.dragon_events)
-            self.ia_player_2 = IAPlayer(self.p2, self.p1, self.grid_comp.grid, self.dragon_events)
-        else:
+        if self.game_config['mode'] == GameMode.PLAYER_VS_PLAYER.value:
+            # Joueurs
+            self.p1 = Player(
+                name=self.game_config['p1'],
+                color="bleu"
+            )
             self.p2 = Player(
-            name=self.game_config['p2'],
-            color="rouge",
-        )
+                name=self.game_config['p2'],
+                color="rouge"
+            )
+        elif self.game_config['mode'] == GameMode.PLAYER_VS_AI.value:
+            self.p1 = Player(
+                name=self.game_config['p1'],
+                color="bleu"
+            )
+            self.ia_player_1 = None
+            self.p2 = Player(
+                name=self.game_config['p2'],
+                color="rouge",
+                is_ai=True
+            )
+            self.ia_player_2 = IAPlayer(self.p2, self.p1, self.grid_comp.grid, self.dragon_events)
+        elif self.game_config['mode'] == GameMode.AI_VS_AI.value:
+            self.p1 = Player(
+                name=self.game_config['p1'],
+                color="bleu",
+                is_ai=True
+            )
+            self.p2 = Player(
+                name=self.game_config['p2'],
+                color="rouge",
+                is_ai=True
+            )
+            self.ia_player_2 = IAPlayer(self.p2, self.p1, self.grid_comp.grid, self.dragon_events)
+            self.ia_player_1 = IAPlayer(self.p1, self.p2, self.grid_comp.grid, self.dragon_events)
+
+        # if have_ia:
+        #     self.ia_player_1 = IAPlayer(self.p1, self.p2, self.grid_comp.grid, self.dragon_events)
+        #     self.ia_player_2 = IAPlayer(self.p2, self.p1, self.grid_comp.grid, self.dragon_events)
+        # else:
+        #     self.p2 = Player(
+        #         name=self.game_config['p2'],
+        #         color="rouge",
+        #     )
 
         self.turn = Turn(self.p1, self.p2)
         player = self.turn.current_player()
@@ -194,9 +222,9 @@ class Game:
             self.dragon_events.draw(self.screen)
             self.tower_events.draw(self.screen)
 
-            if self.ia_player_1 is not None and self.ia_player_2 is not None:
+            if self.ia_player_1 is not None or self.ia_player_2 is not None:
                 current_player = self.turn.current_player()
-                if current_player == self.p2:  # Si c'est le tour de l'IA (p2)
+                if current_player == self.p2 and self.p2.is_ai:  # Si c'est le tour de l'IA (p2)
 
                     self.ia_player_2.play_turn(self.turn)
 
@@ -205,7 +233,7 @@ class Game:
                     if all_dragons_moved and self.turn.animations_ended(self.builder.tornado):
                         # TODO add timer
                         self.pass_turn()
-                elif current_player == self.p1:  # Si c'est le tour de l'IA (p2)
+                elif current_player == self.p1 and self.p1.is_ai:  # Si c'est le tour de l'IA (p2)
 
                     self.ia_player_1.play_turn(self.turn)
 

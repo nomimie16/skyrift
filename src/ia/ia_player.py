@@ -17,7 +17,6 @@ class IAPlayer:
     def random_start(self):
         pass
 
-
     def manage_economy(self):
         """
         Système d'achat basé sur le SCORING.
@@ -117,7 +116,8 @@ class IAPlayer:
                     continue
 
                 # Meilleur déplcacement
-                move_cell, score_move = get_best_move(dragon, self.grid, self.player, self.ennemy, self.dragon_events)
+                move_cell, score_move = get_best_move(dragon, self.grid, self.player, self.ennemy, self.dragon_events,
+                                                      turn)
                 # Meilleure attaque
                 target_now, score_attack_now = get_best_attack(dragon, self.grid, self.player, self.ennemy)
 
