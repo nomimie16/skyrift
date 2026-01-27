@@ -3,6 +3,7 @@ import pygame
 from src import screen_const as sc
 from src.component.entities.purse import spawn_random_purse
 from src.component.entities.tower import Tower
+from src.component.sound import sound
 from src.const import *
 from src.enum.event_enum import TypeEventEnum
 from src.enum.type_entities import TypeEntitiesEnum
@@ -167,6 +168,7 @@ class Game:
 
                         print("tour de ", self.turn.current_player().name, "terminé")
                         self.turn.next()
+                        sound.play("turn_change.wav")  # changement de tour
 
                         # reinitialise la selection de dragon au changement de tour
                         self.dragon_events._reset_selection()
@@ -221,6 +223,7 @@ class Game:
                                             self.builder.tower2.tower_activation(self.grid_comp.grid, player,
                                                                                  popup_manager=self.damage_heal_popup_manager)
                                         player.economy.spend_gold(button["cost"])
+                                        sound.play("menu_small.wav")  # achat de tour
                                         self.event_information.show(TypeEventEnum.NOUVELLE_TOUR)
 
 
@@ -251,6 +254,7 @@ class Game:
                                             player.add_unit(new_dragon)
 
                                             player.economy.spend_gold(button["cost"])
+                                            sound.play("menu_small.wav")  # achat de dragon
                                             self.event_information.show(TypeEventEnum.NOUVEAU_DRAGON)
 
                                             # logs
@@ -308,6 +312,7 @@ class Game:
                                 print("Dragon mort détecté :", occupant.name)
                                 occupant.grant_rewards()
                                 occupant.update()
+                                sound.play("dragon_death.wav")  # mort de dragon
                                 cell.remove_occupant(occupant)
                                 if occupant in occupant.player.units:
                                     occupant.player.units.remove(occupant)
@@ -322,14 +327,17 @@ class Game:
                             if occupant.is_dead():
                                 print("Tour morte détectée :", occupant.name)
                                 occupant.grant_rewards()
+                                sound.play("explosion.wav")  # tour détruite
                                 occupant.tower_disable(self.grid_comp.grid)
                                 self.event_information.show(TypeEventEnum.TOUR_DETRUITE)
 
             # Gestion base détruite
             if self.builder.base1.is_dead():
+                sound.play("explosion.wav")  # base détruite
                 self.event_information.show(TypeEventEnum.BASE_DETRUITE)
                 return ("endGame", self.p1.name)
             if self.builder.base2.is_dead():
+                sound.play("explosion.wav")  # base détruite
                 self.event_information.show(TypeEventEnum.BASE_DETRUITE)
                 return ("endGame", self.p2.name)
             # ======================================================================================

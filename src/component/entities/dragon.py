@@ -9,6 +9,7 @@ from src.component.entities.fireball import Fireball
 from src.component.grid import Cell, Grid
 from src.component.path_finding import find_path
 from src.component.position import Position
+from src.component.sound import sound
 from src.const import DRAGONNET_COST, DRAGON_MOYEN_COST, DRAGON_GEANT_COST
 from src.enum.type_entities import TypeEntitiesEnum
 from src.player import Player
@@ -76,6 +77,7 @@ class Dragon(Entity):
             # Ajoute l'or au joueur propriétaire du dragon
             amount = purse.amount
             self._player.economy.earn_gold(amount)
+            sound.play("coin_pickup.wav")  # ramassage de bourse
 
             print(
                 f"{self._player.name} a collecté une bourse de {amount} gold ! Total : {self._player.economy.get_gold()}")

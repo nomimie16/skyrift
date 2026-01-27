@@ -7,6 +7,7 @@ from src.component.entities.entity import Entity
 from src.component.entities.static_entity import StaticEntity
 from src.component.grid import Grid, Cell
 from src.component.position import Position
+from src.component.sound import sound
 from src.enum.type_entities import TypeEntitiesEnum
 from src.player import Player
 
@@ -191,6 +192,7 @@ class DragonEvents:
                 current_cell.remove_occupant(self.selected_dragon)
                 self.grid.add_occupant(self.selected_dragon, cell)
                 self.selected_dragon.move_dragon(cell.position.x, cell.position.y, self.grid)
+                sound.play("wing_flap.wav")  # battement d'ailes lors du déplacement
 
                 self.selected_dragon.has_moved = True
                 print(f"Dragon déplacé - Déplacement utilisé pour ce dragon")
@@ -217,6 +219,7 @@ class DragonEvents:
                         occupant.last_attacker = player
                         occupant.take_damage(damage)
                         self.selected_dragon.attack_fireball(occupant)
+                        sound.play("dragon_attack.wav")  # attaque de dragon
 
                         if self.damage_heal_popup_manager:
                             self.damage_heal_popup_manager.spawn_for_entity(occupant, -damage)
