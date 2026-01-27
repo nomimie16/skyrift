@@ -14,7 +14,7 @@ SCREEN_W, SCREEN_H = screen.get_size()
 ROWS = 24
 COLS = 24
 
-PANEL_WIDTH = max(200, int(SCREEN_W * 0.15))
+PANEL_WIDTH = max(250, int(SCREEN_W * 0.15))
 
 TOP_PCT = 0.10
 BOTTOM_PCT = 0.03
