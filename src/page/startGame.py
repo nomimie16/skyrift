@@ -5,7 +5,7 @@
 import pygame
 from src.const import *
 from src.page.ui_components import Button
-from src.page.sound import sound
+from src.component.sound import sound
 
 
 def run_start(screen):
