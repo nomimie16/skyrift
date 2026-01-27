@@ -104,6 +104,7 @@ class Dragon(Entity):
         if self.path:
             print("Chemin trouvé :", self.path)
             print("Proprietaire du dragon : ", self._player.name)
+            sound.play_loop("wing_flap.wav", identifier=f"dragon_move_{id(self)}")
         else:
             print("Pas de chemin possible")
 
@@ -155,6 +156,7 @@ class Dragon(Entity):
                 self._moving = False
                 self._target_cell = None
                 self._index_img = 0
+                sound.stop(f"dragon_move_{id(self)}")
                 # Vérifier si le dragon s'est arrêté sur une bourse
                 amount = self._check_purse_collection()
                 if amount:

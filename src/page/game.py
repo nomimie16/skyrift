@@ -313,6 +313,7 @@ class Game:
                                 occupant.grant_rewards()
                                 occupant.update()
                                 sound.play("dragon_death.wav")  # mort de dragon
+                                sound.stop(f"dragon_move_{id(occupant)}")
                                 cell.remove_occupant(occupant)
                                 if occupant in occupant.player.units:
                                     occupant.player.units.remove(occupant)
