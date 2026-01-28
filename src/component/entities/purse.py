@@ -29,7 +29,7 @@ def spawn_random_purse(grid: Grid, amount: int = 50) -> 'Purse | None':
     cell = random.choice(free_cells)
     purse = Purse(cell.position.x, cell.position.y, amount)
     grid.add_occupant(purse, cell)
-    sound.play("coin_spawn.wav")  # apparition de bourse
+    sound.play("magic.wav")  # apparition de bourse
 
     return purse
 

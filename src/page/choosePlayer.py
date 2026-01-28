@@ -5,7 +5,7 @@ import pygame
 from src.const import *
 from src.page.ui_components import Button
 from src.enum.game_mode import GameMode
-
+from src.component.sound import sound
 
 def run_choose_player(screen):
     """Écran de sélection du mode de jeu"""
@@ -83,6 +83,7 @@ def run_choose_player(screen):
                 # Vérifier les boutons de mode
                 for btn in mode_buttons:
                     if btn["rect"].collidepoint(event.pos):
+                        sound.play("button.wav")
                         selected_mode = btn["mode"]
                         print(f"Mode sélectionné : {selected_mode}")
                 
@@ -230,6 +231,8 @@ def show_pseudo_popup(screen, mode, background):
                     all_filled = all(field["value"].strip() != "" for field in input_fields)
                     
                     if mode == GameMode.AI_VS_AI.value or all_filled:
+                        sound.play("button.wav")
+                        sound.stop_all()
                         # Récupérer les pseudos
                         if mode == GameMode.PLAYER_VS_PLAYER.value:
                             p1_name = input_fields[0]["value"].strip()
