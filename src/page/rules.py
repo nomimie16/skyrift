@@ -4,6 +4,7 @@
 
 import pygame
 from src.const import *
+from src.component.sound import sound
 
 def run_rules(screen, from_game):
 
@@ -292,12 +293,14 @@ def run_rules(screen, from_game):
                 if left_arrow_rect.collidepoint(event.pos):
                     if current_page > 0:
                         current_page -= 1
+                        sound.play("rules_turn.wav")
                         print(f"Page {current_page}")
 
                 # page suivante
                 if right_arrow_rect.collidepoint(event.pos):
                     if current_page < max_page:
                         current_page += 1
+                        sound.play("rules_turn.wav")
                         print(f"Page {current_page}")
                 
         pygame.display.flip()
