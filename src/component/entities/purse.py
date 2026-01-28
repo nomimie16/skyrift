@@ -6,6 +6,7 @@ from src import screen_const as sc
 from src.component.entities.purse_effect import PurseEffect
 from src.component.entities.zone_entity import ZoneEntity
 from src.component.grid import Grid
+from src.component.sound import sound
 from src.const import PURSE_SPAWN_CHANCE_PER_TURN
 from src.enum.type_entities import TypeEntitiesEnum
 
@@ -28,6 +29,7 @@ def spawn_random_purse(grid: Grid, amount: int = 50) -> 'Purse | None':
     cell = random.choice(free_cells)
     purse = Purse(cell.position.x, cell.position.y, amount)
     grid.add_occupant(purse, cell)
+    sound.play("magic.wav")  # apparition de bourse
 
     return purse
 

@@ -6,6 +6,7 @@ from src.component.entities.dragon import Dragon
 from src.component.entities.tower import Tower
 from src.component.grid import Grid, Cell
 from src.component.position import Position
+from src.component.sound import sound
 from src.enum.type_entities import TypeEntitiesEnum
 from src.screen_const import TILE_SIZE, OFFSET_X, OFFSET_Y
 
@@ -128,6 +129,8 @@ class TowerEvents:
         """
         if not self.selected_tower:
             return
+
+        sound.play("cannon.wav")  # attaque de tour
 
         for dragon in self.attack_cells:
             dragon.take_damage(self.selected_tower.attack_damage)

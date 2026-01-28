@@ -93,7 +93,7 @@ Voici un tableau présentant les **caractéristiques** de chaque type de **drago
 
 * Pour séléctionner une unité, il vous suffit de **cliquer** sur une unité déjà déployée et les actions possibles apparaîtrons (déplacements, attaque).
 
-![background](assets/img/backgroundsquare.png)
+![background](assets/img/attaque1.png)
 
 ## Utilisation des unités
 
@@ -104,7 +104,7 @@ Voici un tableau présentant les **caractéristiques** de chaque type de **drago
     * **L'attaque** : si un dragon ennemi est à une certaine distance de vous, vous aurez la possibilité de l'attaquer. Selectionner l'unité et **cliquez** sur la zone **rouge** vous proposant de passer à l'offensive
     * **Les déplacements** : en selectionnant votre dragon, vous verrez apparaître les cases de **déplacements** accessibles en **bleu.** Cliquez sur la case où vous souhaitez aller pour menez vos troupes jusqu'à la base ennemie.
 
-![background](assets/img/backgroundsquare.png)
+![background](assets/img/attaque1.png)
 
 
 ### Utilisation des tours
@@ -112,7 +112,7 @@ Voici un tableau présentant les **caractéristiques** de chaque type de **drago
 * A l'aide votre tour vous allez pouvoir **protéger** efficacement votre base alliée.
     * **L'attaque** : comme pour les dragons, si un dragon ennemi est à une certaine **distance** de votre tour de défense, vous aurez la possibilité de **l'attaquer**. Selectionner l'unité et cliquez sur la zone **rouge** vous proposant de passer à l'offensive
 
-![background](assets/img/backgroundsquare.png)
+![background](assets/img/achat.png)
 
 
 

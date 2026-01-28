@@ -9,6 +9,7 @@ from src.component.grid import Grid, Cell
 from src.component.position import Position
 from src.enum.type_entities import TypeEntitiesEnum
 from src.player import Player
+from src.component.sound import sound
 
 
 class DragonEvents:
@@ -217,6 +218,7 @@ class DragonEvents:
                         occupant.last_attacker = player
                         occupant.take_damage(damage)
                         self.selected_dragon.attack_fireball(occupant)
+                        sound.play("fireball_attack.wav")  # attaque de dragon
 
                         if self.damage_heal_popup_manager:
                             self.damage_heal_popup_manager.spawn_for_entity(occupant, -damage)

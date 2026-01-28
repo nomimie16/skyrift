@@ -68,14 +68,14 @@ Ile de vie                              | Volcan                             | T
 
 ## Effet des structures
 
-![background](assets/img/backgroundsquare.png)
+![background](assets/img/ilevie2.png)
 
 * Si tu es aux alentours de **l'ile de vie** ton dragon bléssé pourra **regagner de la vie** à chaque tour. Plus ton dragon reste aux abords de celle-ci plus il **augmentera** son nombre total de pv.
 
-![background](assets/img/backgroundsquare.png)
+![background](assets/img/volcan1.png)
 
 * En arrivant autour de l'énorme **volcan**, les dragons subissent des **dégats** liés à la chaleur intense de la zone volcanique. Evite de rester trop longtemps aux alentours du magma, si tu souhaite garder un **maximum** d'unités en vie.
 
-![background](assets/img/backgroundsquare.png)
+![background](assets/img/volcan1.png)
 
 * La tornade fait son apparition tous les **3 tours** et **renverse tout** sur son passage. Pendant ces trois tours, elle inflige des **dégats** aux dragons se situant sur son **chemin**. Pense à planifier tes **déplacements** en fonction de la zone où elle apparait.

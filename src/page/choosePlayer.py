@@ -5,7 +5,7 @@ import pygame
 from src.const import *
 from src.page.ui_components import Button
 from src.enum.game_mode import GameMode
-
+from src.component.sound import sound
 
 def run_choose_player(screen):
     """Écran de sélection du mode de jeu"""
@@ -83,6 +83,7 @@ def run_choose_player(screen):
                 # Vérifier les boutons de mode
                 for btn in mode_buttons:
                     if btn["rect"].collidepoint(event.pos):
+                        sound.play("button.wav")
                         selected_mode = btn["mode"]
                         print(f"Mode sélectionné : {selected_mode}")
                 
@@ -179,14 +180,10 @@ def show_pseudo_popup(screen, mode, background):
     center_x = screen.get_width() // 2
     center_y = screen.get_height() // 2
     
-    popup_width = 500
-    popup_height = 400
-    popup_rect = pygame.Rect(
-        center_x - popup_width // 2,
-        center_y - popup_height // 2,
-        popup_width,
-        popup_height
-    )
+    # Image de fond de la popup
+    bg_pause = pygame.image.load(IMG_BG_PAUSE).convert_alpha()
+    bg_pause = pygame.transform.scale(bg_pause, (500, 500))
+    bg_rect = bg_pause.get_rect(center=(center_x, center_y))
     
     # Champs de saisie
     input_fields = []
@@ -230,6 +227,8 @@ def show_pseudo_popup(screen, mode, background):
                     all_filled = all(field["value"].strip() != "" for field in input_fields)
                     
                     if mode == GameMode.AI_VS_AI.value or all_filled:
+                        sound.play("button.wav")
+                        sound.stop_all()
                         # Récupérer les pseudos
                         if mode == GameMode.PLAYER_VS_PLAYER.value:
                             p1_name = input_fields[0]["value"].strip()
@@ -280,14 +279,14 @@ def show_pseudo_popup(screen, mode, background):
         # === AFFICHAGE ===
         screen.blit(background, (0, 0))
         
-        # Overlay
+        # Overlay semi-transparent
         overlay = pygame.Surface(screen.get_size())
         overlay.set_alpha(OVERLAY_ALPHA)
         overlay.fill(OVERLAY_COLOR)
         screen.blit(overlay, (0, 0))
         
-        # Popup
-        pygame.draw.rect(screen, POPUP_COLOR, popup_rect, border_radius=20)
+        # Image de fond de la popup
+        screen.blit(bg_pause, bg_rect)
         
         # Titre
         if mode == GameMode.AI_VS_AI.value:
@@ -295,39 +294,46 @@ def show_pseudo_popup(screen, mode, background):
         else:
             title_text = "Entrez vos pseudos"
        
-        title = font_title.render(title_text, True, TEXT_COLOR)
-        title_rect = title.get_rect(center=(center_x, popup_rect.top + 50))
+        title = font_title.render(title_text, True, BROWN_FONT)
+        title_rect = title.get_rect(center=(center_x, bg_rect.top + 60))
         screen.blit(title, title_rect)
         
         # Champs de saisie
         for field in input_fields:
             # Fond
-            field_color = (220, 220, 255) if field["active"] else (240, 240, 240)
+            field_color = (255, 250, 240) if field["active"] else (245, 240, 230)
             pygame.draw.rect(screen, field_color, field["rect"], border_radius=8)
-            pygame.draw.rect(screen, BUTTON_COLOR if field["active"] else (150, 150, 150), field["rect"], 2, border_radius=8)
+            pygame.draw.rect(screen, BROWN_FONT if field["active"] else (150, 120, 90), field["rect"], 2, border_radius=8)
             
             # Label
-            label = font_input.render(field["label"], True, TEXT_COLOR)
+            label = font_input.render(field["label"], True, BROWN_FONT)
             label_rect = label.get_rect(bottomleft=(field["rect"].left, field["rect"].top - 5))
             screen.blit(label, label_rect)
             
             # Texte saisi
-            text = font_input.render(field["value"] + ("|" if field["active"] else ""), True, TEXT_COLOR)
+            text = font_input.render(field["value"] + ("|" if field["active"] else ""), True, TRANSLUCENT_BROWN)
             text_rect = text.get_rect(left=field["rect"].left + 10, centery=field["rect"].centery)
             screen.blit(text, text_rect)
         
         # Bouton Valider
-        all_filled = all(f["value"].strip() != "" for f in input_fields) or mode == "aivai"
-        btn_color = BUTTON_COLOR if all_filled else (150, 150, 150)
+        all_filled = all(f["value"].strip() != "" for f in input_fields) or mode == GameMode.AI_VS_AI.value
+        mouse_pos = pygame.mouse.get_pos()
+        is_hover = btn_validate.collidepoint(mouse_pos) and all_filled
         
-        pygame.draw.rect(screen, btn_color, btn_validate, border_radius=12)
-        validate_text = font_title.render("Valider", True, BUTTON_TEXT_COLOR)
+        btn_color = HOVER_BROWN if is_hover else TRANSLUCENT_BROWN if all_filled else (150, 150, 150, 150)
+        
+        # Fond du bouton avec transparence
+        btn_surface = pygame.Surface((btn_validate.width, btn_validate.height), pygame.SRCALPHA)
+        pygame.draw.rect(btn_surface, btn_color, (0, 0, btn_validate.width, btn_validate.height), border_radius=12)
+        screen.blit(btn_surface, btn_validate)
+        
+        validate_text = font_title.render("Valider", True, BROWN_FONT if all_filled else (100, 100, 100))
         validate_rect = validate_text.get_rect(center=btn_validate.center)
         screen.blit(validate_text, validate_rect)
         
         # Message si IA vs IA
-        if mode == "aivai":
-            msg = font_input.render("Appuyez sur Valider pour lancer", True, TEXT_COLOR)
+        if mode == GameMode.AI_VS_AI.value:
+            msg = font_input.render("Appuyez sur Valider pour lancer", True, BROWN_FONT)
             msg_rect = msg.get_rect(center=(center_x, center_y + 20))
             screen.blit(msg, msg_rect)
         

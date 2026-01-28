@@ -3,6 +3,7 @@ import pygame
 from src import screen_const as sc
 from src.component.entities.purse import spawn_random_purse
 from src.component.entities.tower import Tower
+from src.component.sound import sound
 from src.const import *
 from src.enum.event_enum import TypeEventEnum
 from src.enum.game_mode import GameMode
@@ -21,6 +22,7 @@ from src.page.component.turn_popup import TurnPopup
 from src.page.sidepanels import draw_sidepanels
 from src.player import Player
 from src.turn import Turn
+from src.page.settings import get_settings_states
 
 
 class Game:
@@ -184,6 +186,11 @@ class Game:
         print("Tour de", self.turn.current_player().name, "commencé")
 
     def run_game(self):
+        music_on, sound_on = get_settings_states()
+        if music_on:  
+            sound.play_loop("music_menu.wav", identifier="music_menu")  # musique de fond
+
+        
         global buy_buttons
         running = True
 
@@ -258,6 +265,8 @@ class Game:
 
                     # Clic sur le bouton tour suivant (temporaire)
                     if self.next_turn_button.is_clicked(event.pos):
+                        sound.play("button.wav")
+                        self.dragon_events._reset_selection()
                         self.pass_turn()
                         continue
 
@@ -289,6 +298,7 @@ class Game:
                                             self.builder.tower2.tower_activation(self.grid_comp.grid, player,
                                                                                  popup_manager=self.damage_heal_popup_manager)
                                         player.economy.spend_gold(button["cost"])
+                                        sound.play("buy.wav")  # achat de tour
                                         self.event_information.show(TypeEventEnum.NOUVELLE_TOUR)
 
 
@@ -319,6 +329,7 @@ class Game:
                                             player.add_unit(new_dragon)
 
                                             player.economy.spend_gold(button["cost"])
+                                            sound.play("buy.wav")  # achat de dragon
                                             self.event_information.show(TypeEventEnum.NOUVEAU_DRAGON)
 
                                             # logs
@@ -376,6 +387,8 @@ class Game:
                                 print("Dragon mort détecté :", occupant.name)
                                 occupant.grant_rewards()
                                 occupant.update()
+                                sound.play("impact.wav")  # mort de dragon
+                                sound.stop(f"dragon_move_{id(occupant)}")
                                 cell.remove_occupant(occupant)
                                 if occupant in occupant.player.units:
                                     occupant.player.units.remove(occupant)
@@ -390,14 +403,17 @@ class Game:
                             if occupant.is_dead():
                                 print("Tour morte détectée :", occupant.name)
                                 occupant.grant_rewards()
+                                sound.play("rock_destroy.wav")  # tour détruite
                                 occupant.tower_disable(self.grid_comp.grid)
                                 self.event_information.show(TypeEventEnum.TOUR_DETRUITE)
 
             # Gestion base détruite
             if self.builder.base1.is_dead():
+                sound.play("rock_destroy.wav")  # base détruite
                 self.event_information.show(TypeEventEnum.BASE_DETRUITE)
                 return ("endGame", self.p1.name)
             if self.builder.base2.is_dead():
+                sound.play("rock_destroy.wav")  # base détruite
                 self.event_information.show(TypeEventEnum.BASE_DETRUITE)
                 return ("endGame", self.p2.name)
             # ======================================================================================
