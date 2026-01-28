@@ -33,11 +33,26 @@ def deplacement_score(dragon: Dragon, target_cell: Cell, grid: Grid, player, ene
     if player.base and player.base.cell:
         dist_base_ally = grid.distance(target_cell, player.base.cell)
 
+    # on verifie si le dragon est dans une zone dangereuse
+    current_in_danger = False
+    if dragon.cell:
+        for occupant in dragon.cell.occupants:
+            if (TypeEntitiesEnum.VOLCANO in occupant.type_entity or
+                TypeEntitiesEnum.TORNADO in occupant.type_entity or
+                TypeEntitiesEnum.BAD_EFFECT_ZONE in occupant.type_entity):
+                current_in_danger = True
+                break
+    target_in_danger = False
     for occupant in target_cell.occupants:
-
-        # L'ia va vouloir éviter les mauvais effets de zones-
-        if TypeEntitiesEnum.VOLCANO in occupant.type_entity or TypeEntitiesEnum.TORNADO in occupant.type_entity or TypeEntitiesEnum.BAD_EFFECT_ZONE in occupant.type_entity:
+        # L'ia va vouloir éviter les mauvais effets de zones
+        if (TypeEntitiesEnum.VOLCANO in occupant.type_entity or TypeEntitiesEnum.TORNADO in occupant.type_entity or TypeEntitiesEnum.BAD_EFFECT_ZONE in occupant.type_entity):
+            target_in_danger = True
             score -= 500
+            break
+
+    # tres gros bonus si l'ia tente de sortir d'une zone dangereuse
+    if current_in_danger and not target_in_danger:
+        score += 800
 
         if TypeEntitiesEnum.PLAYER_EFFECT_ZONE in occupant.type_entity:
             score += 40
@@ -82,15 +97,30 @@ def deplacement_score(dragon: Dragon, target_cell: Cell, grid: Grid, player, ene
     if dist_base_ally < 2:  # ne pas rester coller au spawn
         score -= 50
 
-    # for ally in player.units:
-    #     if ally != dragon and ally.cell:
-    #         dist_ally = grid.distance(target_cell, ally.cell)
-    #
-    #         if dist_ally == 0:
-    #             score -= 1000
-    #         elif dist_ally == 1:
-    #             if closest_enemy_dist > dragon.attack_range:
-    #                 score -= 2
+    # on evite les regroupements de dragons sans raison
+    for ally in player.units:
+        if ally != dragon and ally.cell:
+            dist_ally = grid.distance(target_cell, ally.cell)
+            if dist_ally == 1:
+                # le malus s'applique que si aucun ennemi proche (sinon c'est un regroupement strategique)
+                if closest_enemy_dist > dragon.attack_range + 2:
+                    score -= 20
+
+    # evite les goulots d'etranglement (quand le volcan est quasi collé au bord de la map en bas a gauche par exemple)
+    if not (current_in_danger and not target_in_danger):
+        adjacent_obstacles = 0
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        for dx, dy in directions:
+            nx, ny = target_cell.position.x + dx, target_cell.position.y + dy
+            if 0 <= nx < grid.nb_columns and 0 <= ny < grid.nb_rows:
+                neighbor = grid.cells[ny][nx]
+                for occ in neighbor.occupants:
+                    if TypeEntitiesEnum.OBSTACLE in occ.type_entity:
+                        adjacent_obstacles += 1
+                        break
+
+        if adjacent_obstacles >= 2:
+            score -= 30 * adjacent_obstacles
 
     return score
 
@@ -158,10 +188,10 @@ def attaque_score(dragon: Dragon, target: Dragon, grid: Grid, player, enemy) -> 
         percent_missing = 1.0 - (target.hp / target.max_hp)
         score += percent_missing * 50
 
-    if target.cell == enemy.base.cell:
+    if enemy.base and enemy.base.cell and target.cell == enemy.base.cell:
         score += 150  # attaquer la base ennemie
 
-    if target.cell == enemy.tower.cell:
+    if enemy.tower and enemy.tower.cell and target.cell == enemy.tower.cell:
         score += 200  # attaquer la tour  ennemie
 
     return score
@@ -190,7 +220,7 @@ def score_purchase_option(player, ennemy, option, current_gold, danger_score):
                 missing = 0.7 - ratio_hp
                 score += missing * 2000
 
-        if player.tower and not player.tower.active:
+        if player.tower and not player.tower.active and player.tower.cell:
             x_start = player.tower.cell.position.x - (player.tower.width - 1)
             y_base = player.tower.cell.position.y
             target_height = 3
@@ -235,17 +265,18 @@ def score_purchase_option(player, ennemy, option, current_gold, danger_score):
         if nb_allies == 0:  # si aucune unité on en achère une
             score += 200
 
-        elif option["name"] == "wait":  # attendre au lieu d'acheter
-            score += 10
+    # scoring de l'attente
+    elif option["name"] == "wait":
+        score += 10
 
-            if danger_score > 0.7:  # si danger critique alors pas d'attente
-                score -= 500
+        if danger_score > 0.7:
+            score -= 500
 
-            if current_gold > 1000:  # si beaucoup de gold  alors on achète
-                score -= 100
+        if current_gold > 1000:
+            score -= 100
 
-            if danger_score < 0.3 and current_gold < DRAGON_GEANT_COST:  # si danger faible on économise
-                score += 150
+        if danger_score < 0.3 and current_gold < DRAGON_GEANT_COST:
+            score += 150
 
     return score
 
@@ -305,7 +336,7 @@ def get_best_attack(dragon: Dragon, grid: Grid, player: Player, enemy: Player):
     if enemy.base and not enemy.base.is_dead():
         potential_targets.append(enemy.base)
 
-    if enemy.tower.active:
+    if enemy.tower and enemy.tower.active:
         potential_targets.append(enemy.tower)
 
     for e in potential_targets:

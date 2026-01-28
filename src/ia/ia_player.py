@@ -102,7 +102,8 @@ class IAPlayer:
                 )
             else:
                 new_dragon = best_option["class"](spawn_x, spawn_y, self.player)
-                new_dragon.update_direction("gauche")
+                direction = "droite" if self.player.color == "bleu" else "gauche"
+                new_dragon.update_direction(direction)
                 self.player.add_unit(new_dragon)
                 self.grid.add_occupant(new_dragon, spawn_cell)
 
@@ -111,35 +112,49 @@ class IAPlayer:
     def play_turn(self, turn):
 
         for dragon in self.player.units:
-            if isinstance(dragon, Dragon):
-                if dragon.moving or dragon.has_moved:
-                    continue
+            if not isinstance(dragon, Dragon):
+                continue
+            if dragon.moving or dragon.has_moved:
+                continue
 
-                # Meilleur déplcacement
-                move_cell, score_move = get_best_move(dragon, self.grid, self.player, self.ennemy, self.dragon_events,
-                                                      turn)
-                # Meilleure attaque
-                target_now, score_attack_now = get_best_attack(dragon, self.grid, self.player, self.ennemy)
 
-                if score_attack_now > score_move:  # Attaque avant déplacement
+            target_now, score_attack_now = get_best_attack(dragon, self.grid, self.player, self.ennemy)
+
+            move_cell, score_move = get_best_move(dragon, self.grid, self.player, self.ennemy, self.dragon_events, turn)
+
+            target_after_move = None
+            score_attack_after = 0
+            if move_cell and move_cell != dragon.cell:
+                # change la position temporairement pour tester
+                old_cell = dragon.cell
+                dragon.cell = move_cell
+                target_after_move, score_attack_after = get_best_attack(dragon, self.grid, self.player, self.ennemy)
+                dragon.cell = old_cell
+
+            # on priosise le mouvement avant l'attaque, sauf si attaquer tout de suite st clairement mieux
+            should_attack_first = (
+                target_now and score_attack_now > 0 and
+                (score_attack_now >= score_attack_after or not move_cell or move_cell == dragon.cell)
+            )
+
+            if should_attack_first:
+                if not dragon.has_attacked:
                     dragon.attack(target_now)
                     dragon.attack_fireball(target_now)
 
-                    if move_cell and move_cell != dragon.cell and score_move > 0:
-                        self.execute_move(dragon, move_cell)
+                if move_cell and move_cell != dragon.cell:
+                    self.execute_move(dragon, move_cell)
+            else:
+                if move_cell and move_cell != dragon.cell:
+                    self.execute_move(dragon, move_cell)
 
-                else:  # Déplacement avant attaque
+                target_after, score_after = get_best_attack(dragon, self.grid, self.player, self.ennemy)
+                if target_after and score_after > 0 and not dragon.has_attacked:
+                    dragon.attack(target_after)
+                    dragon.attack_fireball(target_after)
 
-                    if move_cell and move_cell != dragon.cell:
-                        self.execute_move(dragon, move_cell)
-                    # TODO turn.animations_ended()
+            dragon.has_moved = True
 
-                    target_after, score_after = get_best_attack(dragon, self.grid, self.player, self.ennemy)
-                    if target_after and score_after > 0:
-                        dragon.attack(target_after)
-                        dragon.attack_fireball(target_after)
-
-                dragon.has_moved = True
         self.manage_economy()
 
     def execute_move(self, dragon, target_cell):
