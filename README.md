@@ -24,7 +24,7 @@ Ce jeu développé en Python se déroule dans les cieux, où une zone de combat 
 - Lancement depuis un **terminal** de commande :
   * Dans un terminal ouvert sur le repertoire du jeu, entrez cette commande :
   ```bash
-  python main.py
+  python -m src.page.main
   ```
 
 ## Dépendances
