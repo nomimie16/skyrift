@@ -48,6 +48,8 @@ def run_start(screen):
         Button("Règles", center_x, 520, "rulesFromStart", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE),
         Button("Quitter", center_x, 620, "quit", TRANSLUCENT_BLUE, HOVER_BLUE, WHITE)
     ]
+    
+    sound.play("music_home.wav")
 
     # ===== BOUCLE PRINCIPALE =====
     running = True
@@ -58,10 +60,11 @@ def run_start(screen):
             if event.type == pygame.QUIT:
                 print("\nFermeture du jeu.")
                 return 'quit'
+            
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for button in buttons:
                     if button.rect.collidepoint(event.pos):
-                        sound.play("menu_small.wav")
+                        sound.play("button.wav")
                         print(f"Action : {button.action}")
                         return button.action
 

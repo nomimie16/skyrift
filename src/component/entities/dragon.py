@@ -77,7 +77,7 @@ class Dragon(Entity):
             # Ajoute l'or au joueur propriétaire du dragon
             amount = purse.amount
             self._player.economy.earn_gold(amount)
-            sound.play("coin_pickup.wav")  # ramassage de bourse
+            sound.play("buy.wav")  # ramassage de bourse
 
             print(
                 f"{self._player.name} a collecté une bourse de {amount} gold ! Total : {self._player.economy.get_gold()}")

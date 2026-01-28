@@ -130,7 +130,7 @@ class TowerEvents:
         if not self.selected_tower:
             return
 
-        sound.play("tower_attack.wav")  # attaque de tour
+        sound.play("cannon.wav")  # attaque de tour
 
         for dragon in self.attack_cells:
             dragon.take_damage(self.selected_tower.attack_damage)

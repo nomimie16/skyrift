@@ -218,7 +218,7 @@ class DragonEvents:
                         occupant.last_attacker = player
                         occupant.take_damage(damage)
                         self.selected_dragon.attack_fireball(occupant)
-                        sound.play("dragon_attack.wav")  # attaque de dragon
+                        sound.play("fireball_attack.wav")  # attaque de dragon
 
                         if self.damage_heal_popup_manager:
                             self.damage_heal_popup_manager.spawn_for_entity(occupant, -damage)

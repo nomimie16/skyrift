@@ -5,8 +5,13 @@
 import pygame
 from src.const import *
 from src.page.ui_components import Button, Toggle
+from src.component.sound import sound
+
+music_on = True
+sound_on = True
 
 def run_settings(screen, background, from_game):
+    global music_on, sound_on
 
     # Fond des settings
     bgSettings = pygame.image.load(IMG_BGSETTINGS).convert_alpha()
@@ -25,8 +30,8 @@ def run_settings(screen, background, from_game):
     ]
     
     # Etats des toggles
-    music_on = False
-    sound_on = False
+    toggles[0].is_on = music_on      
+    toggles[1].is_on = sound_on 
 
     # Tant que le jeu tourne
     running = True
@@ -78,3 +83,6 @@ def run_settings(screen, background, from_game):
         pygame.display.flip()
 
     return None
+
+def get_settings_states():
+    return music_on, sound_on

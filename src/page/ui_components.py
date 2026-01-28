@@ -38,7 +38,7 @@ class Button:
 class Toggle:
     def __init__(self, label, center_x, center_y):
         self.label = label
-        self.is_on = False
+        self.is_on = True
         size = (80, 70)
         
         # Charger les images
