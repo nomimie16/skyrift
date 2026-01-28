@@ -6,9 +6,11 @@ from src.component.entities.tower import Tower
 from src.component.sound import sound
 from src.const import *
 from src.enum.event_enum import TypeEventEnum
+from src.enum.game_mode import GameMode
 from src.enum.type_entities import TypeEntitiesEnum
 from src.events.dragonEvents import DragonEvents
 from src.events.towerEvents import TowerEvents
+from src.ia.ia_player import IAPlayer
 from src.page.component.banner_information import BannerInformation
 from src.page.component.damage_heal_popup import DamageAndHealPopupManager
 from src.page.component.gold_popup import GoldPopupManager
@@ -17,7 +19,6 @@ from src.page.component.map_builder import MapBuilder
 from src.page.component.next_button import NextTurnButton
 from src.page.component.panels_layout import PanelsLayout
 from src.page.component.turn_popup import TurnPopup
-from src.enum.game_mode import GameMode
 from src.page.sidepanels import draw_sidepanels
 from src.player import Player
 from src.turn import Turn
@@ -29,7 +30,7 @@ class Game:
     def __init__(self, screen, ui, game_config=None):
         self.screen = screen
         self.ui = ui
-        
+
         # Configuration du jeu (mode et pseudos)
         self.game_config = game_config or {
             'mode': GameMode.PLAYER_VS_PLAYER.value,
@@ -37,19 +38,74 @@ class Game:
             'p2': 'Joueur 2'
         }
 
+        have_ia = False  # TODO: à modifier selon le mode de jeu choisi
         self.background = pygame.image.load("src/assets/img/game_background.png").convert()
         self.background = pygame.transform.scale(self.background, (screen.get_width(), screen.get_height()))
-        
-        # Joueurs
-        self.p1 = Player(
-            name=self.game_config['p1'], 
-            color="bleu",
-            is_ai=(self.game_config['mode'] == GameMode.AI_VS_AI.value)
+
+        # Grille
+        self.grid_comp = GridComponent(
+            cols=sc.COLS,
+            rows=sc.ROWS,
+            tile=sc.TILE_SIZE,
+            origin=(sc.OFFSET_X, sc.OFFSET_Y)
         )
-        self.p2 = Player(
-            name=self.game_config['p2'], 
-            color="rouge",
-        )
+
+        # Popup managers
+        self.damage_heal_popup_manager = DamageAndHealPopupManager()
+        self.gold_popup_manager = GoldPopupManager()
+
+        # Events
+        self.dragon_events = DragonEvents(self.grid_comp.grid, origin=(sc.OFFSET_X, sc.OFFSET_Y),
+                                          tile_size=sc.TILE_SIZE,
+                                          damage_heal_popup_manager=self.damage_heal_popup_manager)
+        self.tower_events = TowerEvents(self.grid_comp.grid, damage_heal_popup_manager=self.damage_heal_popup_manager)
+
+        self.ia_player_1 = None
+        self.ia_player_2 = None
+        if self.game_config['mode'] == GameMode.PLAYER_VS_PLAYER.value:
+            # Joueurs
+            self.p1 = Player(
+                name=self.game_config['p1'],
+                color="bleu"
+            )
+            self.p2 = Player(
+                name=self.game_config['p2'],
+                color="rouge"
+            )
+        elif self.game_config['mode'] == GameMode.PLAYER_VS_AI.value:
+            self.p1 = Player(
+                name=self.game_config['p1'],
+                color="bleu"
+            )
+            self.ia_player_1 = None
+            self.p2 = Player(
+                name=self.game_config['p2'],
+                color="rouge",
+                is_ai=True
+            )
+            self.ia_player_2 = IAPlayer(self.p2, self.p1, self.grid_comp.grid, self.dragon_events)
+        elif self.game_config['mode'] == GameMode.AI_VS_AI.value:
+            self.p1 = Player(
+                name=self.game_config['p1'],
+                color="bleu",
+                is_ai=True
+            )
+            self.p2 = Player(
+                name=self.game_config['p2'],
+                color="rouge",
+                is_ai=True
+            )
+            self.ia_player_2 = IAPlayer(self.p2, self.p1, self.grid_comp.grid, self.dragon_events)
+            self.ia_player_1 = IAPlayer(self.p1, self.p2, self.grid_comp.grid, self.dragon_events)
+
+        # if have_ia:
+        #     self.ia_player_1 = IAPlayer(self.p1, self.p2, self.grid_comp.grid, self.dragon_events)
+        #     self.ia_player_2 = IAPlayer(self.p2, self.p1, self.grid_comp.grid, self.dragon_events)
+        # else:
+        #     self.p2 = Player(
+        #         name=self.game_config['p2'],
+        #         color="rouge",
+        #     )
 
         self.turn = Turn(self.p1, self.p2)
         player = self.turn.current_player()
@@ -57,9 +113,6 @@ class Game:
         # POPUP
         self.turn_popup = TurnPopup(duration=2000)
         self.turn_popup.show(player.name)
-
-        self.damage_heal_popup_manager = DamageAndHealPopupManager()
-        self.gold_popup_manager = GoldPopupManager()
 
         # Listener pour l'or
         self.p1.economy.add_listener(self.on_gold_change)
@@ -72,12 +125,6 @@ class Game:
         self.current_right_x = screen.get_width()
 
         # Création de la grille et de la map
-        self.grid_comp = GridComponent(
-            cols=sc.COLS,
-            rows=sc.ROWS,
-            tile=sc.TILE_SIZE,
-            origin=(sc.OFFSET_X, sc.OFFSET_Y)
-        )
         self.builder = MapBuilder(self.grid_comp.grid, self.p1, self.p2)
         self.grid_comp.grid = self.builder.build_map()
 
@@ -108,6 +155,35 @@ class Game:
 
     def on_gold_change(self, delta):
         self.gold_popup_manager.spawn(*self.ui.coin_position, delta)
+
+    def pass_turn(self):
+        """Logique de passage de tour commune au joueur et à l'IA"""
+        if not self.turn.animations_ended(self.builder.tornado):
+            print("Vous devez attendre la fin de toutes les actions.")
+            return
+
+        print("Tour de", self.turn.current_player().name, "terminé")
+        self.turn.next()
+
+        for dragon in self.turn.current_player().units:  # Note: turn.next() a changé le joueur, attention à l'ordre ou utilisez turn.previous_player() si nécessaire, ou réinitialisez AVANT turn.next() comme dans votre code original.
+            pass
+
+        for dragon in self.turn.current_player().units:
+            dragon.reset_actions()
+
+        for row in self.grid_comp.grid.cells:
+            for cell in row:
+                cell.apply_zone_effects_end_turn(self.damage_heal_popup_manager)
+
+        spawn_random_purse(self.grid_comp.grid)
+
+        if self.builder.tornado:
+            self.builder.tornado.handle_turn(self.grid_comp.grid)
+
+        player = self.turn.current_player()
+        player.economy.start_turn()
+        self.turn_popup.show(player.name)
+        print("Tour de", self.turn.current_player().name, "commencé")
 
     def run_game(self):
         music_on, sound_on = get_settings_states()
@@ -153,6 +229,27 @@ class Game:
             self.dragon_events.draw(self.screen)
             self.tower_events.draw(self.screen)
 
+            if self.ia_player_1 is not None or self.ia_player_2 is not None:
+                current_player = self.turn.current_player()
+                if current_player == self.p2 and self.p2.is_ai:  # Si c'est le tour de l'IA (p2)
+
+                    self.ia_player_2.play_turn(self.turn)
+
+                    all_dragons_moved = all(d.has_moved for d in self.p2.units)  # ou une logique similaire
+
+                    if all_dragons_moved and self.turn.animations_ended(self.builder.tornado):
+                        # TODO add timer
+                        self.pass_turn()
+                elif current_player == self.p1 and self.p1.is_ai:  # Si c'est le tour de l'IA (p2)
+
+                    self.ia_player_1.play_turn(self.turn)
+
+                    all_dragons_moved = all(d.has_moved for d in self.p1.units)  # ou une logique similaire
+
+                    if all_dragons_moved and self.turn.animations_ended(self.builder.tornado):
+                        # TODO add timer
+                        self.pass_turn()
+
             for event in pygame.event.get():
                 action = self.ui.handle_event(event)
 
@@ -168,37 +265,9 @@ class Game:
 
                     # Clic sur le bouton tour suivant (temporaire)
                     if self.next_turn_button.is_clicked(event.pos):
-                        if not self.turn.animations_ended(self.builder.tornado):
-                            print("Vous devez attendre la fin de toutes les actions...")
-                            continue
-
-                        print("tour de ", self.turn.current_player().name, "terminé")
-                        self.turn.next()
-                        sound.play("button.wav")  # changement de tour
-
-                        # reinitialise la selection de dragon au changement de tour
+                        sound.play("button.wav")
                         self.dragon_events._reset_selection()
-
-                        # reinitialiser toutes les actions des dragons du joueur
-                        for dragon in self.turn.current_player().units:
-                            dragon.reset_actions()
-
-                        # Appliquer ou retirer les effets des zones sur les dragons
-                        for row in self.grid_comp.grid.cells:
-                            for cell in row:
-                                cell.apply_zone_effects_end_turn(self.damage_heal_popup_manager)
-
-                        # Spawn de la bourse
-                        spawn_random_purse(self.grid_comp.grid)
-
-                        # Spawn de la tornade
-                        if self.builder.tornado:
-                            self.builder.tornado.handle_turn(self.grid_comp.grid)
-
-                        player = self.turn.current_player()
-                        player.economy.start_turn()
-                        self.turn_popup.show(player.name)
-                        print("tour de ", self.turn.current_player().name, "commencé")
+                        self.pass_turn()
                         continue
 
                     # ouverture et fermeture des panneaux

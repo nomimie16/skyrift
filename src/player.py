@@ -9,7 +9,7 @@ class Player:  # a completer
         self._color = color
         self._base = base
         self._tower = tower
-        self.is_ai = is_ai
+        self._is_ai = is_ai
         self._economy = economy.Economy()  # economie du joueur
         self._units = []  # unités appartenant au joueur
 
@@ -52,3 +52,15 @@ class Player:  # a completer
     @tower.setter
     def tower(self, tower):
         self._tower = tower
+
+    @property
+    def base(self):
+        return self._base
+
+    @base.setter
+    def base(self, base):
+        self._base = base
+
+    @property
+    def is_ai(self):
+        return self._is_ai
