@@ -9,6 +9,7 @@ from src.component.grid import Grid, Cell
 from src.component.position import Position
 from src.enum.type_entities import TypeEntitiesEnum
 from src.player import Player
+from src.component.sound import sound
 
 
 class DragonEvents:

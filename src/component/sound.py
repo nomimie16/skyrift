@@ -27,7 +27,6 @@ class Sound:
                 except pygame.error as e:
                     print(f"Erreur lors du chargement du son {filename}: {e}")
 
-    def play(self, sound_file_name: str, loop=False):
     def play(self, sound_file_name: str, loops: int = 0):
         """Joue le son passé en paramètre, seul le nom du fichier est nécessaire
         """
@@ -42,12 +41,7 @@ class Sound:
         Joue un son en boucle infinie
         """
         if sound_file_name in self.sounds:
-            if identifier and identifier in self.looping_sounds:
-                self.stop(identifier)
-
-            self.sounds[sound_file_name].play(loops=-1)
-            if identifier:
-                self.looping_sounds[identifier] = sound_file_name
+            self.sounds[sound_file_name].play()
         else:
             print(f"Avertissement: Le son '{sound_file_name}' n'a pas été trouvé")
             return
@@ -71,6 +65,16 @@ class Sound:
     def stop_all(self):
         """Arrête tous les sons en cours de lecture"""
         pygame.mixer.stop()
+
+    def stop(self, identifier: str):
+        """
+        Arrête un son en boucle
+        """
+        if identifier in self.looping_sounds:
+            sound_file_name = self.looping_sounds[identifier]
+            if sound_file_name in self.sounds:
+                self.sounds[sound_file_name].stop()
+            del self.looping_sounds[identifier]
 
 
 # singleton a appeler pour jouer les sons (ne pas reinstancier le mixeur a chaque fois)

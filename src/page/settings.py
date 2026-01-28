@@ -65,10 +65,8 @@ def run_settings(screen, background, from_game):
                             toggle.toggle()
                             if toggle.label == "Musique :":
                                 music_on = toggle.is_on
-                                if music_on:
-                                    sound.play("music_menu.wav", loop=True)  # ne relance pas si déjà jouée
-                                else:
-                                    sound.stop_music()
+                                if music_on == False:
+                                    sound.stop("music_menu")
                             elif toggle.label == "Son du jeu :":
                                 if sound_on == False:
                                     sound.stop_all()

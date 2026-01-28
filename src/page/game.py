@@ -112,7 +112,7 @@ class Game:
         
         music_on, sound_on = get_settings_states()
         if music_on:  
-            sound.play("music_menu.wav", loop=True)
+            sound.play_loop("music_menu.wav", identifier="music_menu")  # musique de fond
             
         global buy_buttons
         running = True
