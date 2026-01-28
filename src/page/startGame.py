@@ -5,6 +5,7 @@
 import pygame
 from src.const import *
 from src.page.ui_components import Button
+from src.component.sound import sound
 
 
 def run_start(screen):
@@ -60,6 +61,7 @@ def run_start(screen):
             elif event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                 for button in buttons:
                     if button.rect.collidepoint(event.pos):
+                        sound.play("menu_small.wav")
                         print(f"Action : {button.action}")
                         return button.action
 
