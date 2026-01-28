@@ -63,7 +63,7 @@ Récompense : 90 Skygold
 ## La boutique
 * La boutique est le lieu ou chaque joueur peut **acheter** de nouveaux dragons, ainsi que des tours de défense supplémentaires pour sa base.
 
-![background](assets/img/backgroundsquare.png)
+![background](assets/img/achat.png)
 
 
 

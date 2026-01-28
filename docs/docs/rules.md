@@ -33,11 +33,11 @@ Une fois le jeu lancé, vous aurez accès à l'écran du menu principal. Pour co
     
     * **Déplacer** un dragon : les déplacements possibles s'affichent en cliquant sur un dragon existant
 
-    ![background](assets/img/backgroundsquare.png)
+    ![background](assets/img/attaque1.png)
 
     * **Attaquer** un dragon adverse : les attaques deviennent possibles et visibles lorsque votre dragon se tient à une certaine distance de celui d'un ennemi
 
-    ![background](assets/img/backgroundsquare.png)
+    ![background](assets/img/attaque1.png)
 
 Il vous faudra donc choisir une action à réaliser pour poursuivre le jeu.
 
@@ -50,7 +50,7 @@ Il vous faudra donc choisir une action à réaliser pour poursuivre le jeu.
     * D’activer ou désactiver la **musique**
     * De **quitter** la partie en cours
 
-![background](assets/img/backgroundsquare.png)
+![background](assets/img/param.png)
 
 ## Fin de la partie
 
