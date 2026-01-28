@@ -1,9 +1,143 @@
+from typing import List, Tuple, Any
+
 from src.component.entities.dragon import Dragon
 from src.component.grid import Cell, Grid
 from src.const import DRAGON_GEANT_COST
 from src.enum.type_entities import TypeEntitiesEnum
 from src.events.dragonEvents import DragonEvents
 from src.player import Player
+
+
+def get_priority_targets(player: Player, enemy: Player, grid: Grid) -> List[Tuple[Any, float, int, int]]:
+    """
+    focus fire: trie les cibles par priorite (killable > blesse > base/tour)
+    """
+    targets = []
+
+    for target in enemy.units:
+        if not target.cell:
+            continue
+
+        attackers_count = 0
+        potential_damage = 0
+
+        for ally in player.units:
+            if not ally.cell or not hasattr(ally, 'attack_range'):
+                continue
+
+            dist = grid.distance(ally.cell, target.cell)
+
+            # attaque directe ou apres deplacement
+            if dist <= ally.attack_range:
+                attackers_count += 1
+                potential_damage += getattr(ally, 'attack_damage', 0)
+            elif dist <= (getattr(ally, 'actual_speed', 0) + ally.attack_range):
+                attackers_count += 1
+                potential_damage += getattr(ally, 'attack_damage', 0)
+
+        if attackers_count == 0:
+            continue
+
+        priority = 0
+
+        # killable
+        if target.hp <= potential_damage:
+            priority += 1000
+            priority += target.max_hp * 0.5
+        # blesse
+        elif target.hp < target.max_hp:
+            hp_missing_ratio = (target.max_hp - target.hp) / target.max_hp
+            priority += 300 * hp_missing_ratio
+
+        # proche de notre base
+        if player.base and player.base.cell:
+            dist_to_base = grid.distance(target.cell, player.base.cell)
+            if dist_to_base < 5:
+                priority += 200
+            elif dist_to_base < 10:
+                priority += 100
+
+        # bonus coordination si plusieurs peuvent focus
+        if attackers_count >= 2:
+            priority += 50 * attackers_count
+
+        targets.append((target, priority, attackers_count, potential_damage))
+
+    # base ennemie
+    if enemy.base and not enemy.base.is_dead() and enemy.base.cell:
+        attackers = 0
+        pot_dmg = 0
+        for ally in player.units:
+            if ally.cell and hasattr(ally, 'attack_range'):
+                dist = grid.distance(ally.cell, enemy.base.cell)
+                if dist <= ally.attack_range:
+                    attackers += 1
+                    pot_dmg += getattr(ally, 'attack_damage', 0)
+
+        if attackers > 0:
+            priority = 100
+            if enemy.base.hp <= pot_dmg:
+                priority = 2000  # win condition
+            else:
+                priority += (enemy.base.max_hp - enemy.base.hp) * 0.1
+
+            targets.append((enemy.base, priority, attackers, pot_dmg))
+
+    # tour ennemie
+    if enemy.tower and enemy.tower.active and enemy.tower.cell:
+        attackers = 0
+        pot_dmg = 0
+        for ally in player.units:
+            if ally.cell and hasattr(ally, 'attack_range'):
+                dist = grid.distance(ally.cell, enemy.tower.cell)
+                if dist <= ally.attack_range:
+                    attackers += 1
+                    pot_dmg += getattr(ally, 'attack_damage', 0)
+
+        if attackers > 0:
+            priority = 150
+            if enemy.tower.hp <= pot_dmg:
+                priority = 800
+
+            targets.append((enemy.tower, priority, attackers, pot_dmg))
+
+    targets.sort(key=lambda x: x[1], reverse=True)
+
+    return targets
+
+
+def is_dangerous_position(dragon: Dragon, target_cell: Cell, grid: Grid, enemy: Player) -> tuple[bool, int]:
+    """
+    calcule si l'ennemi peut tuer le dragon au prochain tour
+    """
+    damage_received = 0
+
+    # calcul degats de tous les ennemis
+    for enemy_unit in enemy.units:
+        if not enemy_unit.cell or not hasattr(enemy_unit, 'attack_damage'):
+            continue
+
+        dist = grid.distance(target_cell, enemy_unit.cell)
+        enemy_range = getattr(enemy_unit, 'attack_range', 0)
+        enemy_speed = getattr(enemy_unit, 'actual_speed', 0)
+
+        if dist <= enemy_range:
+            damage_received += enemy_unit.attack_damage
+        elif dist <= (enemy_speed + enemy_range):
+            if not getattr(enemy_unit, 'has_moved', False):
+                damage_received += enemy_unit.attack_damage
+
+    # degats tour
+    if enemy.tower and enemy.tower.active and enemy.tower.cell:
+        tower_range = getattr(enemy.tower, 'attack_range', 0)
+        dist_tower = grid.distance(target_cell, enemy.tower.cell)
+        if dist_tower <= tower_range:
+            tower_damage = getattr(enemy.tower, 'attack_damage', 0)
+            damage_received += tower_damage
+
+    is_lethal = damage_received >= dragon.hp
+
+    return is_lethal, damage_received
 
 
 def deplacement_score(dragon: Dragon, target_cell: Cell, grid: Grid, player, enemy) -> float:
@@ -67,23 +201,23 @@ def deplacement_score(dragon: Dragon, target_cell: Cell, grid: Grid, player, ene
 
     closest_enemy_dist = float('inf')
 
-    for enemy in enemy.units:
-        if not enemy.cell:
+    for enemy_unit in enemy.units:
+        if not enemy_unit.cell:
             continue
 
-        dist = grid.distance(target_cell, enemy.cell)
+        dist = grid.distance(target_cell, enemy_unit.cell)
         closest_enemy_dist = min(closest_enemy_dist, dist)
 
         if dist <= dragon.attack_range:
-            enemy_range = getattr(enemy, 'attack_range', 0)
+            enemy_range = getattr(enemy_unit, 'attack_range', 0)
             if dist > enemy_range:
                 score += 150
             else:
                 score += 50
-                if dragon.hp > enemy.hp:
+                if dragon.hp > enemy_unit.hp:
                     score += 30
 
-        elif dist <= getattr(enemy, 'attack_range', 0):
+        elif dist <= getattr(enemy_unit, 'attack_range', 0):
             score -= 100  # Zone de danger
 
     if closest_enemy_dist < 15:  # Si un ennemi est dans un rayon de 15 cases
@@ -121,6 +255,20 @@ def deplacement_score(dragon: Dragon, target_cell: Cell, grid: Grid, player, ene
 
         if adjacent_obstacles >= 2:
             score -= 30 * adjacent_obstacles
+
+    # anticipation: eviter de se faire tuer
+    is_lethal, potential_damage = is_dangerous_position(dragon, target_cell, grid, enemy)
+
+    if is_lethal:
+        score -= 500
+        if dragon.hp < dragon.max_hp * 0.5:
+            score -= 300
+    elif potential_damage > 0:
+        damage_ratio = potential_damage / dragon.hp
+        if damage_ratio > 0.5:
+            score -= 150 * damage_ratio
+        elif damage_ratio > 0.3:
+            score -= 80 * damage_ratio
 
     return score
 
@@ -328,29 +476,36 @@ def get_best_attack(dragon: Dragon, grid: Grid, player: Player, enemy: Player):
     :param enemy:
     :return:
     """
+    if not dragon.cell:
+        return None, -float('inf')
+
     best_target = None
     best_score = -float('inf')
 
-    potential_targets = list(enemy.units)
+    priority_targets = get_priority_targets(player, enemy, grid)
 
-    if enemy.base and not enemy.base.is_dead():
-        potential_targets.append(enemy.base)
+    for i, (target, priority, attackers_count, potential_damage) in enumerate(priority_targets):
+        if not target.cell:
+            continue
 
-    if enemy.tower and enemy.tower.active:
-        potential_targets.append(enemy.tower)
+        dist = grid.distance(dragon.cell, target.cell)
 
-    for e in potential_targets:
-        if e.cell and dragon.cell and grid.distance(dragon.cell, e.cell) <= dragon.attack_range:
-            score = attaque_score(dragon, e, grid, player, enemy)
+        if dist <= dragon.attack_range:
+            score = attaque_score(dragon, target, grid, player, enemy)
 
-            if e == enemy.base:
-                score += 10
-            if e == enemy.tower:
-                score += 5
+            if i == 0:
+                score += 300
+            elif i == 1:
+                score += 150
+            elif i == 2:
+                score += 75
+
+            if target.hp <= potential_damage:
+                score += 400
 
             if score > best_score:
                 best_score = score
-                best_target = e
+                best_target = target
 
     return best_target, best_score
 
